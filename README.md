@@ -6,10 +6,6 @@ Questa sezione descrive come compilare manualmente le versioni per Windows e And
 Prima di compilare, assicurati di aggiornare la versione del progetto nei seguenti file:
 - `ByteOrBite/package.json`
 - `ByteOrBite/electron/package.json`
-- `README.md` (questa sezione)
-- `release.bat` (se necessario per note di rilascio)
-
-Versione attuale: **1.0.1**
 
 ## 2. COMPILAZIONE PC (.EXE)
 Per generare l'installer di Windows (Setup):

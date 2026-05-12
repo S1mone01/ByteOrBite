@@ -13,7 +13,6 @@ REM --- PROMPT AGGIORNAMENTO VERSIONE ---
 echo [ATTENZIONE] Hai aggiornato la versione (es. 1.0.1) in:
 echo   - ByteOrBite/package.json
 echo   - ByteOrBite/electron/package.json
-echo   - README.md
 echo.
 set /p CONFIRM_VERSION="Confermi di voler procedere? (s/n): "
 if /i "%CONFIRM_VERSION%" NEQ "s" (
