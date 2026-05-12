@@ -25,7 +25,7 @@ Puoi generare l'APK  tramite terminale
 	.\gradlew.bat assembleDebug 
 
 VISUALIZZAZIONE CON EMULATORE ANDROID STUDIO
-
+1. Avvia emulatore
 Dove trovare il file:
 ByteOrBite/android/app/build/outputs/apk/debug/
 
