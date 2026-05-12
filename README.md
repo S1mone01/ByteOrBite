@@ -1,95 +1,67 @@
 # GUIDA ALLA COMPILAZIONE: EXE (PC) E APK (ANDROID)
 
-## COMPILAZIONE PC (.EXE)
-Per generare l'installer di Windows (Setup), usa questi comandi:
+Questa sezione descrive come compilare manualmente le versioni per Windows e Android.
+
+## 1. AGGIORNAMENTO VERSIONE
+Prima di compilare, assicurati di aggiornare la versione del progetto nei file `package.json` (nella root e in `ByteOrBite/electron/`).
+
+## 2. COMPILAZIONE PC (.EXE)
+Per generare l'installer di Windows (Setup):
 
 1. **Spostati nella cartella electron:**
    ```bash
    cd ByteOrBite/electron
    ```
-2. **Genera l'installer:**
+2. **Installa le dipendenze (se necessario):**
+   ```bash
+   npm install
+   ```
+3. **Genera l'installer:**
    ```bash
    npm run electron:make
    ```
 
 **Dove trovare il file:**
-`ByteOrBite/electron/dist/`
+`ByteOrBite/electron/dist/ByteOrBite Setup [VERSIONE].exe`
 
 ---
 
-## COMPILAZIONE ANDROID (FILE .APK)
-Puoi generare l'APK tramite terminale.
+## 3. COMPILAZIONE ANDROID (FILE .APK)
+Per generare l'APK tramite terminale:
 
-1. **Apri il terminale nella cartella principale:**
+1. **Compila il progetto frontend (Angular/Ionic):**
    ```bash
    cd ByteOrBite
-   ```
-2. **Esegui la build del progetto:**
-   ```bash
+   npm install
    npm run build
    ```
-3. **Sincronizza i file:**
+2. **Sincronizza le modifiche con il progetto Android:**
    ```bash
    npx cap sync android
    ```
-4. **Spostati nella cartella android:**
+3. **Genera l'APK tramite Gradle:**
    ```bash
    cd android
-   ```
-5. **Genera l'APK:**
-   ```bash
    .\gradlew.bat assembleDebug
    ```
 
-### VISUALIZZAZIONE E DEBUG CON ANDROID STUDIO
-Se preferisci usare l'interfaccia grafica di Android Studio per testare l'app su un emulatore o un dispositivo fisico:
-
-1. **Assicurati di essere nella cartella del progetto Ionic:**
-   ```bash
-   cd ByteOrBite
-   ```
-2. **Esegui la build e sincronizza i file (se non l'hai già fatto):**
-   ```bash
-   npm run build
-   npx cap sync android
-   ```
-3. **Apri il progetto in Android Studio:**
-   ```bash
-   npx cap open android
-   ```
-   *In alternativa, apri Android Studio manualmente e seleziona la cartella `ByteOrBite/android`.*
-
-4. **Avvia l'app:**
-   - Attendi che Android Studio finisca l'indicizzazione (Gradle sync).
-   - Seleziona un emulatore o un dispositivo fisico collegato nel menu a tendina in alto.
-   - Clicca sul tasto **Run** (l'icona del triangolo verde "Play").
-
 **Dove trovare il file:**
-`ByteOrBite/android/app/build/outputs/apk/debug/`
+`ByteOrBite/android/app/build/outputs/apk/debug/app-debug.apk`
 
 ---
 
-## AUTOMAZIONE RILASCIO (release.bat)
-Per compilare e pubblicare automaticamente una nuova versione su GitHub Releases:
+## 4. AUTOMAZIONE RILASCIO (release.bat)
+Lo script `release.bat` automatizza l'intero processo di build e caricamento su GitHub.
 
-1. **Ottieni un GitHub Token:** Crea un "Personal Access Token (classic)" su GitHub con permessi `repo`.
-2. **Imposta il Token:** Nel terminale (PowerShell o CMD), esegui:
-   ```cmd
-   set GITHUB_TOKEN=ghp_il_tuo_token_qui
-   ```
-3. **Esegui lo script:**
-   ```cmd
-   .\release.bat
-   ```
-
-**Cosa fa lo script:**
-- Verifica il token e le dipendenze.
-- Compila il frontend Angular.
-- Genera l'**APK Android** locale.
-- Compila e pubblica l'**Installer Windows (.exe)** su GitHub.
-- Carica l'APK nella stessa Release di GitHub (richiede [GitHub CLI](https://cli.github.com/)).
+1. **Configurazione:**
+   - [Installa GitHub CLI (gh)](https://cli.github.com/).
+   - Imposta il token: `set GITHUB_TOKEN=ghp_tuo_token`.
+2. **Esecuzione:**
+   - Avvia `.\release.bat`.
+   - Lo script compilerà il frontend, l'APK e l'EXE, creando poi una nuova Release su GitHub con gli asset caricati.
 
 ---
+
 
 ## COMANDI BASE GIT (CARICAMENTO E MODIFICHE)
 
