@@ -1,0 +1,73 @@
+<ion-header class="desktop-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <div class="logo-container">
+        <img src="assets/verticale.png" alt="Byte or Bite Logo" class="desktop-logo">
+      </div>
+    </ion-buttons>
+
+    <div class="desktop-nav-center">
+      <ion-button routerLink="/tabs/home" fill="clear">Home</ion-button>
+      <ion-button routerLink="/tabs/menu" fill="clear">Menu</ion-button>
+      <ion-button routerLink="/tabs/panini" fill="clear">Panini</ion-button>
+    </div>
+
+    <ion-buttons slot="end">
+      <!-- Se non loggato -->
+      <ion-button *ngIf="!(currentUser$ | async)" routerLink="/tabs/login" class="login-button">Login</ion-button>
+      
+      <!-- Se loggato -->
+      <ng-container *ngIf="currentUser$ | async as user">
+        <div class="user-profile-nav">
+          <ion-icon name="person-circle-outline" class="user-icon"></ion-icon>
+          <span class="user-name">{{ user.name }}</span>
+        </div>
+        <ion-button (click)="logout()" color="danger" fill="clear" title="Logout">
+          <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+        </ion-button>
+      </ng-container>
+
+      <ion-button (click)="toggleTheme()" class="theme-toggle" fill="clear">
+        <ion-icon slot="icon-only" [name]="isDarkMode ? 'sunny-outline' : 'moon-outline'"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-tabs>
+  <ion-tab-bar slot="bottom" class="mobile-tab-bar">
+    <ion-tab-button tab="home" href="/tabs/home">
+      <div class="icon-wrapper">
+        <img src="assets/1024v5.png" alt="Logo" class="mobile-logo-icon">
+      </div>
+      <ion-label>Home</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="menu" href="/tabs/menu">
+      <div class="icon-wrapper">
+        <ion-icon aria-hidden="true" name="fast-food-outline"></ion-icon>
+      </div>
+      <ion-label>Menu</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="panini" href="/tabs/panini">
+      <div class="icon-wrapper">
+        <div class="custom-panino-icon">
+          <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+            <path d="M464 256c0-88.37-71.63-160-160-160H208c-88.37 0-160 71.63-160 160v48h416v-48z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+            <rect x="48" y="304" width="416" height="48" rx="24" ry="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+            <path d="M464 352c0 44.18-35.82 80-80 80H128c-44.18 0-80-35.82-80-80v-16h416v16z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+          </svg>
+        </div>
+      </div>
+      <ion-label>Panini</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="login" href="/tabs/login">
+      <div class="icon-wrapper">
+        <ion-icon aria-hidden="true" [name]="(currentUser$ | async) ? 'person-circle-outline' : 'person-outline'"></ion-icon>
+      </div>
+      <ion-label>{{ (currentUser$ | async) ? 'Profilo' : 'Login' }}</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

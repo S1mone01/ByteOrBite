@@ -1,0 +1,152 @@
+<ion-content class="ion-padding auth-page">
+  <div class="auth-container">
+    <ion-card class="auth-card">
+      <ion-card-header>
+        <div class="logo-wrapper">
+          <img src="assets/verticale.png" alt="Byte or Bite" class="auth-logo">
+        </div>
+        
+        <ng-container *ngIf="!isForgotPassword">
+          <ion-segment [value]="isLogin ? 'login' : 'register'" (ionChange)="toggleMode($event)" mode="ios">
+            <ion-segment-button value="login">
+              <ion-label>Login</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="register">
+              <ion-label>Registrati</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+        </ng-container>
+
+        <div class="forgot-header" *ngIf="isForgotPassword">
+          <ion-button fill="clear" (click)="setForgotPassword(false)" class="back-button">
+            <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+            Torna al login
+          </ion-button>
+          <h2 class="auth-title">Recupera Password</h2>
+          <p class="auth-subtitle">Inserisci la tua email per ricevere le istruzioni.</p>
+        </div>
+      </ion-card-header>
+
+      <ion-card-content>
+        <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+          <ion-list lines="none">
+            <!-- Campo Nome (solo registrazione) -->
+            <ion-item *ngIf="!isLogin && !isForgotPassword" class="auth-item">
+              <ion-icon name="person-outline" slot="start"></ion-icon>
+              <ion-input
+                label="Nome Completo"
+                labelPlacement="stacked"
+                placeholder="Inserisci il tuo nome"
+                formControlName="name"
+                type="text"
+              ></ion-input>
+            </ion-item>
+
+            <!-- Campo Email -->
+            <ion-item class="auth-item">
+              <ion-icon name="mail-outline" slot="start"></ion-icon>
+              <ion-input
+                label="Email"
+                labelPlacement="stacked"
+                placeholder="esempio@email.com"
+                formControlName="email"
+                type="email"
+              ></ion-input>
+            </ion-item>
+
+            <!-- Campo Password (nascosto in forgot password) -->
+            <ion-item *ngIf="!isForgotPassword" class="auth-item">
+              <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+              <ion-input
+                label="Password"
+                labelPlacement="stacked"
+                placeholder="********"
+                formControlName="password"
+                [type]="showPassword ? 'text' : 'password'"
+              ></ion-input>
+              <ion-button slot="end" fill="clear" (click)="togglePasswordVisibility()">
+                <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+              </ion-button>
+            </ion-item>
+          </ion-list>
+
+          <!-- Checkbox Termini e Condizioni (solo registrazione) -->
+          <div class="terms-container" *ngIf="!isLogin && !isForgotPassword">
+            <ion-checkbox formControlName="termsAccepted" mode="md"></ion-checkbox>
+            <ion-label>
+              Accetto i <a (click)="openTerms($event)">termini e condizioni</a>
+            </ion-label>
+          </div>
+
+          <div class="error-container" *ngIf="errorMessage">
+            <ion-text color="danger">
+              <p>{{ errorMessage }}</p>
+            </ion-text>
+          </div>
+
+          <div class="success-container" *ngIf="successMessage">
+            <ion-text color="success">
+              <p>{{ successMessage }}</p>
+            </ion-text>
+          </div>
+
+          <ion-button 
+            expand="block" 
+            type="submit" 
+            class="submit-button" 
+            [disabled]="authForm.invalid || isLoading"
+          >
+            <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+            <span *ngIf="!isLoading">
+              {{ isForgotPassword ? 'Invia Link' : (isLogin ? 'Entra' : 'Crea Account') }}
+            </span>
+          </ion-button>
+        </form>
+
+        <div class="auth-footer" *ngIf="isLogin && !isForgotPassword">
+          <ion-button fill="clear" size="small" color="medium" (click)="setForgotPassword(true)">
+            Password dimenticata?
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Modal Termini e Condizioni -->
+  <ion-modal [isOpen]="showTermsModal" (didDismiss)="closeTerms()" class="terms-modal">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-title>Termini e Condizioni</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeTerms()">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <div class="terms-content">
+          <h3>1. Accettazione dei Termini</h3>
+          <p>Utilizzando l'app ByteOrBite, accetti di essere vincolato dai presenti termini e condizioni d'uso.</p>
+          
+          <h3>2. Servizio</h3>
+          <p>ByteOrBite fornisce un servizio di ordinazione online per panini e prodotti di panineria.</p>
+          
+          <h3>3. Account Utente</h3>
+          <p>Sei responsabile del mantenimento della riservatezza delle tue credenziali di accesso.</p>
+          
+          <h3>4. Privacy</h3>
+          <p>I tuoi dati verranno trattati in conformità con la nostra politica sulla privacy.</p>
+          
+          <h3>5. Modifiche</h3>
+          <p>Ci riserviamo il diritto di modificare questi termini in qualsiasi momento.</p>
+          
+          <div class="modal-footer">
+            <ion-button expand="block" (click)="closeTerms()">Ho capito</ion-button>
+          </div>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>

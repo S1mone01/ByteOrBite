@@ -1,0 +1,41 @@
+.panini-header {
+  padding: 30px 20px;
+  background: var(--app-bg);
+  border-bottom: 2px solid var(--ion-color-secondary);
+  text-align: center;
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--app-text);
+    margin: 0;
+  }
+
+  p {
+    color: var(--ion-color-primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 5px;
+  }
+}
+
+.panino-card {
+  margin: 8px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  background: var(--app-card-bg);
+
+  img {
+    height: 150px;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  ion-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--app-text);
+  }
+}

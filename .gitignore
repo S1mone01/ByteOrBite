@@ -1,0 +1,31 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Compiled output
+dist/
+www/
+out-tsc/
+bazel-out/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Angular/Ionic
+.angular/
+.ionic/
+platforms/
+plugins/
+capacitor.config.ts.json
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Other
+*.log
+.tmp/

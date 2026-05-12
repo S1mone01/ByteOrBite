@@ -1,0 +1,31 @@
+GUIDA ALLA COMPILAZIONE: EXE (PC) E APK (ANDROID)
+
+COMPILAZIONE PC (.EXE)
+Per generare l'installer di Windows (Setup), usa questi comandi:
+1. Spostati nella cartella electron:
+   cd ByteOrBite/electron
+2. Genera l'installer:
+   npm run electron:make
+Dove trovare il file:
+ByteOrBite/electron/dist/
+
+
+COMPILAZIONE ANDROID (FILE .APK)
+Puoi generare l'APK  tramite terminale
+
+1. Apri il terminale nella cartella principale: 
+	cd ByteOrBite
+2. Esegui la build del progetto: 
+	npm run build
+3. Sincronizza i file: 
+	npx cap sync android
+4. Spostati nella cartella android: 
+	cd android
+5. Genera l'APK: 
+	.\gradlew.bat assembleDebug 
+
+VISUALIZZAZIONE CON EMULATORE ANDROID STUDIO
+
+Dove trovare il file:
+ByteOrBite/android/app/build/outputs/apk/debug/
+

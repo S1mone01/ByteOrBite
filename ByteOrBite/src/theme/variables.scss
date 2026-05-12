@@ -1,0 +1,40 @@
+/**
+ * Ionic Variables and Theming
+ * ----------------------------------------------------------------------------
+ * For more information, please visit:
+ * https://ionicframework.com/docs/theming/
+ */
+
+:root {
+  /** Primary - Verde Panineria **/
+  --ion-color-primary: #27ae60;
+  --ion-color-primary-rgb: 39, 174, 96;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #229954;
+  --ion-color-primary-tint: #3dbe70;
+
+  /** Secondary - Giallo Panineria **/
+  --ion-color-secondary: #f1c40f;
+  --ion-color-secondary-rgb: 241, 196, 15;
+  --ion-color-secondary-contrast: #000000;
+  --ion-color-secondary-contrast-rgb: 0, 0, 0;
+  --ion-color-secondary-shade: #d4ac0d;
+  --ion-color-secondary-tint: #f2ca27;
+
+  /** Background and Text **/
+  --app-bg: #ffffff;
+  --app-text: #1a252f;
+  --app-card-bg: #ffffff;
+}
+
+/* Dark Mode Variables */
+body.ion-palette-dark {
+  --ion-color-primary: #2ecc71;
+  --ion-color-primary-shade: #28b463;
+  --ion-color-primary-tint: #43d17f;
+
+  --app-bg: #293133;
+  --app-text: #f8f9fa;
+  --app-card-bg: #343d40;
+}
