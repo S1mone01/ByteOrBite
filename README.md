@@ -69,16 +69,25 @@ Se preferisci usare l'interfaccia grafica di Android Studio per testare l'app su
 
 ---
 
-## AUTOMAZIONE (RELEASE SU GITHUB)
-È disponibile uno script PowerShell che automatizza la creazione di una **GitHub Release**. Lo script invia il codice e crea un "Tag" (es. v1.0.0), che attiva automaticamente una *GitHub Action* per compilare e pubblicare i file.
+## AUTOMAZIONE RILASCIO (release.bat)
+Per compilare e pubblicare automaticamente una nuova versione su GitHub Releases:
 
-1. **Esegui lo script:**
-   ```powershell
-   .\publish_builds.ps1
+1. **Ottieni un GitHub Token:** Crea un "Personal Access Token (classic)" su GitHub con permessi `repo`.
+2. **Imposta il Token:** Nel terminale (PowerShell o CMD), esegui:
+   ```cmd
+   set GITHUB_TOKEN=ghp_il_tuo_token_qui
    ```
-2. **Inserisci la versione** quando richiesto (es. `1.0.0`).
-3. **Monitora la build:** Vai sulla scheda **Actions** del tuo repository GitHub.
-4. **Scarica i file:** Una volta terminata la build (circa 5-10 min), i file `.apk` e `.exe` appariranno nella sezione **Releases** a destra nella home del repository.
+3. **Esegui lo script:**
+   ```cmd
+   .\release.bat
+   ```
+
+**Cosa fa lo script:**
+- Verifica il token e le dipendenze.
+- Compila il frontend Angular.
+- Genera l'**APK Android** locale.
+- Compila e pubblica l'**Installer Windows (.exe)** su GitHub.
+- Carica l'APK nella stessa Release di GitHub (richiede [GitHub CLI](https://cli.github.com/)).
 
 ---
 

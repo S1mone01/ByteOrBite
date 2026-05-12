@@ -1,22 +1,56 @@
-# Script di automazione per il rilascio su GitHub
+# Script di automazione per build locale e caricamento su GitHub Release
 
-Write-Host "--- Avvio procedura di rilascio ---" -ForegroundColor Cyan
+Write-Host "--- Avvio procedura di build locale e rilascio ---" -ForegroundColor Cyan
+
+# 0. Verifica GitHub CLI (gh)
+if (!(Get-Command gh -ErrorAction SilentlyContinue)) {
+    Write-Host "ERRORE: GitHub CLI (gh) non è installato." -ForegroundColor Red
+    Write-Host "Per favore installalo da: https://cli.github.com/ per permettere il caricamento delle Releases."
+    exit
+}
 
 # 1. Chiedi la versione
-$version = Read-Host "Inserisci il numero di versione (es. 1.0.0)"
+$version = Read-Host "Inserisci il numero di versione (es. 1.1.0)"
 if (-not $version.StartsWith("v")) { $tag = "v$version" } else { $tag = $version }
 
-# 2. Commit delle modifiche correnti (senza binari)
-Write-Host "Salvataggio modifiche su Git..." -ForegroundColor Yellow
+# 2. Build Locale
+Write-Host "`n[1/3] Compilazione progetto Ionic/Angular..." -ForegroundColor Yellow
+cd ByteOrBite
+npm run build
+
+Write-Host "`n[2/3] Compilazione APK Android..." -ForegroundColor Yellow
+npx cap sync android
+cd android
+.\gradlew.bat assembleDebug
+$apkPath = "app/build/outputs/apk/debug/app-debug.apk"
+cd ..
+
+Write-Host "`n[3/3] Compilazione EXE Electron..." -ForegroundColor Yellow
+cd electron
+npm run electron:make
+$exePath = Get-ChildItem "dist/*.exe" | Select-Object -First 1 -ExpandProperty FullName
+cd ../..
+
+# 3. Caricamento su GitHub Release
+Write-Host "`n--- Creazione Release su GitHub ---" -ForegroundColor Cyan
+
+# Commit e Push del codice prima del tag
 git add .
-git commit -m "Preparazione rilascio $tag"
+git commit -m "Build locale per rilascio $tag"
 git push
 
-# 3. Creazione e invio del TAG (questo attiva la GitHub Action)
-Write-Host "Creazione tag $tag per attivare la Release..." -ForegroundColor Yellow
-git tag $tag
-git push origin $tag
+# Creazione della release tramite GitHub CLI e caricamento file
+Write-Host "Caricamento file su GitHub Release $tag..." -ForegroundColor Yellow
+gh release create $tag --title "Release $tag" --notes "Build locale del $(Get-Date)"
 
-Write-Host "`n--- Operazione avviata! ---" -ForegroundColor Green
-Write-Host "Controlla la scheda 'Actions' su GitHub per seguire la build."
-Write-Host "Una volta completata, troverai i file nella sezione 'Releases'."
+# Caricamento APK
+gh release upload $tag "ByteOrBite/android/$apkPath#app-debug.apk"
+
+# Caricamento EXE
+if ($exePath) {
+    gh release upload $tag "$exePath"
+}
+
+Write-Host "`n--- Operazione completata! ---" -ForegroundColor Green
+Write-Host "I file sono ora disponibili nella sezione Releases su GitHub."
+
