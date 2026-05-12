@@ -9,6 +9,20 @@ echo  ByteOrBite - Build ^& Release (Local)
 echo ========================================
 echo.
 
+REM --- PROMPT AGGIORNAMENTO VERSIONE ---
+echo [ATTENZIONE] Hai aggiornato la versione (es. 1.0.1) in:
+echo   - ByteOrBite/package.json
+echo   - ByteOrBite/electron/package.json
+echo   - README.md
+echo.
+set /p CONFIRM_VERSION="Confermi di voler procedere? (s/n): "
+if /i "%CONFIRM_VERSION%" NEQ "s" (
+    echo [INFO] Operazione annullata. Aggiorna i file e riprova.
+    pause
+    exit /b 0
+)
+echo.
+
 REM Check if GITHUB_TOKEN is set
 if "%GITHUB_TOKEN%"=="" (
     echo [ERROR] GITHUB_TOKEN non impostato!
