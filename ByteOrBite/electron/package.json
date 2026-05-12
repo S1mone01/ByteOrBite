@@ -1,6 +1,6 @@
 {
   "name": "ByteOrBite",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An Amazing Capacitor App",
   "author": {
     "name": "",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/S1mone01/ByteOrBite.git"
   },
   "license": "MIT",
   "main": "build/src/index.js",

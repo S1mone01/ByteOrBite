@@ -9,6 +9,11 @@
     "capacitor.config.*",
     "app/**/*"
   ],
+  "publish": {
+    "provider": "github",
+    "owner": "S1mone01",
+    "repo": "ByteOrBite"
+  },
   "nsis": {
     "allowElevation": true,
     "oneClick": false,
