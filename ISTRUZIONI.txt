@@ -29,3 +29,22 @@ VISUALIZZAZIONE CON EMULATORE ANDROID STUDIO
 Dove trovare il file:
 ByteOrBite/android/app/build/outputs/apk/debug/
 
+
+COMANDI BASE GIT (CARICAMENTO E MODIFICHE)
+
+1. Controlla lo stato dei file (quali sono modificati):
+   git status
+
+2. Aggiungi le modifiche per il commit:
+   git add .              # Aggiunge tutti i file modificati
+   git add nome_file      # Aggiunge un file specifico
+
+3. Crea un commit con un messaggio descrittivo:
+   git commit -m "Descrizione delle modifiche effettuate"
+
+4. Invia le modifiche al repository online (GitHub):
+   git push
+
+5. Aggiorna il progetto locale con le modifiche online:
+   git pull
+
