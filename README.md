@@ -1,8 +1,8 @@
-# GUIDA ALLA COMPILAZIONE: EXE (PC) E APK (ANDROID).
+# GUIDA ALLA COMPILAZIONE: EXE (PC) E APK (ANDROID). 
 
 Questa sezione descrive come compilare manualmente le versioni per Windows e Android.
 
-## 1. AGGIORNAMENTO VERSIONE
+## 1. AGGIORNAMENTO VERSIONE gay
 Prima di compilare, assicurati di aggiornare la versione del progetto nei seguenti file:
 - `ByteOrBite/package.json`
 - `ByteOrBite/electron/package.json`
