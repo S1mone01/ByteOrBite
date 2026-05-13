@@ -4,7 +4,8 @@ import {
   IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
   IonCardTitle, IonCardContent, IonButton, IonIcon, 
   IonText, IonList, IonItem, IonLabel, IonThumbnail, 
-  IonBadge, IonListHeader, IonImg 
+  IonBadge, IonListHeader, IonImg, 
+  IonCardSubtitle
 } from '@ionic/angular/standalone';
 
 @Component({
@@ -17,7 +18,7 @@ import {
     IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
     IonCardTitle, IonCardContent, IonButton, IonIcon, 
     IonText, IonList, IonItem, IonLabel, IonThumbnail, 
-    IonBadge, IonListHeader, IonImg 
+    IonBadge, IonListHeader, IonImg, IonCardSubtitle
   ],
 })
 export class PaniniPage {
