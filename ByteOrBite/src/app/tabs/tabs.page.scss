@@ -132,10 +132,18 @@ ion-toolbar {
   }
 }
 
-/* Layout per Mobile */
+/* Layout base / Mobile */
+ion-tabs {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
 .mobile-tab-bar {
   --background: var(--app-bg);
-  --border-top: 1px solid var(--border-color, #eeeeee);
+  border-top: 3px solid var(--ion-color-primary);
   height: 65px;
   display: flex;
 }
@@ -183,9 +191,9 @@ ion-tab-button[aria-selected="true"] {
   }
 }
 
-/* Stili per il Popover Utente */
+/* Stili per il Menu a tendina Utente */
 .user-dropdown-popover {
-  --width: 280px;
+  --width: 240px;
   --border-radius: 12px;
 
   ion-content {
@@ -263,7 +271,7 @@ ion-tab-button[aria-selected="true"] {
       --background: transparent;
       --padding-start: 15px;
       --min-height: 50px;
-      --border-style: none; /* Rimuove eventuali bordi predefiniti */
+      --border-style: none;
       font-size: 14px;
       font-weight: 600;
       
@@ -331,5 +339,14 @@ ion-tab-button[aria-selected="true"] {
   }
   .mobile-tab-bar {
     display: none;
+  }
+  
+  /* Assicura che il contenuto delle tab parta sotto l'header desktop */
+  ion-tabs {
+    position: absolute;
+    top: 73px;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
 }
