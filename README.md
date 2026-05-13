@@ -8,7 +8,7 @@ Prima di compilare, assicurati di aggiornare la versione del progetto nei seguen
 - `ByteOrBite/electron/package.json`
 
 ## 2. COMPILAZIONE PC (.EXE)
-Per generare l'installer di Windows (Setup):
+Per generare l'installer di Windows (Setup):,
 
 1. **Spostati nella cartella electron:**
    ```bash
