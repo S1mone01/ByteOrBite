@@ -47,7 +47,7 @@ app.post('/login', async (req, res) => {
 
         const match = await bcrypt.compare(password, user.password);
         if (match) {
-            res.json({ message: "Login effettuato", user: { id: user.id, name: user.name, email: user.email } });
+            res.json({ message: "Login effettuato", user: { id: user.id, name: user.name, email: user.email, points: user.points } });
         } else {
             res.status(401).json({ error: "Credenziali non valide." });
         }

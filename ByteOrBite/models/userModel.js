@@ -4,10 +4,10 @@ const User = {
     // Creazione nuovo utente
     create: (name, email, password) => {
         return new Promise((resolve, reject) => {
-            const sql = `INSERT INTO users (name, email, password) VALUES (?, ?, ?)`;
+            const sql = `INSERT INTO users (name, email, password, points) VALUES (?, ?, ?, 0)`;
             db.run(sql, [name, email, password], function(err) {
                 if (err) reject(err);
-                else resolve({ id: this.lastID, name, email });
+                else resolve({ id: this.lastID, name, email, points: 0 });
             });
         });
     },
