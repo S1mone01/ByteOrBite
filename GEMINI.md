@@ -26,9 +26,11 @@ npm start
 
 ### Desktop (Windows .EXE)
 To generate the Windows installer (Setup):
-1. Navigate to the electron directory: `cd ByteOrBite/electron`
-2. Install dependencies: `npm install`
-3. Build the installer: `npm run electron:make`
+1. Build the frontend: `cd ByteOrBite` and `npm run build`
+2. Sync assets with Electron: `xcopy /E /I /Y "www\*" "electron\app\"` (Windows)
+3. Navigate to the electron directory: `cd electron`
+4. Install dependencies: `npm install`
+5. Build the installer: `npm run electron:make`
 *The output is located in `ByteOrBite/electron/dist/`.*
 
 ### Android (.APK)

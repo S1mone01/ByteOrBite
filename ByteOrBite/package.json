@@ -1,12 +1,13 @@
 {
   "name": "ByteOrBite",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "electron:make": "npm run build && cd electron && npm run electron:make",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"

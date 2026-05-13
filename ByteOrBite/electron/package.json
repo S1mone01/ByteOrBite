@@ -1,6 +1,6 @@
 {
   "name": "ByteOrBite",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "An Amazing Capacitor App",
   "author": {
     "name": "",
@@ -14,11 +14,12 @@
   "main": "build/src/index.js",
   "scripts": {
     "build": "tsc && electron-rebuild",
+    "sync": "xcopy /E /I /Y \"..\\www\\*\" \"app\\\"",
     "electron:start-live": "node ./live-runner.js",
-    "electron:start": "npm run build && electron --inspect=5858 ./",
-    "electron:pack": "npm run build && electron-builder build --dir -c ./electron-builder.config.json",
-    "electron:make": "npm run build && electron-builder build -c ./electron-builder.config.json",
-    "publish": "npm run build && electron-builder build -c ./electron-builder.config.json --publish always"
+    "electron:start": "npm run sync && npm run build && electron --inspect=5858 ./",
+    "electron:pack": "npm run sync && npm run build && electron-builder build --dir -c ./electron-builder.config.json",
+    "electron:make": "npm run sync && npm run build && electron-builder build -c ./electron-builder.config.json",
+    "publish": "npm run sync && npm run build && electron-builder build -c ./electron-builder.config.json --publish always"
   },
   "dependencies": {
     "@capacitor-community/electron": "^5.0.0",

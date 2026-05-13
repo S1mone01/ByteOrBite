@@ -46,7 +46,13 @@ if (electronIsDev) {
   // Initialize our app, build windows, and load content.
   await myCapacitorApp.init();
   // Check for updates if we are in a packaged app.
-  autoUpdater.checkForUpdatesAndNotify();
+  if (!electronIsDev) {
+    try {
+      autoUpdater.checkForUpdatesAndNotify();
+    } catch (err) {
+      console.error('Errore durante il controllo aggiornamenti:', err);
+    }
+  }
 })();
 
 // Handle when all of our windows are close (platforms have their own expectations).

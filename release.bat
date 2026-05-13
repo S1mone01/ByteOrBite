@@ -10,28 +10,16 @@ echo ========================================
 echo.
 
 REM --- PROMPT AGGIORNAMENTO VERSIONE ---
-echo [ATTENZIONE] Hai aggiornato la versione (es. 1.0.1) in:
-echo   - ByteOrBite/package.json
-echo   - ByteOrBite/electron/package.json
+echo [ATTENZIONE] Assicurati di aver aggiornato la versione in package.json.
 echo.
-set /p CONFIRM_VERSION="Confermi di voler procedere? (s/n): "
-if /i "%CONFIRM_VERSION%" NEQ "s" (
-    echo [INFO] Operazione annullata. Aggiorna i file e riprova.
-    pause
-    exit /b 0
-)
-echo.
+set /p CONFIRM_VERSION="Vuoi procedere con il rilascio? (s/n): "
+if /i "%CONFIRM_VERSION%" NEQ "s" exit /b 0
 
 REM Check if GITHUB_TOKEN is set
 if "%GITHUB_TOKEN%"=="" (
     echo [ERROR] GITHUB_TOKEN non impostato!
     echo.
-    echo Per favore imposta il token GitHub:
-    echo.
-    echo   set GITHUB_TOKEN=ghp_XXXXXXXXXXXXXXXXXXXX
-    echo.
-    echo Poi esegui di nuovo questo script.
-    echo.
+    echo Per favore imposta il token GitHub prima di lanciare lo script.
     pause
     exit /b 1
 )
@@ -58,6 +46,7 @@ call npm install
 call npm run build
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Build Ionic fallito!
+    cd ..
     pause
     exit /b 1
 )
@@ -70,6 +59,7 @@ cd android
 call .\gradlew.bat assembleDebug
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Build Android fallito!
+    cd ../..
     pause
     exit /b 1
 )
@@ -84,6 +74,7 @@ call npm install
 call npm run publish
 if %ERRORLEVEL% NEQ 0 (
     echo [ERROR] Publish Electron fallito!
+    cd ../..
     pause
     exit /b 1
 )
@@ -92,13 +83,21 @@ cd ../..
 REM Step 5: Upload APK (richiede GitHub CLI 'gh')
 echo.
 echo [INFO] Caricamento APK sulla release appena creata...
-echo Per questo passaggio e' necessario il GitHub CLI (gh).
 where gh >nul 2>nul
 if %ERRORLEVEL% EQU 0 (
-    REM Recupera l'ultimo tag creato
-    for /f "tokens=*" %%i in ('git describe --tags --abbrev^=0') do set LAST_TAG=%%i
-    echo [INFO] Caricamento su release %LAST_TAG%...
-    gh release upload %LAST_TAG% "%APK_PATH%#app-debug.apk" --clobber
+    REM Estrae la versione dal package.json per determinare il tag
+    for /f "tokens=2 delm=:" %%a in ('findstr /i "version" ByteOrBite\package.json') do (
+        set VERSION=%%a
+        goto :found_version
+    )
+    :found_version
+    set VERSION=%VERSION: =%
+    set VERSION=%VERSION:,=%
+    set VERSION=%VERSION:"=%
+    set TAG=v%VERSION%
+
+    echo [INFO] Caricamento su release %TAG%...
+    gh release upload %TAG% "%APK_PATH%#app-debug.apk" --clobber
 ) else (
     echo [WARNING] GitHub CLI (gh) non trovato. 
     echo L'APK non e' stato caricato automaticamente.
