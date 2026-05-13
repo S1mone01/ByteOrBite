@@ -10,7 +10,7 @@ import { addIcons } from 'ionicons';
 import { 
   homeOutline, fastFoodOutline, personOutline, 
   sunnyOutline, moonOutline, logOutOutline, personCircleOutline,
-  starOutline
+  starOutline, settingsOutline
 } from 'ionicons/icons';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
@@ -37,7 +37,7 @@ export class TabsPage implements OnInit {
     addIcons({ 
       homeOutline, fastFoodOutline, personOutline, 
       sunnyOutline, moonOutline, logOutOutline, personCircleOutline,
-      starOutline
+      starOutline, settingsOutline
     });
     this.currentUser$ = this.authService.currentUser$;
   }

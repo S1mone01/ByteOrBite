@@ -32,6 +32,11 @@ export const routes: Routes = [
           import('../profile/profile.page').then((m) => m.ProfilePage),
       },
       {
+        path: 'manage',
+        loadComponent: () =>
+          import('../manage/manage.page').then((m) => m.ManagePage),
+      },
+      {
         path: '',
         redirectTo: '/tabs/home',
         pathMatch: 'full',

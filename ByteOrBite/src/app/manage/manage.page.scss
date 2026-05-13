@@ -1,0 +1,23 @@
+.manage-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: 20px;
+    color: var(--app-text);
+
+    h2 {
+        font-size: 24px;
+        font-weight: 800;
+        margin-bottom: 15px;
+        color: var(--ion-color-primary);
+    }
+
+    p {
+        font-size: 16px;
+        opacity: 0.8;
+        max-width: 300px;
+    }
+}
