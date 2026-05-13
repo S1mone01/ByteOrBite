@@ -22,7 +22,10 @@ app.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // 2. Salva nel database tramite il modello
-        const nuovoUtente = await User.create(name, email, hashedPassword);
+        // Nota: Qui potresti voler gestire un ruolo specifico se inviato dal client, 
+        // ma di default è 'user'.
+        const role = req.body.role || 'user';
+        const nuovoUtente = await User.create(name, email, hashedPassword, role);
 
         console.log("Utente registrato con successo:", nuovoUtente);
         res.status(201).json({ message: "Registrazione completata", user: nuovoUtente });
@@ -47,7 +50,7 @@ app.post('/login', async (req, res) => {
 
         const match = await bcrypt.compare(password, user.password);
         if (match) {
-            res.json({ message: "Login effettuato", user: { id: user.id, name: user.name, email: user.email, points: user.points } });
+            res.json({ message: "Login effettuato", user: { id: user.id, name: user.name, email: user.email, points: user.points, role: user.role } });
         } else {
             res.status(401).json({ error: "Credenziali non valide." });
         }

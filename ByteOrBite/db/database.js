@@ -19,7 +19,8 @@ db.serialize(() => {
             name TEXT,
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
-            points INTEGER DEFAULT 0
+            points INTEGER DEFAULT 0,
+            role TEXT DEFAULT 'user'
         )
     `);
 });

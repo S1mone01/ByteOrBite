@@ -49,6 +49,12 @@
                   <ion-icon slot="start" name="person-outline"></ion-icon>
                   <ion-label>Il mio Profilo</ion-label>
                 </ion-item>
+
+                <!-- Pulsante Gestisci per Amministratori -->
+                <ion-item *ngIf="user.role === 'admin'" [button]="true" routerLink="/tabs/manage" class="profile-item">
+                  <ion-icon slot="start" name="settings-outline"></ion-icon>
+                  <ion-label>Gestisci</ion-label>
+                </ion-item>
                 
                 <ion-item [button]="true" (click)="logout()" class="logout-item">
                   <ion-icon slot="start" name="log-out-outline"></ion-icon>
