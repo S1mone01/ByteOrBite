@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # GUIDA ALLA COMPILAZIONE: EXE (PC) E APK (ANDROID). 
+=======
+# GUIDA ALLA COMPILAZIONE: EXE (PC) E APK (ANDROID)
+>>>>>>> 0d45528c2bbe0b5b92d105f467c03e7fc8a41b4b
 
 Questa sezione descrive come compilare manualmente le versioni per Windows e Android.
 
