@@ -3,12 +3,14 @@ import { CommonModule } from '@angular/common';
 import { 
   IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, 
   IonHeader, IonToolbar, IonButtons, IonButton, IonTitle,
-  IonMenuButton, IonAvatar, IonText
+  IonMenuButton, IonAvatar, IonText, IonPopover, IonList, IonItem,
+  IonContent
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
   homeOutline, fastFoodOutline, personOutline, 
-  sunnyOutline, moonOutline, logOutOutline, personCircleOutline
+  sunnyOutline, moonOutline, logOutOutline, personCircleOutline,
+  starOutline
 } from 'ionicons/icons';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
@@ -23,7 +25,7 @@ import { Observable } from 'rxjs';
     CommonModule, RouterLink,
     IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel,
     IonHeader, IonToolbar, IonButtons, IonButton, IonTitle,
-    IonAvatar, IonText
+    IonAvatar, IonText, IonPopover, IonList, IonItem, IonContent
   ],
 })
 export class TabsPage implements OnInit {
@@ -34,7 +36,8 @@ export class TabsPage implements OnInit {
   constructor(private authService: AuthService) {
     addIcons({ 
       homeOutline, fastFoodOutline, personOutline, 
-      sunnyOutline, moonOutline, logOutOutline, personCircleOutline
+      sunnyOutline, moonOutline, logOutOutline, personCircleOutline,
+      starOutline
     });
     this.currentUser$ = this.authService.currentUser$;
   }

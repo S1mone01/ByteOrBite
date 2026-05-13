@@ -26,6 +26,11 @@
   --app-bg: #ffffff;
   --app-text: #1a252f;
   --app-card-bg: #ffffff;
+
+  /** Profile Button **/
+  --profile-btn-bg: #8c949a;
+  --profile-btn-text: #ffffff;
+  --profile-btn-hover: #7a8288;
 }
 
 /* Dark Mode Variables */
@@ -37,4 +42,8 @@ body.ion-palette-dark {
   --app-bg: #293133;
   --app-text: #f8f9fa;
   --app-card-bg: #343d40;
+
+  --profile-btn-bg: #3d484b;
+  --profile-btn-text: #ffffff;
+  --profile-btn-hover: #4d5b5f;
 }

@@ -18,13 +18,46 @@
       
       <!-- Se loggato -->
       <ng-container *ngIf="currentUser$ | async as user">
-        <div class="user-profile-nav">
+        <div class="user-profile-nav" id="user-popover-trigger">
           <ion-icon name="person-circle-outline" class="user-icon"></ion-icon>
           <span class="user-name">{{ user.name }}</span>
         </div>
-        <ion-button (click)="logout()" color="danger" fill="clear" title="Logout">
-          <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
-        </ion-button>
+
+        <ion-popover trigger="user-popover-trigger" triggerAction="click" [dismissOnSelect]="true" alignment="end" class="user-dropdown-popover">
+          <ng-template>
+            <ion-content>
+              <div class="popover-header">
+                <div class="user-info-detail">
+                  <span class="detail-name">{{ user.name }}</span>
+                  <span class="detail-email">{{ user.email }}</span>
+                </div>
+              </div>
+
+              <div class="points-container">
+                <div class="points-box">
+                  <div class="points-header">
+                    <ion-icon name="star-outline"></ion-icon>
+                    <span>I tuoi Punti</span>
+                  </div>
+                  <div class="points-value">0</div>
+                  <div class="points-footer">Accumula punti con ogni ordine</div>
+                </div>
+              </div>
+
+              <ion-list lines="full" class="popover-list">
+                <ion-item [button]="true" routerLink="/tabs/profile" class="profile-item">
+                  <ion-icon slot="start" name="person-outline"></ion-icon>
+                  <ion-label>Il mio Profilo</ion-label>
+                </ion-item>
+                
+                <ion-item [button]="true" (click)="logout()" class="logout-item">
+                  <ion-icon slot="start" name="log-out-outline"></ion-icon>
+                  <ion-label>Logout</ion-label>
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
       </ng-container>
 
       <ion-button (click)="toggleTheme()" class="theme-toggle" fill="clear">
@@ -63,7 +96,7 @@
       <ion-label>Panini</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="login" href="/tabs/login">
+    <ion-tab-button [tab]="(currentUser$ | async) ? 'profile' : 'login'" [href]="(currentUser$ | async) ? '/tabs/profile' : '/tabs/login'">
       <div class="icon-wrapper">
         <ion-icon aria-hidden="true" [name]="(currentUser$ | async) ? 'person-circle-outline' : 'person-outline'"></ion-icon>
       </div>

@@ -1,21 +1,28 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { tap, catchError, map } from 'rxjs/operators';
 
 export interface User {
   id: string;
   email: string;
-  name: string;
+  name?: string;
+}
+
+interface AuthResponse {
+  message: string;
+  user: User;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private apiUrl = 'http://localhost:3000';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$: Observable<User | null> = this.currentUserSubject.asObservable();
 
-  constructor() {
+  constructor(private http: HttpClient) {
     // Carica l'utente dal localStorage all'avvio
     const savedUser = localStorage.getItem('byte_or_bite_user');
     if (savedUser) {
@@ -24,23 +31,29 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<User> {
-    // Mock login
-    return of({ id: '1', email, name: 'Utente Mock' }).pipe(
-      delay(1000),
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password }).pipe(
+      map(response => response.user),
       tap(user => {
+        console.log('User logged in:', user);
         this.currentUserSubject.next(user);
         localStorage.setItem('byte_or_bite_user', JSON.stringify(user));
+      }),
+      catchError(err => {
+        return throwError(() => err);
       })
     );
   }
 
   register(email: string, password: string, name: string): Observable<User> {
-    // Mock registration
-    return of({ id: '2', email, name }).pipe(
-      delay(1000),
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, { name, email, password }).pipe(
+      map(response => response.user),
       tap(user => {
+        console.log('User registered:', user);
         this.currentUserSubject.next(user);
         localStorage.setItem('byte_or_bite_user', JSON.stringify(user));
+      }),
+      catchError(err => {
+        return throwError(() => err);
       })
     );
   }
@@ -50,10 +63,12 @@ export class AuthService {
     localStorage.removeItem('byte_or_bite_user');
   }
 
-  resetPassword(email: string): Observable<boolean> {
-    // Mock reset password
+  resetPassword(email: string): Observable<any> {
+    // Placeholder per il reset password (ancora mock o da implementare nel backend)
     console.log(`Reset password request for: ${email}`);
-    return of(true).pipe(delay(1000));
+    return this.http.post(`${this.apiUrl}/reset-password`, { email }).pipe(
+      catchError(err => throwError(() => err))
+    );
   }
 
   isLoggedIn(): boolean {

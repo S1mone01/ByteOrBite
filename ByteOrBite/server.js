@@ -1,0 +1,62 @@
+const express = require('express');
+const cors = require('cors');
+const bcrypt = require('bcrypt');
+const User = require('./models/userModel');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(cors());
+app.use(express.json());
+
+// Endpoint di registrazione
+app.post('/register', async (req, res) => {
+    const { name, email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ error: "Email e password sono obbligatorie." });
+    }
+
+    try {
+        // 1. Cripta la password (10 round di hashing)
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // 2. Salva nel database tramite il modello
+        const nuovoUtente = await User.create(name, email, hashedPassword);
+
+        console.log("Utente registrato con successo:", nuovoUtente);
+        res.status(201).json({ message: "Registrazione completata", user: nuovoUtente });
+    } catch (error) {
+        if (error.message.includes("UNIQUE constraint failed")) {
+            return res.status(400).json({ error: "Email già registrata." });
+        }
+        console.error("Errore durante la registrazione:", error.message);
+        res.status(500).json({ error: "Errore interno del server." });
+    }
+});
+
+// Endpoint di login (aggiunto per completezza)
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await User.findByEmail(email);
+        if (!user) {
+            return res.status(401).json({ error: "Credenziali non valide." });
+        }
+
+        const match = await bcrypt.compare(password, user.password);
+        if (match) {
+            res.json({ message: "Login effettuato", user: { id: user.id, name: user.name, email: user.email } });
+        } else {
+            res.status(401).json({ error: "Credenziali non valide." });
+        }
+    } catch (error) {
+        console.error("Errore durante il login:", error.message);
+        res.status(500).json({ error: "Errore interno del server." });
+    }
+});
+
+app.listen(PORT, () => {
+    console.log(`Server avviato sulla porta ${PORT}`);
+});
