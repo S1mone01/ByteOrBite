@@ -60,6 +60,32 @@ app.post('/login', async (req, res) => {
     }
 });
 
+// --- SEZIONE GESTIONE PANINI  ---
+const Panino = require('./models/paniniModel');
+
+// Rotta per ottenere il catalogo
+app.get('/catalogo', async (req, res) => {
+    try {
+        const elenco = await Panino.tutti();
+        res.json(elenco);
+    } catch (err) {
+        res.status(500).json({ error: "Errore nel recupero dei panini" });
+    }
+});
+
+// Rotta per aggiungere un panino al catalogo
+app.post('/catalogo/aggiungi', async (req, res) => {
+    const { nome, ingredienti, prezzo } = req.body;
+    try {
+        const nuovoPanino = await Panino.aggiungi(nome, ingredienti, prezzo);
+        res.status(201).json(nuovoPanino);
+    } catch (err) {
+        res.status(500).json({ error: "Errore nel salvataggio del panino" });
+    }
+});
+// --- FINE SEZIONE PANINI ---
+
+
 app.listen(PORT, () => {
     console.log(`Server avviato sulla porta ${PORT}`);
 });
