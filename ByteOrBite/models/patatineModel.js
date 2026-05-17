@@ -1,6 +1,6 @@
 const db = require('../db/database_panini');
 
-const Bibita = {
+const Patatine = {
     // Funzione per leggere tutte le patatine
     tutti: () => {
         return new Promise((resolve, reject) => {
@@ -10,4 +10,6 @@ const Bibita = {
             });
         });
     }
-}
+};
+
+module.exports = Patatine;

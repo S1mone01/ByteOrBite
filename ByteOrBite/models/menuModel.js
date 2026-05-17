@@ -1,6 +1,6 @@
 const db = require('../db/database_panini');
 
-const Bibita = {
+const Menu = {
     // Funzione per leggere tutti i menu
     tutti: () => {
         return new Promise((resolve, reject) => {
@@ -10,4 +10,6 @@ const Bibita = {
             });
         });
     }
-}
+};
+
+module.exports = Menu;

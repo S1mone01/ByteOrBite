@@ -18,6 +18,8 @@ db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS panini (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome TEXT NOT NULL,
+        immagine_url TEXT,
+        disponibilita INTEGER DEFAULT 1,
         ingredienti TEXT,
         prezzo REAL
     )`);

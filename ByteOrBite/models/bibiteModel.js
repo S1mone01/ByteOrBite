@@ -10,4 +10,6 @@ const Bibita = {
             });
         });
     }
-}
+};
+
+module.exports = Bibita;
