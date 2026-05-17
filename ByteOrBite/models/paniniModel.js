@@ -20,7 +20,26 @@ const Panino = {
                 resolve({ id: this.lastID, nome, ingredienti, prezzo });
             });
         });
+    },
+
+
+    // Funzione per prendere un panino specifico CON i suoi ingredienti
+    getDettaglio: (paninoId) => {
+        return new Promise((resolve, reject) => {
+            const sql = `
+                SELECT ingredienti.nome, ingredienti.prezzo_extra 
+                FROM panino_ingredienti
+                JOIN ingredienti ON panino_ingredienti.ingrediente_id = ingredienti.id
+                WHERE panino_ingredienti.panino_id = ?
+            `;
+            
+            db.all(sql, [paninoId], (err, rows) => {
+                if (err) reject(err);
+                else resolve(rows); // restituisce la lista degli ingredienti di quel panino
+            });
+        });
     }
+
 };
 
 module.exports = Panino;
