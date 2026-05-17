@@ -2,8 +2,8 @@ import { Component, EnvironmentInjector, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { 
   IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, 
-  IonHeader, IonToolbar, IonButtons, IonButton, IonTitle,
-  IonMenuButton, IonAvatar, IonText, IonPopover, IonList, IonItem,
+  IonHeader, IonToolbar, IonButtons, IonButton,
+  IonMenuButton, IonPopover, IonList, IonItem,
   IonContent
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -24,8 +24,8 @@ import { Observable } from 'rxjs';
   imports: [
     CommonModule, RouterLink,
     IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel,
-    IonHeader, IonToolbar, IonButtons, IonButton, IonTitle,
-    IonAvatar, IonText, IonPopover, IonList, IonItem, IonContent
+    IonHeader, IonToolbar, IonButtons, IonButton,
+    IonPopover, IonList, IonItem, IonContent
   ],
 })
 export class TabsPage implements OnInit {

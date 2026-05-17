@@ -1,23 +1,137 @@
-.manage-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    text-align: center;
-    padding: 20px;
-    color: var(--app-text);
+.orders-section, .database-section {
+  margin-bottom: 30px;
+  background: var(--ion-background-color);
+  border-radius: 12px;
+  border: 1px solid var(--ion-color-light-shade);
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 
-    h2 {
-        font-size: 24px;
-        font-weight: 800;
-        margin-bottom: 15px;
-        color: var(--ion-color-primary);
+  ion-list-header {
+    background: var(--ion-color-light);
+    padding: 10px 16px;
+    ion-label {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: var(--ion-color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
+  }
+}
 
+.order-card.grid-card {
+  margin: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid var(--ion-color-light-shade);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-radius: 12px;
+  transition: transform 0.2s ease;
+  overflow: hidden; // Garantisce che il contenuto non esca dai bordi arrotondati
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  ion-card-header {
+    padding: 12px;
+    border-bottom: 1px solid var(--ion-color-light);
+  }
+
+  ion-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  ion-card-subtitle {
+    font-size: 0.85rem;
+    color: var(--ion-color-medium);
+  }
+
+  ion-card-content {
+    padding: 12px;
+  }
+
+  .order-info {
     p {
-        font-size: 16px;
-        opacity: 0.8;
-        max-width: 300px;
+      margin: 4px 0;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
+    .data-ora {
+      font-size: 0.8rem;
+      color: var(--ion-color-medium);
+      margin-bottom: 8px;
+    }
+  }
+}
+
+.database-section {
+  .segment-toolbar {
+    --background: var(--ion-color-light);
+    border-bottom: 1px solid var(--ion-color-light-shade);
+    padding: 4px;
+    
+    ion-segment {
+      --background: transparent;
+    }
+  }
+}
+
+ion-list {
+  margin-bottom: 20px;
+}
+
+ion-modal {
+  --height: 90%;
+  --width: 600px;
+  --border-radius: 20px;
+  --box-shadow: 0 28px 48px rgba(0,0,0,0.4);
+}
+
+// Padding in fondo alla pagina
+.bottom-spacer {
+  height: 100px;
+}
+
+// Media query per schermi piccoli (mobile)
+@media (max-width: 768px) {
+  ion-modal {
+    --width: 100%;
+    --height: 100%;
+    --border-radius: 0;
+  }
+
+  .orders-section, .database-section {
+    border: 1px solid var(--ion-color-light-shade);
+    border-radius: 12px; // Forza bordi arrotondati anche su mobile
+    margin: 10px;
+    overflow: hidden;
+  }
+
+  .order-card.grid-card {
+    border-radius: 12px;
+    margin: 8px 0;
+    // Forza visualizzazione bordi arrotondati su alcuni browser mobile
+    -webkit-border-radius: 12px;
+    border-radius: 12px;
+  }
+}
+
+// Utility class per nascondere su mobile
+.ion-hide-sm-down {
+  @media (max-width: 576px) {
+    display: none !important;
+  }
+}
+
+// Utility class per nascondere su desktop
+.ion-hide-sm-up {
+  @media (min-width: 577px) {
+    display: none !important;
+  }
 }

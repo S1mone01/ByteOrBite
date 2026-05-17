@@ -1,4 +1,4 @@
-const db = require('../db/database');
+const { userDB: db } = require('../db/database');
 
 const User = {
     // Creazione nuovo utente

@@ -1,6 +1,324 @@
-<ion-content>
-  <div class="manage-placeholder">
-    <h2>Gestione Amministrazione</h2>
-    <p>Benvenuto nella sezione di amministrazione. Questa sezione è attualmente in fase di sviluppo.</p>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Pannello di Controllo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- SEZIONE ORDINI -->
+  <div class="orders-section">
+    <ion-list-header (click)="toggleOrders()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+      <ion-label>Ordini</ion-label>
+      <ion-button fill="clear">
+        <ion-icon slot="icon-only" [name]="isOrdersVisible ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+      </ion-button>
+    </ion-list-header>
+
+    <div *ngIf="isOrdersVisible">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" size-md="6" size-lg="4" *ngFor="let ordine of ordini">
+            <ion-card class="order-card grid-card">
+              <ion-card-header>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                  <div>
+                    <ion-card-title>Ordine #{{ ordine.id }}</ion-card-title>
+                    <ion-card-subtitle>{{ ordine.utente_nome }}</ion-card-subtitle>
+                  </div>
+                  <ion-buttons slot="end">
+                    <ion-button color="primary" (click)="openEditOrderModal(ordine)">
+                      <ion-icon name="eye-outline"></ion-icon>
+                    </ion-button>
+                    <ion-button color="danger" (click)="confirmDeleteOrder(ordine.id)">
+                      <ion-icon name="trash"></ion-icon>
+                    </ion-button>
+                  </ion-buttons>
+                </div>
+              </ion-card-header>
+
+              <ion-card-content>
+                <div class="order-info">
+                  <p class="data-ora">{{ ordine.data_ora | date:'dd/MM/yyyy HH:mm' }}</p>
+                  <p><strong>Dest:</strong> {{ ordine.destinazione }}</p>
+                  <p><strong>Totale:</strong> {{ ordine.totale | currency:'EUR' }}</p>
+                  <p>
+                    <ion-badge [color]="ordine.stato === 'completato' ? 'success' : (ordine.stato === 'spedito' ? 'warning' : 'primary')">
+                      {{ ordine.stato }}
+                    </ion-badge>
+                  </p>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <div *ngIf="ordini.length === 0" class="ion-padding ion-text-center">
+        <p>Nessun ordine presente.</p>
+      </div>
+    </div>
   </div>
+
+  <!-- MODAL DETTAGLI/EDIT ORDINE -->
+  <ion-modal [isOpen]="isOrderModalOpen" (didDismiss)="closeOrderModal()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button (click)="closeOrderModal()">Chiudi</ion-button>
+          </ion-buttons>
+          <ion-title>Dettagli Ordine #{{ currentOrder.id }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="saveOrder()" [strong]="true">Salva</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-list-header>
+          <ion-label>Prodotti Ordinati</ion-label>
+        </ion-list-header>
+        <ion-list class="ion-margin-bottom">
+          <ion-item *ngFor="let p of currentOrder.prodotti">
+            <ion-label>
+              <h3>{{ p.quantita }}x {{ p.prodotto_nome }}</h3>
+              <p *ngIf="p.modifiche" style="color: var(--ion-color-medium)">{{ p.modifiche }}</p>
+            </ion-label>
+            <ion-text slot="end">{{ p.prezzo_unitario | currency:'EUR' }}</ion-text>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-label><strong>Totale</strong></ion-label>
+            <ion-text slot="end"><strong>{{ currentOrder.totale | currency:'EUR' }}</strong></ion-text>
+          </ion-item>
+        </ion-list>
+
+        <ion-list-header>
+          <ion-label>Gestione Consegna</ion-label>
+        </ion-list-header>
+        <ion-item>
+          <ion-select label="Stato Ordine" labelPlacement="stacked" [(ngModel)]="currentOrder.stato">
+            <ion-select-option value="ordinato">Ordinato</ion-select-option>
+            <ion-select-option value="in preparazione">In Preparazione</ion-select-option>
+            <ion-select-option value="spedito">Spedito</ion-select-option>
+            <ion-select-option value="completato">Completato</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-input label="Destinazione" labelPlacement="stacked" type="text" [(ngModel)]="currentOrder.destinazione" placeholder="Indirizzo di consegna"></ion-input>
+        </ion-item>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- SEZIONE GESTIONE DATABASE -->
+  <div class="database-section">
+    <ion-list-header>
+      <ion-label>Gestione Catalogo</ion-label>
+    </ion-list-header>
+
+    <ion-toolbar class="segment-toolbar">
+      <ion-segment [(ngModel)]="segmentValue" scrollable="true">
+        <ion-segment-button value="panini">
+          <ion-label>Panini</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="bibite">
+          <ion-label>Bibite</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="patatine">
+          <ion-label>Patatine</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="menu">
+          <ion-label>Menu</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="ingredienti">
+          <ion-label>Ingr.</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+      <ion-buttons slot="end" class="ion-hide-sm-down">
+        <ion-button (click)="openAddModal()" color="success" fill="solid">
+          <ion-icon slot="start" name="add"></ion-icon>
+          Aggiungi
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+
+    <!-- LISTA PANINI -->
+    <ion-list *ngIf="segmentValue === 'panini'">
+      <ion-item *ngFor="let item of panini">
+        <ion-thumbnail slot="start">
+          <img [src]="item.immagine_url || 'assets/1024v5.png'" />
+        </ion-thumbnail>
+        <ion-label>
+          <h2>{{ item.nome }}</h2>
+          <p>{{ item.prezzo | currency:'EUR' }}</p>
+        </ion-label>
+        <ion-buttons slot="end">
+          <ion-toggle [checked]="item.disponibile === 1" (ionChange)="toggleAvailability(item)"></ion-toggle>
+          <ion-button color="warning" (click)="openEditModal(item)">
+            <ion-icon slot="icon-only" name="pencil"></ion-icon>
+          </ion-button>
+          <ion-button color="danger" (click)="confirmDeleteItem(item)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+
+    <!-- LISTA BIBITE -->
+    <ion-list *ngIf="segmentValue === 'bibite'">
+      <ion-item *ngFor="let item of bibite">
+        <ion-label>
+          <h2>{{ item.nome }}</h2>
+          <p>Prezzo: {{ item.prezzo | currency:'EUR' }}</p>
+        </ion-label>
+        <ion-buttons slot="end">
+          <ion-toggle [checked]="item.disponibile === 1" (ionChange)="toggleAvailability(item)"></ion-toggle>
+          <ion-button color="warning" (click)="openEditModal(item)">
+            <ion-icon slot="icon-only" name="pencil"></ion-icon>
+          </ion-button>
+          <ion-button color="danger" (click)="confirmDeleteItem(item)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+
+    <!-- LISTA PATATINE -->
+    <ion-list *ngIf="segmentValue === 'patatine'">
+      <ion-item *ngFor="let item of patatine">
+        <ion-label>
+          <h2>{{ item.nome }}</h2>
+          <p>Prezzo: {{ item.prezzo | currency:'EUR' }}</p>
+        </ion-label>
+        <ion-buttons slot="end">
+          <ion-toggle [checked]="item.disponibile === 1" (ionChange)="toggleAvailability(item)"></ion-toggle>
+          <ion-button color="warning" (click)="openEditModal(item)">
+            <ion-icon slot="icon-only" name="pencil"></ion-icon>
+          </ion-button>
+          <ion-button color="danger" (click)="confirmDeleteItem(item)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+
+    <!-- LISTA MENU -->
+    <ion-list *ngIf="segmentValue === 'menu'">
+      <ion-item *ngFor="let item of menu">
+        <ion-label>
+          <h2>{{ item.nome }}</h2>
+          <p>{{ item.prezzo | currency:'EUR' }}</p>
+        </ion-label>
+        <ion-buttons slot="end">
+          <ion-toggle [checked]="item.disponibile === 1" (ionChange)="toggleAvailability(item)"></ion-toggle>
+          <ion-button color="warning" (click)="openEditModal(item)">
+            <ion-icon slot="icon-only" name="pencil"></ion-icon>
+          </ion-button>
+          <ion-button color="danger" (click)="confirmDeleteItem(item)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+
+    <!-- LISTA INGREDIENTI -->
+    <ion-list *ngIf="segmentValue === 'ingredienti'">
+      <ion-item *ngFor="let item of ingredienti">
+        <ion-label>
+          <h2>{{ item.nome }}</h2>
+          <p>Extra: {{ item.prezzo_extra | currency:'EUR' }}</p>
+        </ion-label>
+        <ion-buttons slot="end">
+          <ion-toggle [checked]="item.disponibile === 1" (ionChange)="toggleAvailability(item)"></ion-toggle>
+          <ion-button color="warning" (click)="openEditModal(item)">
+            <ion-icon slot="icon-only" name="pencil"></ion-icon>
+          </ion-button>
+          <ion-button color="danger" (click)="confirmDeleteItem(item)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+    </ion-list>
+
+    <!-- Pulsante Aggiungi per Mobile (in basso a destra della sezione) -->
+    <div class="ion-padding ion-text-end ion-hide-sm-up">
+      <ion-button (click)="openAddModal()" color="success" fill="solid" size="small">
+        <ion-icon slot="start" name="add"></ion-icon>
+        Aggiungi
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- MODAL EDIT/ADD CATALOGO -->
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button (click)="closeModal()">Annulla</ion-button>
+          </ion-buttons>
+          <ion-title>{{ modalMode === 'add' ? 'Aggiungi' : 'Modifica' }} {{ segmentValue }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="saveItem()" [strong]="true">Salva</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-item>
+          <ion-input label="Nome" labelPlacement="stacked" type="text" [(ngModel)]="currentItem.nome" placeholder="Inserisci nome"></ion-input>
+        </ion-item>
+
+        <ion-item *ngIf="segmentValue !== 'ingredienti'">
+          <ion-input label="Prezzo" labelPlacement="stacked" type="number" [(ngModel)]="currentItem.prezzo" placeholder="0.00"></ion-input>
+        </ion-item>
+
+        <ion-item *ngIf="segmentValue === 'ingredienti'">
+          <ion-input label="Prezzo Extra" labelPlacement="stacked" type="number" [(ngModel)]="currentItem.prezzo_extra" placeholder="0.00"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-input label="URL Immagine" labelPlacement="stacked" type="text" [(ngModel)]="currentItem.immagine_url" placeholder="assets/path/to/img.png"></ion-input>
+        </ion-item>
+
+        <!-- Campi specifici per Panini (Ingredienti) -->
+        <ion-item *ngIf="segmentValue === 'panini'">
+          <ion-select label="Ingredienti" labelPlacement="stacked" multiple="true" [(ngModel)]="currentItem.ingredienti">
+            <ion-select-option *ngFor="let ing of ingredienti" [value]="ing.id">{{ ing.nome }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <!-- Campi specifici per Menu -->
+        <ng-container *ngIf="segmentValue === 'menu'">
+          <ion-item>
+            <ion-select label="Panino" labelPlacement="stacked" [(ngModel)]="currentItem.panino_id">
+              <ion-select-option *ngFor="let p of panini" [value]="p.id">{{ p.nome }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-select label="Bibita" labelPlacement="stacked" [(ngModel)]="currentItem.bibite_id">
+              <ion-select-option *ngFor="let b of bibite" [value]="b.id">{{ b.nome }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-select label="Patatine" labelPlacement="stacked" [(ngModel)]="currentItem.patatine_id">
+              <ion-select-option *ngFor="let pt of patatine" [value]="pt.id">{{ pt.nome }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ng-container>
+
+        <ion-item *ngIf="segmentValue === 'bibite' || segmentValue === 'patatine'">
+          <ion-input label="Sovrapprezzo (Menu)" labelPlacement="stacked" type="number" [(ngModel)]="currentItem.sovrapprezzo" placeholder="0.00"></ion-input>
+          <p style="font-size: 0.8em; color: gray; margin-left: 16px;">Costo extra se scelta all'interno di un menu</p>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Disponibile</ion-label>
+          <ion-toggle [checked]="currentItem.disponibile === 1" 
+                      (ionChange)="currentItem.disponibile = $event.detail.checked ? 1 : 0">
+          </ion-toggle>
+        </ion-item>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <div class="bottom-spacer"></div>
 </ion-content>
