@@ -52,7 +52,29 @@ Per generare l'APK tramite terminale:
 
 ---
 
-## 4. AUTOMAZIONE RILASCIO (release.bat)
+## 4. AVVIO DEL SERVER (BACKEND)
+Per avviare il server Express che gestisce il database e le API:
+
+1. **Spostati nella cartella del server:**
+   ```bash
+   cd ByteOrBite-Server-exspress
+   ```
+2. **Installa le dipendenze (solo la prima volta):**
+   ```bash
+   npm install
+   ```
+3. **Avvia il server:**
+   ```bash
+   npm start
+   ```
+   *Oppure, per lo sviluppo con riavvio automatico:*
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 5. AUTOMAZIONE RILASCIO (release.bat)
 Lo script `release.bat` automatizza l'intero processo di build e caricamento su GitHub.
 
 1. **Configurazione:**
