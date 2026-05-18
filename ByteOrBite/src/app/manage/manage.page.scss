@@ -1,3 +1,9 @@
+@media (min-width: 768px) {
+  ion-header {
+    display: none;
+  }
+}
+
 .orders-section, .database-section {
   margin-bottom: 30px;
   background: var(--app-card-bg);

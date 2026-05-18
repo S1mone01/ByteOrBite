@@ -18,7 +18,8 @@ userDB.serialize(() => {
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
             points INTEGER DEFAULT 0,
-            role TEXT DEFAULT 'user'
+            role TEXT DEFAULT 'user',
+            location TEXT
         )
     `);
 });

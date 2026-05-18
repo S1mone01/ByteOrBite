@@ -19,6 +19,24 @@ const Ordine = {
         });
     },
 
+    // Recupera gli ordini di un specifico utente
+    getByUserId: (userId) => {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM ordini WHERE utente_id = ? ORDER BY data_ora DESC`;
+            db.all(sql, [userId], async (err, rows) => {
+                if (err) reject(err);
+                else {
+                    const ordiniCompleti = [];
+                    for (const row of rows) {
+                        const prodotti = await Ordine.getProdottiByOrdineId(row.id);
+                        ordiniCompleti.push({ ...row, prodotti });
+                    }
+                    resolve(ordiniCompleti);
+                }
+            });
+        });
+    },
+
     // Recupera i prodotti di un singolo ordine
     getProdottiByOrdineId: (ordineId) => {
         return new Promise((resolve, reject) => {

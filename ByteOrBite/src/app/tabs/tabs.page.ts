@@ -14,6 +14,7 @@ import {
 } from 'ionicons/icons';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { ThemeService } from '../services/theme.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -30,38 +31,27 @@ import { Observable } from 'rxjs';
 })
 export class TabsPage implements OnInit {
   public environmentInjector = inject(EnvironmentInjector);
-  isDarkMode = false;
   currentUser$: Observable<any>;
+  isDarkMode$: Observable<boolean>;
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private themeService: ThemeService
+  ) {
     addIcons({ 
       homeOutline, fastFoodOutline, personOutline, 
       sunnyOutline, moonOutline, logOutOutline, personCircleOutline,
       starOutline, settingsOutline
     });
     this.currentUser$ = this.authService.currentUser$;
+    this.isDarkMode$ = this.themeService.isDarkMode$;
   }
 
   ngOnInit() {
-    // Carica preferenza tema salvata o usa quella di sistema
-    const savedTheme = localStorage.getItem('theme-preference');
-    if (savedTheme) {
-      this.isDarkMode = savedTheme === 'dark';
-    } else {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-      this.isDarkMode = prefersDark.matches;
-    }
-    this.updateTheme();
   }
 
   toggleTheme() {
-    this.isDarkMode = !this.isDarkMode;
-    localStorage.setItem('theme-preference', this.isDarkMode ? 'dark' : 'light');
-    this.updateTheme();
-  }
-
-  updateTheme() {
-    document.body.classList.toggle('ion-palette-dark', this.isDarkMode);
+    this.themeService.toggleTheme();
   }
 
   logout() {

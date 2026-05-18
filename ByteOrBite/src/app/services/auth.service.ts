@@ -9,6 +9,8 @@ export interface User {
   name?: string;
   points?: number;
   role?: string;
+  location?: string;
+  password?: string;
 }
 
 interface AuthResponse {
@@ -43,6 +45,29 @@ export class AuthService {
       catchError(err => {
         return throwError(() => err);
       })
+    );
+  }
+
+  updateUser(id: string, data: Partial<User>): Observable<User> {
+    return this.http.put<AuthResponse>(`${this.apiUrl}/users/${id}`, data).pipe(
+      map(response => response.user),
+      tap(user => {
+        console.log('User updated:', user);
+        // Fondiamo i dati aggiornati con quelli esistenti per non perdere info non tornate dal server se necessario
+        const currentUser = this.currentUserSubject.value;
+        const updatedUser = { ...currentUser, ...user };
+        this.currentUserSubject.next(updatedUser);
+        localStorage.setItem('byte_or_bite_user', JSON.stringify(updatedUser));
+      }),
+      catchError(err => {
+        return throwError(() => err);
+      })
+    );
+  }
+
+  verifyPassword(id: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users/${id}/verify`, { password }).pipe(
+      catchError(err => throwError(() => err))
     );
   }
 

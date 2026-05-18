@@ -50,13 +50,48 @@ app.post('/login', async (req, res) => {
 
         const match = await bcrypt.compare(password, user.password);
         if (match) {
-            res.json({ message: "Login effettuato", user: { id: user.id, name: user.name, email: user.email, points: user.points, role: user.role } });
+            res.json({ message: "Login effettuato", user: { id: user.id, name: user.name, email: user.email, points: user.points, role: user.role, location: user.location } });
         } else {
             res.status(401).json({ error: "Credenziali non valide." });
         }
     } catch (error) {
         console.error("Errore durante il login:", error.message);
         res.status(500).json({ error: "Errore interno del server." });
+    }
+});
+
+// Endpoint aggiornamento utente
+app.post('/users/:id/verify', async (req, res) => {
+    const { password } = req.body;
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ error: "Utente non trovato" });
+
+        const match = await bcrypt.compare(password, user.password);
+        if (match) {
+            res.json({ message: "Password verificata" });
+        } else {
+            res.status(401).json({ error: "Password attuale non corretta" });
+        }
+    } catch (err) {
+        res.status(500).json({ error: "Errore durante la verifica" });
+    }
+});
+
+app.put('/users/:id', async (req, res) => {
+    try {
+        const { oldPassword, ...updateData } = req.body;
+        
+        // Se si sta aggiornando la password, dobbiamo criptarla
+        if (updateData.password) {
+            updateData.password = await bcrypt.hash(updateData.password, 10);
+        }
+
+        const aggiornato = await User.update(req.params.id, updateData);
+        res.json({ message: "Utente aggiornato", user: aggiornato });
+    } catch (err) {
+        console.error("Errore aggiornamento utente:", err.message);
+        res.status(500).json({ error: "Errore nell'aggiornamento dell'utente" });
     }
 });
 
@@ -74,6 +109,15 @@ app.get('/ordini', async (req, res) => {
         res.json(elenco);
     } catch (err) {
         res.status(500).json({ error: "Errore nel recupero degli ordini" });
+    }
+});
+
+app.get('/ordini/utente/:id', async (req, res) => {
+    try {
+        const elenco = await Ordine.getByUserId(req.params.id);
+        res.json(elenco);
+    } catch (err) {
+        res.status(500).json({ error: "Errore nel recupero degli ordini dell'utente" });
     }
 });
 

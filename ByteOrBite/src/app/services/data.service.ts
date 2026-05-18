@@ -84,6 +84,9 @@ export class DataService {
   getOrdini(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/ordini`);
   }
+  getOrdiniByUtente(userId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/ordini/utente/${userId}`);
+  }
   updateOrdine(id: number, data: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/ordini/${id}`, data);
   }

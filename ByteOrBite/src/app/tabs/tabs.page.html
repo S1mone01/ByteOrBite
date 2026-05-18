@@ -13,6 +13,10 @@
     </div>
 
     <ion-buttons slot="end">
+      <ion-button (click)="toggleTheme()" class="theme-toggle" fill="clear">
+        <ion-icon slot="icon-only" [name]="(isDarkMode$ | async) ? 'sunny-outline' : 'moon-outline'"></ion-icon>
+      </ion-button>
+
       <!-- Se non loggato -->
       <ion-button *ngIf="!(currentUser$ | async)" routerLink="/tabs/login" class="login-button">Login</ion-button>
       
@@ -65,10 +69,6 @@
           </ng-template>
         </ion-popover>
       </ng-container>
-
-      <ion-button (click)="toggleTheme()" class="theme-toggle" fill="clear">
-        <ion-icon slot="icon-only" [name]="isDarkMode ? 'sunny-outline' : 'moon-outline'"></ion-icon>
-      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>

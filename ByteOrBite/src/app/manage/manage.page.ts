@@ -7,12 +7,12 @@ import {
   IonButtons, IonInput, IonToggle, IonSelect, IonSelectOption, IonCard,
   IonCardHeader, IonCardTitle, IonCardContent, IonBadge, IonListHeader,
   IonCardSubtitle, IonText, AlertController, ToastController,
-  IonGrid, IonRow, IonCol, IonFab, IonFabButton
+  IonGrid, IonRow, IonCol, IonFab, IonFabButton, IonBackButton
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
   add, pencil, trash, close, save, 
-  chevronDownOutline, chevronUpOutline, eyeOutline 
+  chevronDownOutline, chevronUpOutline, eyeOutline, arrowBackOutline 
 } from 'ionicons/icons';
 import { DataService } from '../services/data.service';
 
@@ -27,6 +27,7 @@ import { DataService } from '../services/data.service';
     IonButtons, IonInput, IonToggle, IonSelect, IonSelectOption, IonCard, 
     IonCardHeader, IonCardTitle, IonCardContent, IonBadge, IonListHeader, 
     IonCardSubtitle, IonText, IonGrid, IonRow, IonCol, IonFab, IonFabButton,
+    IonBackButton,
     CommonModule, FormsModule
   ]
 })
@@ -51,7 +52,7 @@ export class ManagePage implements OnInit {
   ) {
     addIcons({ 
       add, pencil, trash, close, save, 
-      chevronDownOutline, chevronUpOutline, eyeOutline 
+      chevronDownOutline, chevronUpOutline, eyeOutline, arrowBackOutline 
     });
   }
 
