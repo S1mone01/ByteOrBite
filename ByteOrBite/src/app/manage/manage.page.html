@@ -139,7 +139,7 @@
       <ion-buttons slot="end" class="ion-hide-sm-down">
         <ion-button (click)="openAddModal()" color="success" fill="solid">
           <ion-icon slot="start" name="add"></ion-icon>
-          Aggiungi
+          Aggiungi {{ segmentValue }}
         </ion-button>
       </ion-buttons>
     </ion-toolbar>
@@ -148,7 +148,7 @@
     <ion-list *ngIf="segmentValue === 'panini'">
       <ion-item *ngFor="let item of panini">
         <ion-thumbnail slot="start">
-          <img [src]="item.immagine_url || 'assets/1024v5.png'" />
+          <img [src]="getImageUrl(item.immagine_url)" />
         </ion-thumbnail>
         <ion-label>
           <h2>{{ item.nome }}</h2>
@@ -169,6 +169,9 @@
     <!-- LISTA BIBITE -->
     <ion-list *ngIf="segmentValue === 'bibite'">
       <ion-item *ngFor="let item of bibite">
+        <ion-thumbnail slot="start">
+          <img [src]="getImageUrl(item.immagine_url)" />
+        </ion-thumbnail>
         <ion-label>
           <h2>{{ item.nome }}</h2>
           <p>Prezzo: {{ item.prezzo | currency:'EUR' }} | Extra Menu: {{ item.sovrapprezzo | currency:'EUR' }}</p>
@@ -188,6 +191,9 @@
     <!-- LISTA PATATINE -->
     <ion-list *ngIf="segmentValue === 'patatine'">
       <ion-item *ngFor="let item of patatine">
+        <ion-thumbnail slot="start">
+          <img [src]="getImageUrl(item.immagine_url)" />
+        </ion-thumbnail>
         <ion-label>
           <h2>{{ item.nome }}</h2>
           <p>Prezzo: {{ item.prezzo | currency:'EUR' }} | Extra Menu: {{ item.sovrapprezzo | currency:'EUR' }}</p>
@@ -207,6 +213,9 @@
     <!-- LISTA MENU -->
     <ion-list *ngIf="segmentValue === 'menu'">
       <ion-item *ngFor="let item of menu">
+        <ion-thumbnail slot="start">
+          <img [src]="getImageUrl(item.immagine_url)" />
+        </ion-thumbnail>
         <ion-label>
           <h2>{{ item.nome }}</h2>
           <p>{{ item.prezzo | currency:'EUR' }}</p>
@@ -226,6 +235,9 @@
     <!-- LISTA INGREDIENTI -->
     <ion-list *ngIf="segmentValue === 'ingredienti'">
       <ion-item *ngFor="let item of ingredienti">
+        <ion-thumbnail slot="start">
+          <img [src]="getImageUrl(item.immagine_url)" />
+        </ion-thumbnail>
         <ion-label>
           <h2>{{ item.nome }}</h2>
           <p>Extra: {{ item.prezzo_extra | currency:'EUR' }}</p>
@@ -246,7 +258,7 @@
     <div class="ion-padding ion-text-end ion-hide-sm-up">
       <ion-button (click)="openAddModal()" color="success" fill="solid" size="small">
         <ion-icon slot="start" name="add"></ion-icon>
-        Aggiungi
+        Aggiungi {{ segmentValue }}
       </ion-button>
     </div>
   </div>
@@ -279,7 +291,18 @@
         </ion-item>
 
         <ion-item>
-          <ion-input label="URL Immagine" labelPlacement="stacked" type="text" [(ngModel)]="currentItem.immagine_url" placeholder="assets/path/to/img.png"></ion-input>
+          <ion-label position="stacked">Immagine</ion-label>
+          <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px; margin-bottom: 10px;">
+            <ion-thumbnail *ngIf="currentItem.immagine_url" style="width: 80px; height: 80px;">
+              <img [src]="getImageUrl(currentItem.immagine_url)" />
+            </ion-thumbnail>
+            <ion-button (click)="fileInput.click()" fill="outline">
+              <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+              Carica Immagine
+            </ion-button>
+            <input #fileInput type="file" (change)="onFileSelected($event)" style="display: none" accept="image/*">
+          </div>
+          <p style="font-size: 0.8em; color: gray; margin: 0;">{{ currentItem.immagine_url || 'Nessuna immagine caricata' }}</p>
         </ion-item>
 
         <!-- Campi specifici per Panini (Ingredienti) -->

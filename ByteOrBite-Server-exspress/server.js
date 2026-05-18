@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const path = require('path');
+const multer = require('multer');
 const User = require('./models/userModel');
 
 const app = express();
@@ -8,6 +10,40 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+// Servire i file statici dalla cartella uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Configurazione Multer per caricamento immagini
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        // Possiamo passare la categoria nel corpo della richiesta o come parametro
+        const categoria = req.query.categoria || 'altri';
+        const dest = `uploads/${categoria}`;
+        // Assicuriamoci che la cartella esista (opzionale se le creiamo a mano, ma meglio essere sicuri)
+        const fs = require('fs');
+        if (!fs.existsSync(dest)){
+            fs.mkdirSync(dest, { recursive: true });
+        }
+        cb(null, dest);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
+
+// Endpoint per l'upload delle immagini (generico)
+app.post('/upload', upload.single('immagine'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: "Nessun file caricato." });
+    }
+    const categoria = req.query.categoria || 'altri';
+    const filePath = `uploads/${categoria}/${req.file.filename}`;
+    res.json({ url: filePath });
+});
 
 // Endpoint di registrazione
 app.post('/register', async (req, res) => {

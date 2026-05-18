@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common'; 
+import { DataService } from '../services/data.service';
 import { 
   IonHeader, IonToolbar, IonTitle, IonContent, 
   IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
   IonCardTitle, IonCardContent, IonButton, IonIcon, 
   IonText, IonList, IonItem, IonLabel, IonThumbnail, 
-  IonBadge, IonListHeader, 
-  IonCardSubtitle
+  IonBadge, IonListHeader, IonCardSubtitle
 } from '@ionic/angular/standalone';
 
 @Component({
@@ -14,6 +15,7 @@ import {
   styleUrls: ['panini.page.scss'],
   standalone: true,
   imports: [
+    CommonModule, 
     IonHeader, IonToolbar, IonTitle, IonContent, 
     IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
     IonCardTitle, IonCardContent, IonButton, IonIcon, 
@@ -21,6 +23,32 @@ import {
     IonBadge, IonListHeader, IonCardSubtitle
   ],
 })
-export class PaniniPage {
-  constructor() {}
+export class PaniniPage implements OnInit {
+
+  panini: any[] = [];
+
+  constructor(private dataService: DataService) {}
+
+  ngOnInit() {
+    this.caricaPanini();
+  }
+
+  caricaPanini() {
+    this.dataService.getPanini().subscribe({
+      next: (data) => {
+        this.panini = data;
+      },
+      error: (err) => {
+        console.error('Errore nel recupero dei panini dal DB:', err);
+      }
+    });
+  }
+
+  getImageUrl(path: string) {
+    if (!path) return 'assets/1024v5.png';
+    if (path.startsWith('http') || path.startsWith('assets/')) {
+      return path;
+    }
+    return `${this.dataService.getApiUrl()}/${path}`;
+  }
 }

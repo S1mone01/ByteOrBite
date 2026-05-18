@@ -1,5 +1,5 @@
 @media (min-width: 768px) {
-  ion-header {
+  :host > ion-header {
     display: none;
   }
 }
