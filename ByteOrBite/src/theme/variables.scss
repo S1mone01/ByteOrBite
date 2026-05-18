@@ -39,11 +39,31 @@ body.ion-palette-dark {
   --ion-color-primary-shade: #28b463;
   --ion-color-primary-tint: #43d17f;
 
-  --app-bg: #293133;
+  --app-bg: #1e1e1e;
   --app-text: #f8f9fa;
-  --app-card-bg: #343d40;
+  --app-card-bg: #2a2a2a;
 
   --profile-btn-bg: #3d484b;
   --profile-btn-text: #ffffff;
   --profile-btn-hover: #4d5b5f;
+
+  /* Overrides for Ionic system colors in dark mode */
+  --ion-background-color: #1e1e1e;
+  --ion-background-color-rgb: 30, 30, 30;
+
+  --ion-text-color: #f8f9fa;
+  --ion-text-color-rgb: 248, 249, 250;
+
+  --ion-color-step-50: #232323;
+  --ion-color-step-100: #2e2e2e;
+  --ion-color-step-150: #3a3a3a;
+  --ion-color-step-200: #454545;
+
+  --ion-color-light: #2a2a2a;
+  --ion-color-light-rgb: 42, 42, 42;
+  --ion-color-light-shade: #3d3d3d;
+  --ion-color-light-tint: #4d4d4d;
+
+  --ion-item-background: #2a2a2a;
+  --ion-card-background: #2a2a2a;
 }

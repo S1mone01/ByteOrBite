@@ -43,14 +43,20 @@ export class TabsPage implements OnInit {
   }
 
   ngOnInit() {
-    // Verifica preferenza tema
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-    this.isDarkMode = prefersDark.matches;
+    // Carica preferenza tema salvata o usa quella di sistema
+    const savedTheme = localStorage.getItem('theme-preference');
+    if (savedTheme) {
+      this.isDarkMode = savedTheme === 'dark';
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+      this.isDarkMode = prefersDark.matches;
+    }
     this.updateTheme();
   }
 
   toggleTheme() {
     this.isDarkMode = !this.isDarkMode;
+    localStorage.setItem('theme-preference', this.isDarkMode ? 'dark' : 'light');
     this.updateTheme();
   }
 

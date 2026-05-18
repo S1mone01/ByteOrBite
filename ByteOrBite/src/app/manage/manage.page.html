@@ -65,11 +65,11 @@
       <ion-header>
         <ion-toolbar>
           <ion-buttons slot="start">
-            <ion-button (click)="closeOrderModal()">Chiudi</ion-button>
+            <ion-button color="danger" (click)="closeOrderModal()">Chiudi</ion-button>
           </ion-buttons>
           <ion-title>Dettagli Ordine #{{ currentOrder.id }}</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="saveOrder()" [strong]="true">Salva</ion-button>
+            <ion-button color="success" (click)="saveOrder()" [strong]="true">Salva</ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
@@ -152,7 +152,7 @@
           <p>{{ item.prezzo | currency:'EUR' }}</p>
         </ion-label>
         <ion-buttons slot="end">
-          <ion-toggle [checked]="item.disponibile === 1" (ionChange)="toggleAvailability(item)"></ion-toggle>
+          <ion-toggle [checked]="item.disponibile === 1" (ionChange)="toggleAvailability(item, $event)"></ion-toggle>
           <ion-button color="warning" (click)="openEditModal(item)">
             <ion-icon slot="icon-only" name="pencil"></ion-icon>
           </ion-button>
@@ -168,10 +168,10 @@
       <ion-item *ngFor="let item of bibite">
         <ion-label>
           <h2>{{ item.nome }}</h2>
-          <p>Prezzo: {{ item.prezzo | currency:'EUR' }}</p>
+          <p>Prezzo: {{ item.prezzo | currency:'EUR' }} | Extra Menu: {{ item.sovrapprezzo | currency:'EUR' }}</p>
         </ion-label>
         <ion-buttons slot="end">
-          <ion-toggle [checked]="item.disponibile === 1" (ionChange)="toggleAvailability(item)"></ion-toggle>
+          <ion-toggle [checked]="item.disponibile === 1" (ionChange)="toggleAvailability(item, $event)"></ion-toggle>
           <ion-button color="warning" (click)="openEditModal(item)">
             <ion-icon slot="icon-only" name="pencil"></ion-icon>
           </ion-button>
@@ -187,10 +187,10 @@
       <ion-item *ngFor="let item of patatine">
         <ion-label>
           <h2>{{ item.nome }}</h2>
-          <p>Prezzo: {{ item.prezzo | currency:'EUR' }}</p>
+          <p>Prezzo: {{ item.prezzo | currency:'EUR' }} | Extra Menu: {{ item.sovrapprezzo | currency:'EUR' }}</p>
         </ion-label>
         <ion-buttons slot="end">
-          <ion-toggle [checked]="item.disponibile === 1" (ionChange)="toggleAvailability(item)"></ion-toggle>
+          <ion-toggle [checked]="item.disponibile === 1" (ionChange)="toggleAvailability(item, $event)"></ion-toggle>
           <ion-button color="warning" (click)="openEditModal(item)">
             <ion-icon slot="icon-only" name="pencil"></ion-icon>
           </ion-button>
@@ -209,7 +209,7 @@
           <p>{{ item.prezzo | currency:'EUR' }}</p>
         </ion-label>
         <ion-buttons slot="end">
-          <ion-toggle [checked]="item.disponibile === 1" (ionChange)="toggleAvailability(item)"></ion-toggle>
+          <ion-toggle [checked]="item.disponibile === 1" (ionChange)="toggleAvailability(item, $event)"></ion-toggle>
           <ion-button color="warning" (click)="openEditModal(item)">
             <ion-icon slot="icon-only" name="pencil"></ion-icon>
           </ion-button>
@@ -228,7 +228,7 @@
           <p>Extra: {{ item.prezzo_extra | currency:'EUR' }}</p>
         </ion-label>
         <ion-buttons slot="end">
-          <ion-toggle [checked]="item.disponibile === 1" (ionChange)="toggleAvailability(item)"></ion-toggle>
+          <ion-toggle [checked]="item.disponibile === 1" (ionChange)="toggleAvailability(item, $event)"></ion-toggle>
           <ion-button color="warning" (click)="openEditModal(item)">
             <ion-icon slot="icon-only" name="pencil"></ion-icon>
           </ion-button>
@@ -254,11 +254,11 @@
       <ion-header>
         <ion-toolbar>
           <ion-buttons slot="start">
-            <ion-button (click)="closeModal()">Annulla</ion-button>
+            <ion-button color="danger" (click)="closeModal()">Annulla</ion-button>
           </ion-buttons>
           <ion-title>{{ modalMode === 'add' ? 'Aggiungi' : 'Modifica' }} {{ segmentValue }}</ion-title>
           <ion-buttons slot="end">
-            <ion-button (click)="saveItem()" [strong]="true">Salva</ion-button>
+            <ion-button color="success" (click)="saveItem()" [strong]="true">Salva</ion-button>
           </ion-buttons>
         </ion-toolbar>
       </ion-header>

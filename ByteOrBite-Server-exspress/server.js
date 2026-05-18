@@ -155,9 +155,9 @@ app.get('/bibite', async (req, res) => {
 });
 
 app.post('/bibite', async (req, res) => {
-    const { nome, prezzo, immagine_url, disponibile } = req.body;
+    const { nome, prezzo, immagine_url, sovrapprezzo, disponibile } = req.body;
     try {
-        const nuovo = await Bibita.aggiungi(nome, prezzo, immagine_url, disponibile);
+        const nuovo = await Bibita.aggiungi(nome, prezzo, immagine_url, sovrapprezzo, disponibile);
         res.status(201).json(nuovo);
     } catch (err) {
         res.status(500).json({ error: "Errore" });
@@ -165,9 +165,9 @@ app.post('/bibite', async (req, res) => {
 });
 
 app.put('/bibite/:id', async (req, res) => {
-    const { nome, prezzo, immagine_url, disponibile } = req.body;
+    const { nome, prezzo, immagine_url, sovrapprezzo, disponibile } = req.body;
     try {
-        const aggiornato = await Bibita.modifica(req.params.id, nome, prezzo, immagine_url, disponibile);
+        const aggiornato = await Bibita.modifica(req.params.id, nome, prezzo, immagine_url, sovrapprezzo, disponibile);
         res.json(aggiornato);
     } catch (err) {
         res.status(500).json({ error: "Errore" });
@@ -194,9 +194,9 @@ app.get('/patatine', async (req, res) => {
 });
 
 app.post('/patatine', async (req, res) => {
-    const { nome, prezzo, immagine_url, disponibile } = req.body;
+    const { nome, prezzo, immagine_url, sovrapprezzo, disponibile } = req.body;
     try {
-        const nuovo = await Patatine.aggiungi(nome, prezzo, immagine_url, disponibile);
+        const nuovo = await Patatine.aggiungi(nome, prezzo, immagine_url, sovrapprezzo, disponibile);
         res.status(201).json(nuovo);
     } catch (err) {
         res.status(500).json({ error: "Errore" });
@@ -204,9 +204,9 @@ app.post('/patatine', async (req, res) => {
 });
 
 app.put('/patatine/:id', async (req, res) => {
-    const { nome, prezzo, immagine_url, disponibile } = req.body;
+    const { nome, prezzo, immagine_url, sovrapprezzo, disponibile } = req.body;
     try {
-        const aggiornato = await Patatine.modifica(req.params.id, nome, prezzo, immagine_url, disponibile);
+        const aggiornato = await Patatine.modifica(req.params.id, nome, prezzo, immagine_url, sovrapprezzo, disponibile);
         res.json(aggiornato);
     } catch (err) {
         res.status(500).json({ error: "Errore" });

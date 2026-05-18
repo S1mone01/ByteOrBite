@@ -1,20 +1,23 @@
 .orders-section, .database-section {
   margin-bottom: 30px;
-  background: var(--ion-background-color);
+  background: var(--app-card-bg);
   border-radius: 12px;
   border: 1px solid var(--ion-color-light-shade);
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 
   ion-list-header {
     background: var(--ion-color-light);
-    padding: 10px 16px;
+    border-bottom: 1px solid var(--ion-color-light-shade);
+    padding: 12px 16px;
+    margin-bottom: 0;
+    
     ion-label {
       font-weight: bold;
       font-size: 1.1rem;
       color: var(--ion-color-primary);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
     }
   }
 }
@@ -26,10 +29,11 @@
   flex-direction: column;
   justify-content: space-between;
   border: 1px solid var(--ion-color-light-shade);
+  background: var(--app-card-bg);
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   border-radius: 12px;
-  transition: transform 0.2s ease;
-  overflow: hidden; // Garantisce che il contenuto non esca dai bordi arrotondati
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
 
   &:active {
     transform: scale(0.98);
@@ -37,12 +41,14 @@
 
   ion-card-header {
     padding: 12px;
-    border-bottom: 1px solid var(--ion-color-light);
+    border-bottom: 1px solid var(--ion-color-light-shade);
+    background: var(--ion-color-light);
   }
 
   ion-card-title {
     font-size: 1rem;
     font-weight: 700;
+    color: var(--app-text);
   }
 
   ion-card-subtitle {
@@ -52,6 +58,7 @@
 
   ion-card-content {
     padding: 12px;
+    color: var(--app-text);
   }
 
   .order-info {

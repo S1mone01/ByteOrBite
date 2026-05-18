@@ -33,13 +33,44 @@
  */
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+@import "@ionic/angular/css/palettes/dark.class.css";
+/* @import '@ionic/angular/css/palettes/dark.system.css'; */
 
 body {
     --background: var(--app-bg);
+    color: var(--app-text);
 }
 
 ion-content {
     --background: var(--app-bg);
+    --color: var(--app-text);
+}
+
+/* Stili globali per tabelle (se presenti in futuro o per elementi che le simulano) */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  background-color: var(--app-card-bg);
+  color: var(--app-text);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+}
+
+th {
+  background-color: var(--ion-color-light);
+  color: var(--ion-color-primary);
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+tr:last-child td {
+  border-bottom: none;
 }

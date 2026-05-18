@@ -181,6 +181,11 @@ export class ManagePage implements OnInit {
   }
 
   saveItem() {
+    // Assicuriamoci che i campi numerici siano effettivamente numeri
+    if (this.currentItem.prezzo) this.currentItem.prezzo = Number(this.currentItem.prezzo);
+    if (this.currentItem.prezzo_extra) this.currentItem.prezzo_extra = Number(this.currentItem.prezzo_extra);
+    if (this.currentItem.sovrapprezzo) this.currentItem.sovrapprezzo = Number(this.currentItem.sovrapprezzo);
+
     const obs = this.getObservable();
     if (obs) {
       obs.subscribe({
@@ -255,9 +260,14 @@ export class ManagePage implements OnInit {
     }
   }
 
-  toggleAvailability(item: any) {
+  toggleAvailability(item: any, event: any) {
+    const newVal = event.detail.checked ? 1 : 0;
+    
+    // Se il valore è già quello desiderato, non fare nulla (previene loop o chiamate doppie)
+    if (item.disponibile === newVal) return;
+
     const oldVal = item.disponibile;
-    item.disponibile = item.disponibile === 1 ? 0 : 1;
+    item.disponibile = newVal;
     
     const id = item.id;
     const val = this.segmentValue;
@@ -275,6 +285,7 @@ export class ManagePage implements OnInit {
         error: (err) => {
           console.error("Errore aggiornamento disponibilità", err);
           this.showToast('Errore aggiornamento disponibilità', 'danger');
+          // Ripristina il valore precedente in caso di errore
           item.disponibile = oldVal;
         }
       });

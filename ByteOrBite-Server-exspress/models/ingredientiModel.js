@@ -15,7 +15,7 @@ const Ingrediente = {
             const sql = "INSERT INTO ingredienti (nome, prezzo_extra, immagine_url, disponibile) VALUES (?, ?, ?, ?)";
             db.run(sql, [nome, prezzo_extra, immagine_url, disponibile], function(err) {
                 if (err) reject(err);
-                else resolve({ id: this.lastID, nome, prezzo_extra, disponibile });
+                else resolve({ id: this.lastID, nome, prezzo_extra, immagine_url, disponibile });
             });
         });
     },
@@ -25,7 +25,7 @@ const Ingrediente = {
             const sql = "UPDATE ingredienti SET nome = ?, prezzo_extra = ?, immagine_url = ?, disponibile = ? WHERE id = ?";
             db.run(sql, [nome, prezzo_extra, immagine_url, disponibile, id], (err) => {
                 if (err) reject(err);
-                else resolve({ id, nome, prezzo_extra, disponibile });
+                else resolve({ id, nome, prezzo_extra, immagine_url, disponibile });
             });
         });
     },
