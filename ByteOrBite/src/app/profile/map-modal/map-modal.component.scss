@@ -1,0 +1,52 @@
+#map {
+    height: 100%;
+    width: 100%;
+    background-color: var(--ion-color-light); /* Colore di fallback */
+}
+
+.address-overlay {
+    position: absolute;
+    bottom: 30px;
+    left: 20px;
+    right: 20px;
+    background: var(--ion-card-background, white);
+    padding: 15px;
+    border-radius: 12px;
+    z-index: 1000;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--ion-color-light-shade, #eee);
+}
+
+.address-text {
+    font-size: 0.95rem;
+    color: var(--ion-text-color, #333);
+    text-align: center;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.locate-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 50px;
+    height: 50px;
+    margin: 0;
+    --border-radius: 50%;
+    --box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    --background: var(--ion-color-light);
+    --color: var(--ion-color-primary);
+    --padding-start: 0;
+    --padding-end: 0;
+}
+
+/* Fix per Leaflet in dark mode */
+:host-context(.ion-palette-dark) {
+    .leaflet-container {
+        background: #262626;
+    }
+}

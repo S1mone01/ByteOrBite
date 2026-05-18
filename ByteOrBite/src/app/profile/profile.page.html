@@ -5,11 +5,11 @@
     </ion-buttons>
     <ion-title>Il mio Profilo</ion-title>
     <ion-buttons slot="end">
-      <ion-button *ngIf="(currentUser$ | async)?.role === 'admin'" (click)="goToManage()" color="tertiary" fill="clear">
-        <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
-      </ion-button>
       <ion-button (click)="toggleTheme()" fill="clear">
         <ion-icon slot="icon-only" [name]="(isDarkMode$ | async) ? 'sunny-outline' : 'moon-outline'"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="(currentUser$ | async)?.role === 'admin'" (click)="goToManage()" color="tertiary" fill="clear">
+        <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
       </ion-button>
       <ion-button (click)="logout()" color="danger" fill="clear">
         <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
@@ -46,52 +46,75 @@
           </ion-col>
 
           <ion-col size="12" size-md="6">
-            <ion-list lines="inset" class="info-list">
-              <ion-item [button]="true" (click)="editField('name')">
-                <ion-icon slot="start" name="person-outline" color="primary"></ion-icon>
-                <ion-label>
-                  <h3>Nome</h3>
-                  <p>{{ user.name }}</p>
-                </ion-label>
-                <ion-button slot="end" fill="clear" color="primary">
-                    <ion-icon name="create-outline"></ion-icon>
-                </ion-button>
-              </ion-item>
-              <ion-item [button]="true" (click)="editField('email')">
-                <ion-icon slot="start" name="mail-outline" color="primary"></ion-icon>
-                <ion-label>
-                  <h3>Email</h3>
-                  <p>{{ user.email }}</p>
-                </ion-label>
-                <ion-button slot="end" fill="clear" color="primary">
-                    <ion-icon name="create-outline"></ion-icon>
-                </ion-button>
-              </ion-item>
-              <ion-item [button]="true" (click)="editField('password')">
-                <ion-icon slot="start" name="lock-closed-outline" color="primary"></ion-icon>
-                <ion-label>
-                  <h3>Password</h3>
-                  <p>••••••••</p>
-                </ion-label>
-                <ion-button slot="end" fill="clear" color="primary">
-                    <ion-icon name="create-outline"></ion-icon>
-                </ion-button>
-              </ion-item>
-              <!-- Posizione -->
-              <ion-item [button]="true" (click)="editField('posizione')">
-                <ion-icon slot="start" name="location-outline" color="primary"></ion-icon>
-                <ion-label>
-                  <h3>Posizione</h3>
-                  <p>{{ user.location || 'Nessuna posizione salvata' }}</p>
-                </ion-label>
-                <ion-button slot="end" fill="clear" color="primary">
-                    <ion-icon name="create-outline"></ion-icon>
-                </ion-button>
-              </ion-item>
-            </ion-list>
+            <div class="info-cards-container">
+              <ion-card class="location-unified-card" (click)="editField('name')">
+                <div class="location-card-content">
+                  <ion-icon name="person-outline" color="primary"></ion-icon>
+                  <ion-label>
+                    <h3>Nome</h3>
+                    <p>{{ user.name }}</p>
+                  </ion-label>
+                  <ion-button fill="clear" color="primary">
+                      <ion-icon name="create-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ion-card>
+
+              <ion-card class="location-unified-card" (click)="editField('email')">
+                <div class="location-card-content">
+                  <ion-icon name="mail-outline" color="primary"></ion-icon>
+                  <ion-label>
+                    <h3>Email</h3>
+                    <p>{{ user.email }}</p>
+                  </ion-label>
+                  <ion-button fill="clear" color="primary">
+                      <ion-icon name="create-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ion-card>
+
+            </div>
           </ion-col>
         </ion-row>
       </ion-grid>
+
+      <ion-card class="location-unified-card full-width-card" (click)="editField('password')">
+                <div class="location-card-content">
+                  <ion-icon name="lock-closed-outline" color="primary"></ion-icon>
+                  <ion-label>
+                    <h3>Password</h3>
+                    <p>••••••••</p>
+                  </ion-label>
+                  <ion-button fill="clear" color="primary">
+                      <ion-icon name="create-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ion-card>
+
+      <!-- Posizione e Preview Unite -->
+      <div class="location-section-middle">
+        <ion-list-header>
+          <ion-label>La mia Posizione</ion-label>
+        </ion-list-header>
+
+        <ion-card class="location-unified-card">
+          <div class="location-card-content" (click)="editField('posizione')">
+            <ion-icon name="location-outline" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Indirizzo di Consegna</h3>
+              <p>{{ parseLocation(user.location)?.address || user.location || 'Nessuna posizione salvata' }}</p>
+            </ion-label>
+            <ion-button fill="clear" color="primary">
+                <ion-icon name="create-outline"></ion-icon>
+            </ion-button>
+          </div>
+
+          <!-- Preview Mappa interna alla card -->
+          <div *ngIf="parseLocation(user.location)?.lat" class="map-preview-bottom">
+            <div id="profile-map-preview" class="map-preview-box-bottom"></div>
+          </div>
+        </ion-card>
+      </div>
 
       <!-- Cronologia Ordini -->
       <div class="orders-history-section">
@@ -131,37 +154,7 @@
         </ng-template>
       </div>
 
-      <!-- Sezione Azioni Mobile -->
-      <div class="mobile-actions-section" *ngIf="isMobile">
-        <ion-list-header>
-          <ion-label>Impostazioni e Sicurezza</ion-label>
-        </ion-list-header>
-        
-        <ion-list lines="inset">
-          <!-- Cambio Tema -->
-          <ion-item>
-            <ion-icon slot="start" [name]="(isDarkMode$ | async) ? 'sunny-outline' : 'moon-outline'" color="secondary"></ion-icon>
-            <ion-label>Tema Scuro</ion-label>
-            <ion-toggle [checked]="isDarkMode$ | async" (ionChange)="toggleTheme()"></ion-toggle>
-          </ion-item>
-
-          <!-- Modifica Password -->
-          <ion-item [button]="true" (click)="editField('password')">
-            <ion-icon slot="start" name="lock-closed-outline" color="secondary"></ion-icon>
-            <ion-label>Cambia Password</ion-label>
-            <ion-icon slot="end" name="chevron-forward-outline" size="small"></ion-icon>
-          </ion-item>
-
-          <!-- Pulsante Gestione (Solo Admin su Mobile) -->
-          <ion-item *ngIf="user.role === 'admin'" [button]="true" (click)="goToManage()" class="manage-item">
-            <ion-icon slot="start" name="settings-outline" color="tertiary"></ion-icon>
-            <ion-label>Gestione App</ion-label>
-            <ion-icon slot="end" name="chevron-forward-outline" size="small"></ion-icon>
-          </ion-item>
-        </ion-list>
-      </div>
     </div>
-
   </div>
 
   <ng-template #noUser>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewChecked, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { 
@@ -8,20 +8,23 @@ import {
   IonCardHeader, IonCardSubtitle, IonCardTitle, 
   IonCardContent, IonGrid, IonRow, IonCol,
   IonListHeader, IonToggle, IonBadge,
-  Platform, AlertController, LoadingController, ToastController
+  Platform, AlertController, LoadingController, ToastController, ModalController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
   personOutline, mailOutline, locationOutline, 
   lockClosedOutline, sunnyOutline, moonOutline, 
   settingsOutline, logOutOutline, createOutline,
-  starOutline, chevronForwardOutline, navigateOutline
+  starOutline, chevronForwardOutline, navigateOutline,
+  mapOutline
 } from 'ionicons/icons';
 import { AuthService, User } from '../services/auth.service';
 import { ThemeService } from '../services/theme.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { DataService } from '../services/data.service';
+import { MapModalComponent } from './map-modal/map-modal.component';
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-profile',
@@ -38,11 +41,16 @@ import { DataService } from '../services/data.service';
     CommonModule, FormsModule
   ]
 })
-export class ProfilePage implements OnInit {
+export class ProfilePage implements OnInit, AfterViewChecked {
   currentUser$: Observable<User | null>;
   isDarkMode$: Observable<boolean>;
   isMobile: boolean;
   ordini: any[] = [];
+  
+  private previewMap?: L.Map;
+  private lastLat?: number;
+  private lastLon?: number;
+  private themeSub?: Subscription;
 
   constructor(
     private authService: AuthService,
@@ -52,13 +60,15 @@ export class ProfilePage implements OnInit {
     private alertController: AlertController,
     private loadingController: LoadingController,
     private toastController: ToastController,
-    private dataService: DataService
+    private dataService: DataService,
+    private modalController: ModalController
   ) {
     addIcons({ 
       personOutline, mailOutline, locationOutline, 
       lockClosedOutline, sunnyOutline, moonOutline, 
       settingsOutline, logOutOutline, createOutline,
-      starOutline, chevronForwardOutline, navigateOutline
+      starOutline, chevronForwardOutline, navigateOutline,
+      mapOutline
     });
     this.currentUser$ = this.authService.currentUser$;
     this.isDarkMode$ = this.themeService.isDarkMode$;
@@ -67,6 +77,76 @@ export class ProfilePage implements OnInit {
 
   ngOnInit() {
     this.loadOrderHistory();
+    this.themeSub = this.themeService.isDarkMode$.subscribe(() => {
+      if (this.previewMap) {
+        // Forza il refresh se il tema cambia
+        this.updatePreviewMap();
+      }
+    });
+  }
+
+  ngAfterViewChecked() {
+    this.updatePreviewMap();
+  }
+
+  updatePreviewMap() {
+    const user = JSON.parse(localStorage.getItem('byte_or_bite_user') || '{}');
+    const loc = this.parseLocation(user.location);
+    
+    if (loc && loc.lat && loc.lon) {
+      if (this.lastLat === loc.lat && this.lastLon === loc.lon && this.previewMap) {
+        return;
+      }
+
+      this.lastLat = loc.lat;
+      this.lastLon = loc.lon;
+
+      setTimeout(() => {
+        const container = document.getElementById('profile-map-preview');
+        if (container) {
+          if (this.previewMap) {
+            this.previewMap.remove();
+          }
+
+          this.previewMap = L.map('profile-map-preview', {
+            zoomControl: false,
+            dragging: false,
+            touchZoom: false,
+            doubleClickZoom: false,
+            scrollWheelZoom: false,
+            attributionControl: false
+          }).setView([loc.lat, loc.lon], 15);
+
+          const isDark = this.themeService.currentThemeValue;
+          const tileUrl = isDark 
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+          L.tileLayer(tileUrl).addTo(this.previewMap);
+
+          const defaultIcon = L.icon({
+            iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+            iconSize: [20, 32],
+            iconAnchor: [10, 32]
+          });
+
+          L.marker([loc.lat, loc.lon], { icon: defaultIcon }).addTo(this.previewMap);
+          
+          this.previewMap.invalidateSize();
+        }
+      }, 100);
+    }
+  }
+
+  parseLocation(location: string | undefined): any {
+    if (!location) return null;
+    try {
+      return JSON.parse(location);
+    } catch (e) {
+      // Supporto per vecchio formato o inserimento manuale
+      return { address: location };
+    }
   }
 
   loadOrderHistory() {
@@ -216,30 +296,34 @@ export class ProfilePage implements OnInit {
   }
 
   async getCurrentLocation() {
-    const loading = await this.loadingController.create({
-      message: 'Recupero posizione...'
-    });
-    await loading.present();
+    const user = JSON.parse(localStorage.getItem('byte_or_bite_user') || '{}');
+    const loc = this.parseLocation(user.location);
+    let initialLat, initialLon;
 
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          const locationString = `Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
-          
-          await loading.dismiss();
-          this.updateUser({ location: locationString });
-        },
-        async (error) => {
-          await loading.dismiss();
-          this.showToast('Errore nel recupero della posizione: ' + error.message, 'danger');
-        },
-        { enableHighAccuracy: true, timeout: 5000 }
-      );
-    } else {
-      await loading.dismiss();
-      this.showToast('Geolocalizzazione non supportata dal tuo dispositivo.', 'danger');
+    if (loc && loc.lat && loc.lon) {
+      initialLat = loc.lat;
+      initialLon = loc.lon;
+    }
+
+    const modal = await this.modalController.create({
+      component: MapModalComponent,
+      cssClass: 'full-screen-modal',
+      componentProps: {
+        initialLat,
+        initialLon
+      }
+    });
+    
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+    if (data && data.address) {
+      const locationData = JSON.stringify({
+        address: data.address,
+        lat: data.coords.lat,
+        lon: data.coords.lon
+      });
+      this.updateUser({ location: locationData });
     }
   }
 

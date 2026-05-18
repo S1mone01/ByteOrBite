@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancel()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Scegli Posizione</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="confirm()" [disabled]="!selectedAddress">
+        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div id="map" style="height: 100%; width: 100%;"></div>
+  
+  <div class="address-overlay" *ngIf="selectedAddress || isGeocoding">
+    <div class="address-text">
+      <span *ngIf="isGeocoding">Recupero indirizzo...</span>
+      <span *ngIf="!isGeocoding">{{ selectedAddress }}</span>
+    </div>
+  </div>
+
+  <ion-button class="locate-btn" (click)="getCurrentLocation()" fill="solid" color="light" shape="round">
+    <ion-icon slot="icon-only" name="locate-outline"></ion-icon>
+  </ion-button>
+</ion-content>

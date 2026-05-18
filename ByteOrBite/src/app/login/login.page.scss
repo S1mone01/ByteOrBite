@@ -64,18 +64,18 @@ ion-list {
 }
 
 .auth-item {
-  --background: rgba(var(--app-text-rgb, 0, 0, 0), 0.05);
-  --border-radius: 15px;
-  border-radius: 15px;
+  --background: var(--ion-card-background);
+  --border-radius: 16px;
+  border-radius: 16px;
   margin-bottom: 15px;
   --padding-start: 20px;
   --inner-padding-end: 10px;
-  --min-height: 70px;
+  --min-height: 75px;
   --border-width: 0;
   --inner-border-width: 0;
   --border-style: none;
-  --box-shadow: none;
-  border: 1px solid rgba(var(--app-text-rgb, 0, 0, 0), 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(var(--ion-color-primary-rgb), 0.1);
   display: flex;
   align-items: center;
   
@@ -83,7 +83,7 @@ ion-list {
     color: var(--ion-color-primary);
     font-size: 22px;
     margin-right: 12px;
-    margin-top: 18px;
+    margin-top: 22px;
   }
   
   ion-input {
