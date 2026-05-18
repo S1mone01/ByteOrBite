@@ -15,7 +15,7 @@ const Menu = {
             const sql = "INSERT INTO menu (nome, prezzo, immagine_url, panino_id, patatine_id, bibite_id, disponibile) VALUES (?, ?, ?, ?, ?, ?, ?)";
             db.run(sql, [nome, prezzo, immagine_url, panino_id, patatine_id, bibite_id, disponibile], function(err) {
                 if (err) reject(err);
-                else resolve({ id: this.lastID, nome, prezzo, disponibile });
+                else resolve({ id: this.lastID, nome, prezzo, immagine_url, panino_id, patatine_id, bibite_id, disponibile });
             });
         });
     },
@@ -25,7 +25,7 @@ const Menu = {
             const sql = "UPDATE menu SET nome = ?, prezzo = ?, immagine_url = ?, panino_id = ?, patatine_id = ?, bibite_id = ?, disponibile = ? WHERE id = ?";
             db.run(sql, [nome, prezzo, immagine_url, panino_id, patatine_id, bibite_id, disponibile, id], (err) => {
                 if (err) reject(err);
-                else resolve({ id, nome, prezzo, disponibile });
+                else resolve({ id, nome, prezzo, immagine_url, panino_id, patatine_id, bibite_id, disponibile });
             });
         });
     },

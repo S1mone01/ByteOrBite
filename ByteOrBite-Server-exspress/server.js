@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const path = require('path');
+const fs = require('fs');
 const multer = require('multer');
 const User = require('./models/userModel');
 
@@ -11,17 +12,31 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// Assicuriamoci che la cartella base uploads esista
+const baseUploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(baseUploadsDir)) {
+    fs.mkdirSync(baseUploadsDir);
+}
+
+// Lista delle categorie per pre-creare le cartelle (opzionale ma consigliato)
+const categorie = ['panini', 'bibite', 'patatine', 'menu', 'ingredienti', 'altri'];
+categorie.forEach(cat => {
+    const dir = path.join(baseUploadsDir, cat);
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+});
+
 // Servire i file statici dalla cartella uploads
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(baseUploadsDir));
 
 // Configurazione Multer per caricamento immagini
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        // Possiamo passare la categoria nel corpo della richiesta o come parametro
         const categoria = req.query.categoria || 'altri';
-        const dest = `uploads/${categoria}`;
-        // Assicuriamoci che la cartella esista (opzionale se le creiamo a mano, ma meglio essere sicuri)
-        const fs = require('fs');
+        const dest = path.join(__dirname, 'uploads', categoria);
+        
+        // Assicuriamoci che la sottocartella esista
         if (!fs.existsSync(dest)){
             fs.mkdirSync(dest, { recursive: true });
         }

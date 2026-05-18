@@ -32,7 +32,7 @@ const Panino = {
             const nuovoPaninoId = this.lastID;
 
             if (!arrayIngredientiIds || arrayIngredientiIds.length === 0) {
-                return resolve({ id: nuovoPaninoId, nome, prezzo, disponibile });
+                return resolve({ id: nuovoPaninoId, nome, prezzo, immagine_url, disponibile });
             }
 
             const queryPonte = "INSERT INTO panino_ingredienti (panino_id, ingredienti_id) VALUES (?, ?)";
@@ -48,7 +48,7 @@ const Panino = {
                     
                     inserimentiCompletati++;
                     if (inserimentiCompletati === arrayIngredientiIds.length && !haAvutoErrore) {
-                        resolve({ id: nuovoPaninoId, nome, prezzo, disponibile, ingredienti: arrayIngredientiIds });
+                        resolve({ id: nuovoPaninoId, nome, prezzo, immagine_url, disponibile, ingredienti: arrayIngredientiIds });
                     }
                 });
             });
@@ -67,7 +67,7 @@ modifica: (id, nome, prezzo, immagine_url, disponibile, arrayIngredientiIds) => 
                 if (errDel) return reject(errDel);
 
                 if (!arrayIngredientiIds || arrayIngredientiIds.length === 0) {
-                    return resolve({ id, nome, prezzo, disponibile });
+                    return resolve({ id, nome, prezzo, immagine_url, disponibile });
                 }
 
                 const queryPonte = "INSERT INTO panino_ingredienti (panino_id, ingredienti_id) VALUES (?, ?)";
@@ -82,7 +82,7 @@ modifica: (id, nome, prezzo, immagine_url, disponibile, arrayIngredientiIds) => 
                         }
                         inserimentiCompletati++;
                         if (inserimentiCompletati === arrayIngredientiIds.length && !haAvutoErrore) {
-                            resolve({ id, nome, prezzo, disponibile, ingredienti: arrayIngredientiIds });
+                            resolve({ id, nome, prezzo, immagine_url, disponibile, ingredienti: arrayIngredientiIds });
                         }
                     });
                 });
