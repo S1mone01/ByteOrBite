@@ -12,7 +12,8 @@ import {
 import { addIcons } from 'ionicons';
 import { 
   add, pencil, trash, close, save, 
-  chevronDownOutline, chevronUpOutline, eyeOutline, arrowBackOutline 
+  chevronDownOutline, chevronUpOutline, eyeOutline, arrowBackOutline,
+  cloudUploadOutline
 } from 'ionicons/icons';
 import { DataService } from '../services/data.service';
 
@@ -52,13 +53,38 @@ export class ManagePage implements OnInit {
   ) {
     addIcons({ 
       add, pencil, trash, close, save, 
-      chevronDownOutline, chevronUpOutline, eyeOutline, arrowBackOutline 
+      chevronDownOutline, chevronUpOutline, eyeOutline, arrowBackOutline,
+      cloudUploadOutline
     });
   }
 
   ngOnInit() {
     this.loadAllData();
     this.loadOrdini();
+  }
+
+  getImageUrl(path: string) {
+    if (!path) return 'assets/1024v5.png';
+    if (path.startsWith('http') || path.startsWith('assets/')) {
+      return path;
+    }
+    return `${this.dataService.getApiUrl()}/${path}`;
+  }
+
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.dataService.uploadImage(file, this.segmentValue).subscribe({
+        next: (res) => {
+          this.currentItem.immagine_url = res.url;
+          this.showToast('Immagine caricata con successo');
+        },
+        error: (err) => {
+          console.error("Errore upload", err);
+          this.showToast('Errore durante il caricamento dell\'immagine', 'danger');
+        }
+      });
+    }
   }
 
   toggleOrders() {

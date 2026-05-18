@@ -10,6 +10,17 @@ export class DataService {
 
   constructor(private http: HttpClient) { }
 
+  getApiUrl(): string {
+    return this.apiUrl;
+  }
+
+  // Upload Immagini
+  uploadImage(file: File, categoria: string): Observable<{ url: string }> {
+    const formData = new FormData();
+    formData.append('immagine', file);
+    return this.http.post<{ url: string }>(`${this.apiUrl}/upload?categoria=${categoria}`, formData);
+  }
+
   // Panini
   getPanini(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/catalogo`);

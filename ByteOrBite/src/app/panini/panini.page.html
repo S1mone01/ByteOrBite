@@ -1,67 +1,19 @@
 <ion-content class="ion-padding">
-<ion-content >
-  <ion-title>Title</ion-title>
+  <!-- Rimosso il secondo ion-title fuori da un'header per buona pratica, ma puoi rimetterlo se serve -->
+  <h1 class="ion-padding-start">Catalogo Panini</h1>
+
   <ion-grid fixed>
     <ion-row>
-      <ion-col size="4" size-md="3" size-lg="2">
+      <!-- La formattazione dei dispositivi viene scritta UNA SOLA VOLTA qui -->
+      <ion-col size="4" size-md="3" size-lg="2" *ngFor="let panino of panini">
         <ion-card>
-         <img src="assets/1024v5.png" alt="nome panino">
-  <ion-card-header>
-    <ion-card-title>nome panino</ion-card-title>
-    <ion-card-subtitle>prezzo panino</ion-card-subtitle>
-  </ion-card-header>
-</ion-card>
-      </ion-col>
-
-            <ion-col size="4" size-md="3" size-lg="2">
-        <ion-card>
-         <img src="assets/1024v5.png" alt="nome panino">
-  <ion-card-header>
-    <ion-card-title>nome panino</ion-card-title>
-    <ion-card-subtitle>prezzo panino</ion-card-subtitle>
-  </ion-card-header>
-</ion-card>
-      </ion-col>
-
-            <ion-col size="4" size-md="3" size-lg="2">
-        <ion-card>
-         <img src="assets/1024v5.png" alt="nome panino">
-  <ion-card-header>
-    <ion-card-title>nome panino</ion-card-title>
-    <ion-card-subtitle>prezzo panino</ion-card-subtitle>
-  </ion-card-header>
-</ion-card>
-      </ion-col>
-
-            <ion-col size="4" size-md="3" size-lg="2">
-        <ion-card>
-         <img src="assets/1024v5.png" alt="nome panino">
-  <ion-card-header>
-    <ion-card-title>nome panino</ion-card-title>
-    <ion-card-subtitle>prezzo panino</ion-card-subtitle>
-  </ion-card-header>
-</ion-card>
-      </ion-col>
-      
-            <ion-col size="4" size-md="3" size-lg="2">
-        <ion-card>
-         <img src="assets/1024v5.png" alt="nome panino">
-  <ion-card-header>
-    <ion-card-title>nome panino</ion-card-title>
-    <ion-card-subtitle>prezzo panino</ion-card-subtitle>
-  </ion-card-header>
-</ion-card>
-      </ion-col>
-      
-      <ion-col size="4" size-md="3" size-lg="2">
-        <ion-card>
-         <img src="assets/1024v5.png" alt="nome panino">
-  <ion-card-header>
-    <ion-card-title>nome panino</ion-card-title>
-    <ion-card-subtitle>prezzo panino</ion-card-subtitle>
-  </ion-card-header>
-</ion-card>
+          <img [src]="getImageUrl(panino.immagine_url)" [alt]="panino.nome">
+          <ion-card-header>
+            <ion-card-title>{{ panino.nome }}</ion-card-title>
+            <ion-card-subtitle>{{ panino.prezzo | currency:'EUR' }}</ion-card-subtitle>
+          </ion-card-header>
+        </ion-card>
       </ion-col>
     </ion-row>
   </ion-grid>
-  </ion-content>
+</ion-content>
