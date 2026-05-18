@@ -129,5 +129,25 @@ ordersDB.serialize(() => {
     )`);
 });
 
+// CONFIGURAZIONE DATABASE CARRELLO
+const cartDbPath = path.resolve(__dirname, 'carrello.sqlite');
+const cartDB = new sqlite3.Database(cartDbPath, (err) => {
+    if (err) console.error("Errore connessione DB Carrello:", err.message);
+    else console.log("Connesso al database fisico: carrello.sqlite");
+});
+
+cartDB.serialize(() => {
+    cartDB.run(`CREATE TABLE IF NOT EXISTS carrello (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        utente_id INTEGER,
+        prodotto_nome TEXT,
+        quantita INTEGER,
+        prezzo_unitario REAL,
+        modifiche TEXT, -- JSON per ingredienti extra/rimossi
+        tipo_prodotto TEXT, -- panino, bibita, patatine, menu
+        immagine_url TEXT
+    )`);
+});
+
 // Esportiamo le connessioni separate per poterle usare nei modelli specifici
-module.exports = { userDB, catalogDB, ordersDB };
+module.exports = { userDB, catalogDB, ordersDB, cartDB };

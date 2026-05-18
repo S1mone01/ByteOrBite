@@ -155,6 +155,54 @@ const Patatine = require('./models/patatineModel');
 const Menu = require('./models/menuModel');
 const Ingrediente = require('./models/ingredientiModel');
 const Ordine = require('./models/ordineModel');
+const Carrello = require('./models/carrelloModel');
+
+// --- SEZIONE CARRELLO ---
+app.get('/carrello/utente/:id', async (req, res) => {
+    try {
+        const elenco = await Carrello.getByUserId(req.params.id);
+        res.json(elenco);
+    } catch (err) {
+        res.status(500).json({ error: "Errore nel recupero del carrello" });
+    }
+});
+
+app.post('/carrello', async (req, res) => {
+    try {
+        const nuovo = await Carrello.addItem(req.body);
+        res.status(201).json(nuovo);
+    } catch (err) {
+        res.status(500).json({ error: "Errore nell'aggiunta al carrello" });
+    }
+});
+
+app.put('/carrello/:id', async (req, res) => {
+    try {
+        const { quantita } = req.body;
+        const aggiornato = await Carrello.updateQuantity(req.params.id, quantita);
+        res.json(aggiornato);
+    } catch (err) {
+        res.status(500).json({ error: "Errore nell'aggiornamento del carrello" });
+    }
+});
+
+app.delete('/carrello/:id', async (req, res) => {
+    try {
+        await Carrello.removeItem(req.params.id);
+        res.json({ message: "Elemento rimosso dal carrello" });
+    } catch (err) {
+        res.status(500).json({ error: "Errore nell'eliminazione dal carrello" });
+    }
+});
+
+app.delete('/carrello/utente/:id', async (req, res) => {
+    try {
+        await Carrello.clearByUserId(req.params.id);
+        res.json({ message: "Carrello svuotato" });
+    } catch (err) {
+        res.status(500).json({ error: "Errore nello svuotamento del carrello" });
+    }
+});
 
 // --- SEZIONE ORDINI ---
 app.get('/ordini', async (req, res) => {
