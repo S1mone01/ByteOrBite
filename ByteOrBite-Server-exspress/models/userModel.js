@@ -26,7 +26,7 @@ const User = {
     // Ricerca per ID
     findById: (id) => {
         return new Promise((resolve, reject) => {
-            const sql = `SELECT id, name, email, points, role, location FROM users WHERE id = ?`;
+            const sql = `SELECT * FROM users WHERE id = ?`;
             db.get(sql, [id], (err, row) => {
                 if (err) reject(err);
                 else resolve(row);

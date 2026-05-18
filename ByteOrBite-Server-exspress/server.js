@@ -88,7 +88,10 @@ app.put('/users/:id', async (req, res) => {
         }
 
         const aggiornato = await User.update(req.params.id, updateData);
-        res.json({ message: "Utente aggiornato", user: aggiornato });
+        
+        // Rimuoviamo la password dalla risposta per sicurezza
+        const { password, ...userWithoutPassword } = aggiornato;
+        res.json({ message: "Utente aggiornato", user: userWithoutPassword });
     } catch (err) {
         console.error("Errore aggiornamento utente:", err.message);
         res.status(500).json({ error: "Errore nell'aggiornamento dell'utente" });
