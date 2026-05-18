@@ -110,6 +110,7 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     padding-left: 20px;
+    color: var(--ion-color-medium);
   }
 }
 
@@ -320,6 +321,27 @@
     overflow: hidden;
     border: 1px solid var(--ion-color-light-shade);
     z-index: 1;
+    position: relative;
+
+    .map-expand-button {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      z-index: 1000;
+      --background: white;
+      --color: var(--ion-color-primary);
+      --border-radius: 8px;
+      --padding-start: 8px;
+      --padding-end: 8px;
+      height: 36px;
+      width: 36px;
+      margin: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+      ion-icon {
+        font-size: 20px;
+      }
+    }
   }
 }
 
@@ -327,6 +349,12 @@
 :host-context(.ion-palette-dark) {
   .map-preview-box-bottom {
     border-color: #444;
+
+    .map-expand-button {
+      --background: #333;
+      --color: var(--ion-color-primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
   }
 }
 

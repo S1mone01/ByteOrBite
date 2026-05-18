@@ -2,11 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { DataService } from '../services/data.service';
 import { 
-  IonHeader, IonToolbar, IonTitle, IonContent, 
+  IonContent, 
   IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
-  IonCardTitle, IonCardContent, IonButton, IonIcon, 
-  IonText, IonList, IonItem, IonLabel, IonThumbnail, 
-  IonBadge, IonListHeader, IonCardSubtitle
+  IonCardTitle, IonCardSubtitle
 } from '@ionic/angular/standalone';
 
 @Component({
@@ -16,11 +14,9 @@ import {
   standalone: true,
   imports: [
     CommonModule, 
-    IonHeader, IonToolbar, IonTitle, IonContent, 
+    IonContent, 
     IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
-    IonCardTitle, IonCardContent, IonButton, IonIcon, 
-    IonText, IonList, IonItem, IonLabel, IonThumbnail, 
-    IonBadge, IonListHeader, IonCardSubtitle
+    IonCardTitle, IonCardSubtitle
   ],
 })
 export class PaniniPage implements OnInit {

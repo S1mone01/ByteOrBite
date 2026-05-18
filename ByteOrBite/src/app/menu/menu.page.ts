@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
 import { 
-  IonHeader, IonToolbar, IonTitle, IonContent, 
+  IonContent, 
   IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
-  IonCardTitle,IonCardSubtitle, IonCardContent, IonButton, IonIcon, 
-  IonText, IonList, IonItem, IonLabel, IonThumbnail, 
-  IonBadge, IonListHeader, IonImg 
+  IonCardTitle, IonCardSubtitle, IonTitle
 } from '@ionic/angular/standalone';
 
 @Component({
@@ -13,11 +11,9 @@ import {
   styleUrls: ['menu.page.scss'],
   standalone: true,
   imports: [
-    IonHeader, IonToolbar, IonTitle, IonContent, 
+    IonContent, 
     IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
-    IonCardTitle,IonCardSubtitle, IonCardContent, IonButton, IonIcon, 
-    IonText, IonList, IonItem, IonLabel, IonThumbnail, 
-    IonBadge, IonListHeader, IonImg 
+    IonCardTitle, IonCardSubtitle, IonTitle
   ]
 })
 export class MenuPage {

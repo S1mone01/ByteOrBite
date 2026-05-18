@@ -2,8 +2,7 @@ import { Component, OnInit, AfterViewInit, Input, OnDestroy } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { 
   IonHeader, IonToolbar, IonTitle, IonButtons, 
-  IonButton, IonContent, IonIcon, IonFooter,
-  IonSearchbar, IonList, IonItem, IonLabel,
+  IonButton, IonContent, IonIcon,
   ModalController, LoadingController, ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -20,8 +19,7 @@ import { Subscription } from 'rxjs';
   standalone: true,
   imports: [
     IonHeader, IonToolbar, IonTitle, IonButtons, 
-    IonButton, IonContent, IonIcon, IonFooter,
-    IonSearchbar, IonList, IonItem, IonLabel,
+    IonButton, IonContent, IonIcon,
     CommonModule
   ]
 })

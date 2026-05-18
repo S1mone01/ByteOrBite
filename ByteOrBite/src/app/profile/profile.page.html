@@ -111,7 +111,11 @@
 
           <!-- Preview Mappa interna alla card -->
           <div *ngIf="parseLocation(user.location)?.lat" class="map-preview-bottom">
-            <div id="profile-map-preview" class="map-preview-box-bottom"></div>
+            <div id="profile-map-preview" class="map-preview-box-bottom">
+              <ion-button (click)="getCurrentLocation()" class="map-expand-button" fill="clear">
+                <ion-icon name="map-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
           </div>
         </ion-card>
       </div>

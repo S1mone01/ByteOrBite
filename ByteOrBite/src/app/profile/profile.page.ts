@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { 
   IonContent, IonHeader, IonToolbar, IonTitle, 
-  IonButtons, IonBackButton, IonList, IonItem, 
+  IonButtons, IonBackButton, 
   IonLabel, IonIcon, IonButton, IonCard, 
   IonCardHeader, IonCardSubtitle, IonCardTitle, 
   IonCardContent, IonGrid, IonRow, IonCol,
-  IonListHeader, IonToggle, IonBadge,
+  IonListHeader, IonBadge,
   Platform, AlertController, LoadingController, ToastController, ModalController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -23,8 +23,9 @@ import { ThemeService } from '../services/theme.service';
 import { Observable, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { DataService } from '../services/data.service';
-import { MapModalComponent } from './map-modal/map-modal.component';
+import { MapModalComponent } from '../components/map-modal/map-modal.component';
 import * as L from 'leaflet';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-profile',
@@ -33,11 +34,11 @@ import * as L from 'leaflet';
   standalone: true,
   imports: [
     IonContent, IonHeader, IonToolbar, IonTitle, 
-    IonButtons, IonBackButton, IonList, IonItem, 
+    IonButtons, IonBackButton, 
     IonLabel, IonIcon, IonButton, IonCard, 
     IonCardHeader, IonCardSubtitle, IonCardTitle, 
     IonCardContent, IonGrid, IonRow, IonCol,
-    IonListHeader, IonToggle, IonBadge,
+    IonListHeader, IonBadge,
     CommonModule, FormsModule
   ]
 })
@@ -50,6 +51,7 @@ export class ProfilePage implements OnInit, AfterViewChecked {
   private previewMap?: L.Map;
   private lastLat?: number;
   private lastLon?: number;
+  private lastTheme?: boolean;
   private themeSub?: Subscription;
 
   constructor(
@@ -61,7 +63,8 @@ export class ProfilePage implements OnInit, AfterViewChecked {
     private loadingController: LoadingController,
     private toastController: ToastController,
     private dataService: DataService,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private http: HttpClient
   ) {
     addIcons({ 
       personOutline, mailOutline, locationOutline, 
@@ -78,10 +81,8 @@ export class ProfilePage implements OnInit, AfterViewChecked {
   ngOnInit() {
     this.loadOrderHistory();
     this.themeSub = this.themeService.isDarkMode$.subscribe(() => {
-      if (this.previewMap) {
-        // Forza il refresh se il tema cambia
-        this.updatePreviewMap();
-      }
+      // Forza il refresh se il tema cambia
+      this.updatePreviewMap();
     });
   }
 
@@ -92,14 +93,16 @@ export class ProfilePage implements OnInit, AfterViewChecked {
   updatePreviewMap() {
     const user = JSON.parse(localStorage.getItem('byte_or_bite_user') || '{}');
     const loc = this.parseLocation(user.location);
+    const isDark = this.themeService.currentThemeValue;
     
     if (loc && loc.lat && loc.lon) {
-      if (this.lastLat === loc.lat && this.lastLon === loc.lon && this.previewMap) {
+      if (this.lastLat === loc.lat && this.lastLon === loc.lon && this.lastTheme === isDark && this.previewMap) {
         return;
       }
 
       this.lastLat = loc.lat;
       this.lastLon = loc.lon;
+      this.lastTheme = isDark;
 
       setTimeout(() => {
         const container = document.getElementById('profile-map-preview');
@@ -178,11 +181,13 @@ export class ProfilePage implements OnInit, AfterViewChecked {
     const alertVerify = await this.alertController.create({
       header: 'Verifica Identità',
       message: 'Per modificare questo campo, inserisci la tua password attuale.',
+      cssClass: 'modern-alert',
       inputs: [{ name: 'password', type: 'password', placeholder: 'Password Attuale' }],
       buttons: [
-        { text: 'Annulla', role: 'cancel' },
+        { text: 'Annulla', role: 'cancel', cssClass: 'alert-button-cancel' },
         { 
           text: 'Verifica', 
+          cssClass: 'alert-button-confirm',
           handler: (data) => {
             this.verifyAndProceed(field, data.password);
           }
@@ -230,11 +235,13 @@ export class ProfilePage implements OnInit, AfterViewChecked {
 
     const alert = await this.alertController.create({
       header: header,
+      cssClass: 'modern-alert',
       inputs: [{ name: 'value', type: inputType, placeholder: placeholder }],
       buttons: [
-        { text: 'Annulla', role: 'cancel' },
+        { text: 'Annulla', role: 'cancel', cssClass: 'alert-button-cancel' },
         { 
           text: 'Salva', 
+          cssClass: 'alert-button-confirm',
           handler: (data) => {
             if (data.value) {
               const updateData: any = {};
@@ -252,18 +259,22 @@ export class ProfilePage implements OnInit, AfterViewChecked {
     const alert = await this.alertController.create({
       header: 'Aggiorna Posizione',
       message: 'Come vuoi inserire la tua posizione?',
+      cssClass: 'modern-alert location-alert',
       buttons: [
         {
-          text: 'Inserimento Manuale',
+          text: 'Manuale',
+          cssClass: 'alert-button-option inline-button',
           handler: () => this.showManualLocationInput()
         },
         {
-          text: 'Condividi Posizione (GPS)',
+          text: 'Condividi posizione',
+          cssClass: 'alert-button-option inline-button',
           handler: () => this.getCurrentLocation()
         },
         {
           text: 'Annulla',
-          role: 'cancel'
+          role: 'cancel',
+          cssClass: 'alert-button-cancel full-width-button'
         }
       ]
     });
@@ -273,6 +284,7 @@ export class ProfilePage implements OnInit, AfterViewChecked {
   async showManualLocationInput() {
     const alert = await this.alertController.create({
       header: 'Inserisci Indirizzo',
+      cssClass: 'modern-alert',
       inputs: [
         {
           name: 'location',
@@ -281,18 +293,52 @@ export class ProfilePage implements OnInit, AfterViewChecked {
         }
       ],
       buttons: [
-        { text: 'Annulla', role: 'cancel' },
+        { text: 'Annulla', role: 'cancel', cssClass: 'alert-button-cancel' },
         { 
           text: 'Salva', 
-          handler: (data) => {
+          cssClass: 'alert-button-confirm',
+          handler: async (data) => {
             if (data.location) {
-              this.updateUser({ location: data.location });
+              const loading = await this.loadingController.create({
+                message: 'Ricerca posizione in corso...'
+              });
+              await loading.present();
+
+              this.geocodeAddress(data.location).subscribe({
+                next: (res) => {
+                  loading.dismiss();
+                  if (res && res.length > 0) {
+                    const bestMatch = res[0];
+                    const locationData = JSON.stringify({
+                      address: bestMatch.display_name,
+                      lat: parseFloat(bestMatch.lat),
+                      lon: parseFloat(bestMatch.lon)
+                    });
+                    this.updateUser({ location: locationData });
+                  } else {
+                    // Se non trova nulla, salva comunque come testo semplice ma avvisa
+                    this.updateUser({ location: data.location });
+                    this.showToast('Indirizzo non trovato sulla mappa, salvato come testo.', 'warning');
+                  }
+                },
+                error: (err) => {
+                  loading.dismiss();
+                  console.error('Errore geocoding', err);
+                  this.updateUser({ location: data.location });
+                  this.showToast('Errore durante la ricerca della posizione.', 'danger');
+                }
+              });
             }
           }
         }
       ]
     });
     await alert.present();
+  }
+
+  geocodeAddress(address: string): Observable<any[]> {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`;
+    return this.http.get<any[]>(url);
   }
 
   async getCurrentLocation() {
@@ -351,3 +397,4 @@ export class ProfilePage implements OnInit, AfterViewChecked {
     this.router.navigate(['/tabs/manage']);
   }
 }
+

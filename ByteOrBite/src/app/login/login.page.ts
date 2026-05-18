@@ -8,7 +8,7 @@ import {
   IonHeader, IonToolbar, IonTitle, IonContent, 
   IonItem, IonLabel, IonInput, IonButton, IonList, 
   IonText, IonIcon, IonButtons, IonSegment, IonSegmentButton,
-  IonCard, IonCardHeader, IonCardTitle, IonCardContent,
+  IonCard, IonCardHeader, IonCardContent,
   IonSpinner, IonCheckbox, IonModal
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -29,7 +29,7 @@ import { AuthService } from '../services/auth.service';
     IonHeader, IonToolbar, IonTitle, IonContent, 
     IonItem, IonLabel, IonInput, IonButton, IonList, 
     IonText, IonIcon, IonButtons, IonSegment, IonSegmentButton,
-    IonCard, IonCardHeader, IonCardTitle, IonCardContent,
+    IonCard, IonCardHeader, IonCardContent,
     IonSpinner, IonCheckbox, IonModal
   ]
 })

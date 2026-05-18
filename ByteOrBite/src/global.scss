@@ -87,3 +87,164 @@ tr:last-child td {
     border-radius: 0;
   }
 }
+
+/* Fix per visibilità testi scuri in Dark Mode (Loading, Alert, Toast) */
+body.ion-palette-dark {
+  ion-loading, ion-alert, ion-toast {
+    --color: #ffffff;
+    --message-color: #ffffff;
+    --header-color: var(--ion-color-primary);
+  }
+  
+  .loading-wrapper, .alert-wrapper {
+    background: #2a2a2a !important;
+    color: #ffffff !important;
+  }
+
+  .alert-message, .loading-content {
+    color: #ffffff !important;
+  }
+  
+  .alert-button {
+    color: var(--ion-color-primary) !important;
+  }
+}
+
+/* Alert Moderni e Customizzati */
+.modern-alert {
+  --background: var(--ion-overlay-background-color);
+  --border-radius: 20px;
+  
+  .alert-wrapper {
+    border: 1px solid rgba(var(--ion-color-primary-rgb), 0.2);
+  }
+
+  .alert-head {
+    padding-top: 24px;
+    padding-bottom: 8px;
+    text-align: center;
+
+    .alert-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--ion-color-primary);
+    }
+  }
+
+  .alert-message {
+    text-align: left;
+    font-size: 15px;
+    color: var(--ion-text-color);
+    padding-bottom: 10px;
+    margin-left: -15px;
+  }
+
+  .alert-input-group {
+    margin-top: -20px;
+    margin-bottom: -5px;
+    margin-right: -35px;
+    margin-left: -15px;
+    .alert-input {
+      background: rgba(var(--ion-color-primary-rgb), 0.05);
+      border-radius: 10px;
+      margin: 0px 0px;
+      border: 1px solid rgba(var(--ion-color-primary-rgb), 0.1);
+      padding: 10px 14px;
+      color: var(--ion-text-color);
+      width: calc(100% - 20px);
+    }
+  }
+
+  .alert-button-group {
+    padding: 12px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+
+    .alert-button {
+      flex: 1 1 calc(50% - 10px);
+      min-width: 80px;
+      height: 44px;
+      border-radius: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0 !important;
+      transition: all 0.2s ease-in-out;
+      
+      &.alert-button-confirm, &.alert-button-option {
+        background: #29dd6e38; /* Verde molto scuro */
+        color: var(--ion-color-primary) !important;
+        
+        &:hover {
+          background: var(--ion-color-primary);
+          color: white !important;
+          transform: translateY(-1px);
+        }
+      }
+
+      &.alert-button-cancel {
+        background: rgba(var(--ion-color-danger-rgb), 0.1);
+        color: var(--ion-color-danger) !important;
+        
+        &:hover {
+          background: var(--ion-color-danger);
+          color: white !important;
+          transform: translateY(-1px);
+        }
+      }
+
+      .alert-button-inner {
+        justify-content: center;
+      }
+    }
+  }
+
+  &.location-alert {
+    .alert-button-group {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      
+      .alert-button {
+        &.inline-button {
+          flex: 1 1 calc(50% - 10px);
+          max-width: calc(50% - 5px);
+        }
+        &.full-width-button {
+          flex: 1 1 100%;
+          max-width: 100%;
+          margin-top: 5px !important;
+        }
+      }
+    }
+  }
+}
+
+/* Scrollbar Moderna e Sleek */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ion-color-primary);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ion-color-primary-shade);
+}
+
+/* Supporto Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ion-color-primary) transparent;
+}

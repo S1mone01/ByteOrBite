@@ -1,10 +1,6 @@
 import { Component } from '@angular/core';
 import { 
-  IonHeader, IonToolbar, IonTitle, IonContent, 
-  IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
-  IonCardTitle, IonCardContent, IonButton, IonIcon, 
-  IonText, IonList, IonItem, IonLabel, IonThumbnail, 
-  IonBadge, IonListHeader, IonImg 
+  IonContent
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { starOutline, arrowForwardOutline, fastFoodOutline, restaurantOutline, personOutline } from 'ionicons/icons';
@@ -15,11 +11,7 @@ import { starOutline, arrowForwardOutline, fastFoodOutline, restaurantOutline, p
   styleUrls: ['home.page.scss'],
   standalone: true,
   imports: [
-    IonHeader, IonToolbar, IonTitle, IonContent, 
-    IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
-    IonCardTitle, IonCardContent, IonButton, IonIcon, 
-    IonText, IonList, IonItem, IonLabel, IonThumbnail, 
-    IonBadge, IonListHeader, IonImg 
+    IonContent
   ],
 })
 export class HomePage {

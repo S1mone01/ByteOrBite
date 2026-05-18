@@ -66,4 +66,28 @@ body.ion-palette-dark {
 
   --ion-item-background: #2a2a2a;
   --ion-card-background: #2a2a2a;
+
+  /* Step colors for dark mode to fix UI components contrast */
+  --ion-color-step-50: #232323;
+  --ion-color-step-100: #2e2e2e;
+  --ion-color-step-150: #3a3a3a;
+  --ion-color-step-200: #454545;
+  --ion-color-step-250: #515151;
+  --ion-color-step-300: #5c5c5c;
+  --ion-color-step-350: #676767;
+  --ion-color-step-400: #737373;
+  --ion-color-step-450: #7f7f7f;
+  --ion-color-step-500: #8a8a8a;
+  --ion-color-step-550: #959595;
+  --ion-color-step-600: #a1a1a1;
+  --ion-color-step-650: #acacac;
+  --ion-color-step-700: #b8b8b8;
+  --ion-color-step-750: #c3c3c3;
+  --ion-color-step-800: #cfcfcf;
+  --ion-color-step-850: #d9d9d9;
+  --ion-color-step-900: #e5e5e5;
+  --ion-color-step-950: #f0f0f0;
+
+  /* Fix visibility for alerts, loadings and modals */
+  --ion-overlay-background-color: #2a2a2a;
 }

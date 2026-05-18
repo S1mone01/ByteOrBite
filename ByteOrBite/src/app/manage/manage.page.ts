@@ -7,7 +7,7 @@ import {
   IonButtons, IonInput, IonToggle, IonSelect, IonSelectOption, IonCard,
   IonCardHeader, IonCardTitle, IonCardContent, IonBadge, IonListHeader,
   IonCardSubtitle, IonText, AlertController, ToastController,
-  IonGrid, IonRow, IonCol, IonFab, IonFabButton, IonBackButton
+  IonGrid, IonRow, IonCol, IonBackButton
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
@@ -27,7 +27,7 @@ import { DataService } from '../services/data.service';
     IonLabel, IonList, IonItem, IonThumbnail, IonButton, IonIcon, IonModal, 
     IonButtons, IonInput, IonToggle, IonSelect, IonSelectOption, IonCard, 
     IonCardHeader, IonCardTitle, IonCardContent, IonBadge, IonListHeader, 
-    IonCardSubtitle, IonText, IonGrid, IonRow, IonCol, IonFab, IonFabButton,
+    IonCardSubtitle, IonText, IonGrid, IonRow, IonCol,
     IonBackButton,
     CommonModule, FormsModule
   ]
