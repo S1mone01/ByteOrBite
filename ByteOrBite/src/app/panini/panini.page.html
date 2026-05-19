@@ -101,13 +101,70 @@
 
   <!-- Pulsante Carrello Fluttuante -->
   <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="cart-fab">
-    <ion-fab-button color="success" class="cart-fab-button">
+    <ion-fab-button color="success" class="cart-fab-button" (click)="openCart()">
       <ion-icon name="cart"></ion-icon>
-      <ion-badge color="danger" class="cart-badge" *ngIf="cartCount > 0">
-        {{ cartCount }}
-      </ion-badge>
     </ion-fab-button>
+    <ion-badge color="danger" class="cart-badge" *ngIf="cartCount > 0" (click)="openCart()">
+      {{ cartCount }}
+    </ion-badge>
   </ion-fab>
+
+  <!-- Modal Carrello -->
+  <ion-modal [isOpen]="isCartModalOpen" (didDismiss)="closeCart()" class="cart-modal">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="primary">
+          <ion-title>Il Tuo Carrello</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeCart()">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="ion-padding">
+        <ion-list *ngIf="cartItems.length > 0">
+          <ion-item *ngFor="let item of cartItems">
+            <ion-thumbnail slot="start">
+              <img [src]="getImageUrl(item.immagine_url)" />
+            </ion-thumbnail>
+            <ion-label>
+              <h2>{{ item.prodotto_nome }}</h2>
+              <p *ngIf="item.modifiche" class="modifiche-text">{{ item.modifiche }}</p>
+              <p>{{ item.prezzo_unitario | currency:'EUR' }} x {{ item.quantita }}</p>
+            </ion-label>
+            <div slot="end" class="cart-item-controls">
+              <ion-button fill="clear" color="danger" (click)="updateCartItemQuantity(item, -1)">
+                <ion-icon name="remove-circle-outline"></ion-icon>
+              </ion-button>
+              <span class="qnt-badge">{{ item.quantita }}</span>
+              <ion-button fill="clear" color="success" (click)="updateCartItemQuantity(item, 1)">
+                <ion-icon name="add-circle-outline"></ion-icon>
+              </ion-button>
+            </div>
+          </ion-item>
+        </ion-list>
+
+        <div *ngIf="cartItems.length === 0" class="ion-text-center ion-padding">
+          <ion-icon name="cart-outline" style="font-size: 4rem; opacity: 0.3;"></ion-icon>
+          <p>Il tuo carrello è vuoto.</p>
+        </div>
+      </ion-content>
+
+      <ion-footer class="ion-no-border" *ngIf="cartItems.length > 0">
+        <ion-toolbar class="ion-padding-horizontal">
+          <ion-title slot="start">Totale:</ion-title>
+          <ion-title slot="end">{{ getCartTotal() | currency:'EUR' }}</ion-title>
+        </ion-toolbar>
+        <div class="ion-padding">
+          <ion-button expand="block" color="success">
+            Procedi all'ordine
+          </ion-button>
+        </div>
+      </ion-footer>
+    </ng-template>
+  </ion-modal>
 
   <!-- Messaggio se la lista è vuota -->
   <div *ngIf="panini.length === 0" class="ion-text-center ion-padding">

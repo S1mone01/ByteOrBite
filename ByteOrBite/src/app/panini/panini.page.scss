@@ -229,3 +229,49 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
+.cart-modal {
+  --height: 80%;
+  --border-radius: 20px 20px 0 0;
+  align-items: flex-end;
+
+  ion-item {
+    margin-bottom: 10px;
+    border-radius: 12px;
+    --padding-start: 10px;
+    border: 1px solid rgba(0,0,0,0.05);
+  }
+
+  ion-thumbnail {
+    --border-radius: 8px;
+    width: 60px;
+    height: 60px;
+  }
+
+  .modifiche-text {
+    font-size: 0.8rem;
+    color: var(--ion-color-medium);
+    font-style: italic;
+    white-space: normal;
+  }
+
+  .cart-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    ion-button {
+      --padding-start: 0;
+      --padding-end: 0;
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .qnt-badge {
+      font-weight: 800;
+      font-size: 1.1rem;
+      min-width: 20px;
+      text-align: center;
+    }
+  }
+}
+

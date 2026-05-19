@@ -11,7 +11,7 @@ import {
   IonButtons, IonFab, IonFabButton
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cartOutline, add, remove, close, cart } from 'ionicons/icons';
+import { cartOutline, add, remove, close, cart, removeCircleOutline, addCircleOutline } from 'ionicons/icons';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -37,13 +37,16 @@ export class PaniniPage implements OnInit, OnDestroy {
   allIngredienti: any[] = [];
   selectedIngredienti: any[] = [];
   cartCount: number = 0;
+  cartItems: any[] = [];
+  isCartModalOpen = false;
   private cartSub: Subscription | null = null;
+  private cartItemsSub: Subscription | null = null;
 
   constructor(
     private dataService: DataService,
     private cartService: CartService
   ) {
-    addIcons({ cartOutline, add, remove, close, cart });
+    addIcons({ cartOutline, add, remove, close, cart, removeCircleOutline, addCircleOutline });
   }
 
   ngOnInit() {
@@ -52,12 +55,30 @@ export class PaniniPage implements OnInit, OnDestroy {
     this.cartSub = this.cartService.cartCount$.subscribe(count => {
       this.cartCount = count;
     });
+    this.cartItemsSub = this.cartService.cartItems$.subscribe(items => {
+      this.cartItems = items;
+      this.aggiornaQuantitaLocali(items);
+    });
   }
 
   ngOnDestroy() {
-    if (this.cartSub) {
-      this.cartSub.unsubscribe();
-    }
+    if (this.cartSub) this.cartSub.unsubscribe();
+    if (this.cartItemsSub) this.cartItemsSub.unsubscribe();
+  }
+
+  aggiornaQuantitaLocali(items: any[]) {
+    // Reset quantita
+    Object.keys(this.cartQuantities).forEach(key => this.cartQuantities[+key] = 0);
+    
+    // Solo i panini "base" (senza modifiche) vengono mostrati nel selettore della card
+    items.forEach(item => {
+      if (item.tipo_prodotto === 'panino' && (!item.modifiche || item.modifiche === '')) {
+        const panino = this.panini.find(p => p.nome === item.prodotto_nome);
+        if (panino) {
+          this.cartQuantities[panino.id] = item.quantita;
+        }
+      }
+    });
   }
 
   caricaPanini() {
@@ -65,10 +86,12 @@ export class PaniniPage implements OnInit, OnDestroy {
       next: (data) => {
         this.panini = data;
         this.panini.forEach(p => {
-          if (!this.cartQuantities[p.id]) {
+          if (this.cartQuantities[p.id] === undefined) {
             this.cartQuantities[p.id] = 0;
           }
         });
+        // Forza aggiornamento dopo il caricamento dei panini
+        this.aggiornaQuantitaLocali(this.cartItems);
       },
       error: (err) => {
         console.error('Errore nel recupero dei panini dal DB:', err);
@@ -86,7 +109,6 @@ export class PaniniPage implements OnInit, OnDestroy {
 
   incrementQuantity(panino: any, event?: Event) {
     if (event) event.stopPropagation();
-    this.cartQuantities[panino.id]++;
     this.cartService.addToCart({
       ...panino,
       quantita: 1,
@@ -96,9 +118,12 @@ export class PaniniPage implements OnInit, OnDestroy {
 
   decrementQuantity(panino: any, event?: Event) {
     if (event) event.stopPropagation();
-    if (this.cartQuantities[panino.id] > 0) {
-      this.cartQuantities[panino.id]--;
-      // Implement decrement in cartService if needed, for now we just add
+    const existingItem = this.cartItems.find(
+      i => i.prodotto_nome === panino.nome && (!i.modifiche || i.modifiche === '')
+    );
+    
+    if (existingItem) {
+      this.cartService.updateQuantity(existingItem.id, existingItem.quantita - 1);
     }
   }
 
@@ -149,6 +174,26 @@ export class PaniniPage implements OnInit, OnDestroy {
 
   toggleIngrediente(ing: any) {
     ing.checked = !ing.checked;
+  }
+
+  openCart() {
+    this.isCartModalOpen = true;
+  }
+
+  closeCart() {
+    this.isCartModalOpen = false;
+  }
+
+  getCartTotal() {
+    return this.cartItems.reduce((acc, item) => acc + (item.prezzo_unitario * item.quantita), 0);
+  }
+
+  removeFromCart(item: any) {
+    this.cartService.removeFromCart(item.id);
+  }
+
+  updateCartItemQuantity(item: any, delta: number) {
+    this.cartService.updateQuantity(item.id, item.quantita + delta);
   }
 
   getImageUrl(path: string) {

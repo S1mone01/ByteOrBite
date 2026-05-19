@@ -44,19 +44,52 @@ export class CartService {
       return;
     }
 
-    const cartItem = {
-      utente_id: currentUser.id,
-      prodotto_nome: item.nome,
-      quantita: item.quantita || 1,
-      prezzo_unitario: item.prezzo,
-      modifiche: item.modifiche || '',
-      tipo_prodotto: item.tipo || 'panino',
-      immagine_url: item.immagine_url
-    };
+    // Cerca se esiste già un elemento identico nel carrello (stesso nome e stesse modifiche)
+    const existingItem = this.cartItemsSubject.value.find(
+      i => i.prodotto_nome === item.nome && i.modifiche === (item.modifiche || '')
+    );
 
-    this.dataService.addToCarrello(cartItem).subscribe({
+    if (existingItem) {
+      this.updateQuantity(existingItem.id, existingItem.quantita + 1);
+    } else {
+      const cartItem = {
+        utente_id: currentUser.id,
+        prodotto_nome: item.nome,
+        quantita: item.quantita || 1,
+        prezzo_unitario: item.prezzo,
+        modifiche: item.modifiche || '',
+        tipo_prodotto: item.tipo || 'panino',
+        immagine_url: item.immagine_url
+      };
+
+      this.dataService.addToCarrello(cartItem).subscribe({
+        next: () => this.loadCart(currentUser.id),
+        error: (err) => console.error('Errore nell\'aggiunta al carrello:', err)
+      });
+    }
+  }
+
+  updateQuantity(id: number, quantita: number) {
+    const currentUser = this.authService.currentUserValue;
+    if (!currentUser) return;
+
+    if (quantita <= 0) {
+      this.removeFromCart(id);
+    } else {
+      this.dataService.updateCarrelloItem(id, quantita).subscribe({
+        next: () => this.loadCart(currentUser.id),
+        error: (err) => console.error('Errore nell\'aggiornamento della quantità:', err)
+      });
+    }
+  }
+
+  removeFromCart(id: number) {
+    const currentUser = this.authService.currentUserValue;
+    if (!currentUser) return;
+
+    this.dataService.removeFromCarrello(id).subscribe({
       next: () => this.loadCart(currentUser.id),
-      error: (err) => console.error('Errore nell\'aggiunta al carrello:', err)
+      error: (err) => console.error('Errore nella rimozione dal carrello:', err)
     });
   }
 
