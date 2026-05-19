@@ -91,6 +91,23 @@ export class DataService {
     return this.http.delete(`${this.apiUrl}/ingredienti/${id}`);
   }
 
+  // Carrello
+  getCarrello(userId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/carrello/utente/${userId}`);
+  }
+  addToCarrello(item: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/carrello`, item);
+  }
+  updateCarrelloItem(id: number, quantita: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/carrello/${id}`, { quantita });
+  }
+  removeFromCarrello(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/carrello/${id}`);
+  }
+  clearCarrello(userId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/carrello/utente/${userId}`);
+  }
+
   // Ordini
   getOrdini(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/ordini`);

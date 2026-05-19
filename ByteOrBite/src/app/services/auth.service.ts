@@ -26,6 +26,10 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$: Observable<User | null> = this.currentUserSubject.asObservable();
 
+  get currentUserValue(): User | null {
+    return this.currentUserSubject.value;
+  }
+
   constructor(private http: HttpClient) {
     // Carica l'utente dal localStorage all'avvio
     const savedUser = localStorage.getItem('byte_or_bite_user');
