@@ -8,7 +8,7 @@ import {
   IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
   IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonIcon, 
   IonText, IonBadge, IonImg, IonModal, IonList, IonItem, IonLabel, IonCheckbox,
-  IonButtons, IonFab, IonFabButton
+  IonButtons, IonFab, IonFabButton, IonThumbnail, IonFooter
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { cartOutline, add, remove, close, cart, removeCircleOutline, addCircleOutline } from 'ionicons/icons';
@@ -25,7 +25,7 @@ import { FormsModule } from '@angular/forms';
     IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
     IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonIcon, 
     IonText, IonBadge, IonImg, IonModal, IonList, IonItem, IonLabel, IonCheckbox, IonButtons,
-    IonFab, IonFabButton
+    IonFab, IonFabButton, IonThumbnail, IonFooter
   ],
 })
 export class PaniniPage implements OnInit, OnDestroy {
