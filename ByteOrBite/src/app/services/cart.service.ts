@@ -13,6 +13,9 @@ export class CartService {
   private cartCountSubject = new BehaviorSubject<number>(0);
   public cartCount$ = this.cartCountSubject.asObservable();
 
+  private isCartModalOpenSubject = new BehaviorSubject<boolean>(false);
+  public isCartModalOpen$ = this.isCartModalOpenSubject.asObservable();
+
   constructor(
     private dataService: DataService,
     private authService: AuthService
@@ -91,6 +94,10 @@ export class CartService {
       next: () => this.loadCart(currentUser.id),
       error: (err) => console.error('Errore nella rimozione dal carrello:', err)
     });
+  }
+
+  setCartModalOpen(isOpen: boolean) {
+    this.isCartModalOpenSubject.next(isOpen);
   }
 
   private updateCartCount(items: any[]) {

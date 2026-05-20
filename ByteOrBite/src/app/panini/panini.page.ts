@@ -6,9 +6,9 @@ import { Subscription } from 'rxjs';
 import { 
   IonHeader, IonToolbar, IonTitle, IonContent, 
   IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
-  IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonIcon, 
+  IonCardTitle, IonCardContent, IonButton, IonIcon, 
   IonText, IonBadge, IonImg, IonModal, IonList, IonItem, IonLabel, IonCheckbox,
-  IonButtons, IonFab, IonFabButton, IonThumbnail, IonFooter
+  IonButtons
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { cartOutline, add, remove, close, cart, removeCircleOutline, addCircleOutline } from 'ionicons/icons';
@@ -23,9 +23,8 @@ import { FormsModule } from '@angular/forms';
     CommonModule, FormsModule,
     IonHeader, IonToolbar, IonTitle, IonContent, 
     IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
-    IonCardTitle, IonCardSubtitle, IonCardContent, IonButton, IonIcon, 
-    IonText, IonBadge, IonImg, IonModal, IonList, IonItem, IonLabel, IonCheckbox, IonButtons,
-    IonFab, IonFabButton, IonThumbnail, IonFooter
+    IonCardTitle, IonCardContent, IonButton, IonIcon, 
+    IonText, IonBadge, IonImg, IonModal, IonList, IonItem, IonLabel, IonCheckbox, IonButtons
   ],
 })
 export class PaniniPage implements OnInit, OnDestroy {
@@ -36,25 +35,19 @@ export class PaniniPage implements OnInit, OnDestroy {
   selectedPanino: any = null;
   allIngredienti: any[] = [];
   selectedIngredienti: any[] = [];
-  cartCount: number = 0;
   cartItems: any[] = [];
-  isCartModalOpen = false;
-  private cartSub: Subscription | null = null;
   private cartItemsSub: Subscription | null = null;
 
   constructor(
     private dataService: DataService,
     private cartService: CartService
   ) {
-    addIcons({ cartOutline, add, remove, close, cart, removeCircleOutline, addCircleOutline });
+    addIcons({ add, remove, close, cart, removeCircleOutline, addCircleOutline });
   }
 
   ngOnInit() {
     this.caricaPanini();
     this.caricaIngredienti();
-    this.cartSub = this.cartService.cartCount$.subscribe(count => {
-      this.cartCount = count;
-    });
     this.cartItemsSub = this.cartService.cartItems$.subscribe(items => {
       this.cartItems = items;
       this.aggiornaQuantitaLocali(items);
@@ -62,7 +55,6 @@ export class PaniniPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.cartSub) this.cartSub.unsubscribe();
     if (this.cartItemsSub) this.cartItemsSub.unsubscribe();
   }
 
@@ -174,26 +166,6 @@ export class PaniniPage implements OnInit, OnDestroy {
 
   toggleIngrediente(ing: any) {
     ing.checked = !ing.checked;
-  }
-
-  openCart() {
-    this.isCartModalOpen = true;
-  }
-
-  closeCart() {
-    this.isCartModalOpen = false;
-  }
-
-  getCartTotal() {
-    return this.cartItems.reduce((acc, item) => acc + (item.prezzo_unitario * item.quantita), 0);
-  }
-
-  removeFromCart(item: any) {
-    this.cartService.removeFromCart(item.id);
-  }
-
-  updateCartItemQuantity(item: any, delta: number) {
-    this.cartService.updateQuantity(item.id, item.quantita + delta);
   }
 
   getImageUrl(path: string) {

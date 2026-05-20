@@ -132,6 +132,40 @@ ion-toolbar {
   }
 }
 
+.cart-button-desktop {
+  --color: var(--app-text);
+  font-size: 24px;
+  margin-left: 5px;
+  position: relative;
+
+  ion-icon {
+    font-size: 28px;
+  }
+
+  ion-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    font-size: 11px;
+    font-weight: 800;
+    --padding-start: 0;
+    --padding-end: 0;
+    height: 18px;
+    min-width: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 50%;
+    border: 1.5px solid var(--app-bg);
+    line-height: 1;
+  }
+
+  &:hover {
+    --color: var(--ion-color-primary);
+  }
+}
+
 /* Layout base / Mobile */
 ion-tabs {
   position: absolute;
@@ -191,6 +225,103 @@ ion-tab-button[aria-selected="true"] {
   }
 }
 
+/* Stili per il Carrello */
+.cart-fab {
+  margin-bottom: 80px;
+  margin-right: 10px;
+  z-index: 999; // Assicura che sia sopra tutto
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+.cart-fab-button {
+  --background: #2dd36f;
+  --background-activated: #28ba62;
+  --background-focused: #28ba62;
+  --background-hover: #28ba62;
+  overflow: visible !important; // Essenziale per il badge
+  position: relative;
+
+  ion-icon {
+    font-size: 32px;
+  }
+}
+
+.cart-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border-radius: 50%;
+  padding: 0;
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 800;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  line-height: 1;
+}
+
+.cart-modal {
+  --height: 80%;
+  --border-radius: 20px 20px 0 0;
+  align-items: flex-end;
+
+  @media (min-width: 768px) {
+    --height: 600px;
+    --width: 500px;
+    --border-radius: 20px;
+    align-items: center;
+  }
+
+  ion-item {
+    margin-bottom: 10px;
+    border-radius: 12px;
+    --padding-start: 10px;
+    border: 1px solid rgba(0,0,0,0.05);
+  }
+
+  ion-thumbnail {
+    --border-radius: 8px;
+    width: 60px;
+    height: 60px;
+  }
+
+  .modifiche-text {
+    font-size: 0.8rem;
+    color: var(--ion-color-medium);
+    font-style: italic;
+    white-space: normal;
+  }
+
+  .cart-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    ion-button {
+      --padding-start: 0;
+      --padding-end: 0;
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .qnt-badge {
+      font-weight: 800;
+      font-size: 1.1rem;
+      min-width: 20px;
+      text-align: center;
+    }
+  }
+}
+
 /* Stili per il Menu a tendina Utente */
 .user-dropdown-popover {
   --width: 240px;
@@ -201,9 +332,9 @@ ion-tab-button[aria-selected="true"] {
   }
 
   .popover-header {
-    padding: 8px 16px;
-    background: rgba(var(--ion-color-primary-rgb), 0.05);
-    border-bottom: 1px solid rgba(var(--ion-color-primary-rgb), 0.1);
+    padding: 12px 16px;
+    background: linear-gradient(to bottom, rgba(39, 174, 96, 0.8) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(0,0,0,0.1);
     
     .user-info-detail {
       display: flex;
@@ -217,7 +348,7 @@ ion-tab-button[aria-selected="true"] {
       
       .detail-email {
         font-size: 13px;
-        color: #7f8c8d;
+        color: var(--ion-color-medium);
         margin-top: 1px;
       }
     }
@@ -229,7 +360,7 @@ ion-tab-button[aria-selected="true"] {
     margin-top: -1px;
     
     .points-box {
-      background: linear-gradient(135deg, var(--ion-color-primary) 0%, #2ecc71 100%);
+      background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
       border-radius: 10px;
       padding: 15px;
       color: white;
