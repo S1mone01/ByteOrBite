@@ -42,13 +42,26 @@
               <ion-card-content>
                 <div class="order-info">
                   <p class="data-ora">{{ ordine.data_ora | date:'dd/MM/yyyy HH:mm' }}</p>
-                  <p><strong>Dest:</strong> {{ ordine.destinazione }}</p>
-                  <p><strong>Totale:</strong> {{ ordine.totale | currency:'EUR' }}</p>
+                  <p><strong>Dest:</strong> {{ parseLocation(ordine.destinazione)?.address || ordine.destinazione }}</p>
                   <p>
-                    <ion-badge [color]="ordine.stato === 'completato' ? 'success' : (ordine.stato === 'spedito' ? 'warning' : 'primary')">
-                      {{ ordine.stato }}
-                    </ion-badge>
+                    <strong>Totale:</strong> {{ (ordine.totale + 1.99) | currency:'EUR' }}
+                    <span class="delivery-fee-tag">(incl. 1,99€ sped.)</span>
                   </p>
+                  
+                  <div class="status-progress-bar">
+                    <div class="status-step status-ordinato" [class.active]="ordine.stato === 'ordinato'" (click)="updateStatoOrdine(ordine.id, 'ordinato')">
+                      Ordinato
+                    </div>
+                    <div class="status-step status-in-preparazione" [class.active]="ordine.stato === 'in preparazione'" (click)="updateStatoOrdine(ordine.id, 'in preparazione')">
+                      In Prep.
+                    </div>
+                    <div class="status-step status-spedito" [class.active]="ordine.stato === 'spedito'" (click)="updateStatoOrdine(ordine.id, 'spedito')">
+                      Spedito
+                    </div>
+                    <div class="status-step status-completato" [class.active]="ordine.stato === 'completato'" (click)="updateStatoOrdine(ordine.id, 'completato')">
+                      Completato
+                    </div>
+                  </div>
                 </div>
               </ion-card-content>
             </ion-card>
@@ -62,52 +75,42 @@
     </div>
   </div>
 
-  <!-- MODAL DETTAGLI/EDIT ORDINE -->
+  <!-- MODAL DETTAGLI ORDINE (SOLO PRODOTTI) -->
   <ion-modal [isOpen]="isOrderModalOpen" (didDismiss)="closeOrderModal()">
     <ng-template>
       <ion-header>
-        <ion-toolbar>
+        <ion-toolbar color="primary">
           <ion-buttons slot="start">
-            <ion-button color="danger" (click)="closeOrderModal()">Chiudi</ion-button>
+            <ion-button (click)="closeOrderModal()">Chiudi</ion-button>
           </ion-buttons>
-          <ion-title>Dettagli Ordine #{{ currentOrder.id }}</ion-title>
-          <ion-buttons slot="end">
-            <ion-button color="success" (click)="saveOrder()" [strong]="true">Salva</ion-button>
-          </ion-buttons>
+          <ion-title>Prodotti Ordine #{{ currentOrder.id }}</ion-title>
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
         <ion-list-header>
-          <ion-label>Prodotti Ordinati</ion-label>
+          <ion-label>Riepilogo Articoli</ion-label>
         </ion-list-header>
-        <ion-list class="ion-margin-bottom">
+        <ion-list>
           <ion-item *ngFor="let p of currentOrder.prodotti">
             <ion-label>
-              <h3>{{ p.quantita }}x {{ p.prodotto_nome }}</h3>
+              <h3><strong>{{ p.quantita }}x</strong> {{ p.prodotto_nome }}</h3>
               <p *ngIf="p.modifiche" style="color: var(--ion-color-medium)">{{ p.modifiche }}</p>
             </ion-label>
             <ion-text slot="end">{{ p.prezzo_unitario | currency:'EUR' }}</ion-text>
           </ion-item>
-          <ion-item lines="none">
-            <ion-label><strong>Totale</strong></ion-label>
+          <ion-item lines="none" class="ion-margin-top">
+            <ion-label><strong>Totale Prodotti</strong></ion-label>
             <ion-text slot="end"><strong>{{ currentOrder.totale | currency:'EUR' }}</strong></ion-text>
           </ion-item>
+          <ion-item lines="none">
+            <ion-label>Spedizione</ion-label>
+            <ion-text slot="end">1,99 €</ion-text>
+          </ion-item>
+          <ion-item lines="none" style="--background: var(--ion-color-light)">
+            <ion-label><strong>TOTALE ORDINE</strong></ion-label>
+            <ion-text slot="end" color="primary"><strong>{{ (currentOrder.totale + 1.99) | currency:'EUR' }}</strong></ion-text>
+          </ion-item>
         </ion-list>
-
-        <ion-list-header>
-          <ion-label>Gestione Consegna</ion-label>
-        </ion-list-header>
-        <ion-item>
-          <ion-select label="Stato Ordine" labelPlacement="stacked" [(ngModel)]="currentOrder.stato">
-            <ion-select-option value="ordinato">Ordinato</ion-select-option>
-            <ion-select-option value="in preparazione">In Preparazione</ion-select-option>
-            <ion-select-option value="spedito">Spedito</ion-select-option>
-            <ion-select-option value="completato">Completato</ion-select-option>
-          </ion-select>
-        </ion-item>
-        <ion-item>
-          <ion-input label="Destinazione" labelPlacement="stacked" type="text" [(ngModel)]="currentOrder.destinazione" placeholder="Indirizzo di consegna"></ion-input>
-        </ion-item>
       </ion-content>
     </ng-template>
   </ion-modal>

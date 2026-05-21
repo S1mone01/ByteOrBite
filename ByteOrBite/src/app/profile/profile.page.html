@@ -144,8 +144,8 @@
                 </p>
               </div>
               <div class="order-card-bottom">
-                <span class="order-dest">Dest: {{ ordine.destinazione }}</span>
-                <span class="order-total">Totale: {{ ordine.totale | currency:'EUR' }}</span>
+                <span class="order-dest">Dest: {{ parseLocation(ordine.destinazione)?.address || ordine.destinazione }}</span>
+                <span class="order-total">Totale: {{ (ordine.totale + 1.99) | currency:'EUR' }}</span>
               </div>
             </ion-card-content>
           </ion-card>

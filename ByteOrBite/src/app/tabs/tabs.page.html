@@ -80,7 +80,7 @@
 </ion-header>
 
 <ion-tabs>
-  <ion-tab-bar slot="bottom" class="mobile-tab-bar">
+  <ion-tab-bar slot="bottom" class="mobile-tab-bar" *ngIf="(currentUrl$ | async) !== '/tabs/riepilogo'">
     <ion-tab-button tab="home" href="/tabs/home">
       <div class="icon-wrapper">
         <img src="assets/1024v5.png" alt="Logo" class="mobile-logo-icon">
@@ -117,7 +117,7 @@
   </ion-tab-bar>
 
   <!-- Pulsante Carrello Fluttuante (Mobile) -->
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="cart-fab" *ngIf="(currentUser$ | async) && (currentUrl$ | async) !== '/tabs/profile' && (currentUrl$ | async) !== '/tabs/manage'">
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="cart-fab" *ngIf="(currentUser$ | async) && (currentUrl$ | async) !== '/tabs/profile' && (currentUrl$ | async) !== '/tabs/manage' && (currentUrl$ | async) !== '/tabs/riepilogo'">
     <ion-fab-button color="success" class="cart-fab-button" (click)="openCart()">
       <ion-icon name="cart-outline"></ion-icon>
     </ion-fab-button>
@@ -128,21 +128,26 @@
 </ion-tabs>
 
 <!-- Modal Carrello Globale -->
-<ion-modal [isOpen]="(isCartModalOpen$ | async) || false" (didDismiss)="closeCart()" class="cart-modal">
+<ion-modal 
+  [isOpen]="(isCartModalOpen$ | async) || false" 
+  (didDismiss)="closeCart()" 
+  class="cart-modal"
+  [enterAnimation]="enterAnimation"
+  [leaveAnimation]="leaveAnimation">
   <ng-template>
     <ion-header>
       <ion-toolbar color="primary">
         <ion-title>Il Tuo Carrello</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="closeCart()">
-            <ion-icon name="close"></ion-icon>
+          <ion-button (click)="closeCart()" class="cart-close-btn" fill="clear">
+            <ion-icon [name]="isDesktop ? 'arrow-forward-outline' : 'arrow-down-outline'"></ion-icon>
           </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content class="ion-padding">
-      <ion-list *ngIf="(cartItems$ | async)?.length || 0 > 0">
+    <ion-content>
+      <ion-list lines="none" *ngIf="(cartItems$ | async)?.length || 0 > 0">
         <ion-item *ngFor="let item of (cartItems$ | async)">
           <ion-thumbnail slot="start">
             <img [src]="getImageUrl(item.immagine_url)" />
@@ -154,32 +159,35 @@
           </ion-label>
           <div slot="end" class="cart-item-controls">
             <ion-button fill="clear" color="danger" (click)="updateCartItemQuantity(item, -1)">
-              <ion-icon name="remove-circle-outline"></ion-icon>
+              <ion-icon [name]="item.quantita === 1 ? 'trash' : 'remove-outline'"></ion-icon>
             </ion-button>
             <span class="qnt-badge">{{ item.quantita }}</span>
             <ion-button fill="clear" color="success" (click)="updateCartItemQuantity(item, 1)">
-              <ion-icon name="add-circle-outline"></ion-icon>
+              <ion-icon name="add-outline"></ion-icon>
             </ion-button>
           </div>
         </ion-item>
       </ion-list>
 
-      <div *ngIf="(cartItems$ | async)?.length === 0" class="ion-text-center ion-padding">
-        <ion-icon name="cart-outline" style="font-size: 4rem; opacity: 0.3;"></ion-icon>
+      <div *ngIf="(cartItems$ | async)?.length === 0" class="empty-cart-container">
+        <ion-icon name="cart-outline"></ion-icon>
         <p>Il tuo carrello è vuoto.</p>
       </div>
     </ion-content>
 
     <ion-footer class="ion-no-border" *ngIf="(cartItems$ | async)?.length || 0 > 0">
-      <ion-toolbar class="ion-padding-horizontal">
-        <ion-title slot="start">Totale:</ion-title>
-        <ion-title slot="end">{{ getCartTotal(cartItems$ | async) | currency:'EUR' }}</ion-title>
+      <ion-toolbar class="cart-footer-toolbar">
+        <div class="cart-total-container">
+          <span class="total-label">Totale:</span>
+          <span class="total-amount">{{ getCartTotal(cartItems$ | async) | currency:'EUR' }}</span>
+        </div>
+        <div class="checkout-section">
+          <ion-button expand="block" color="success" class="checkout-button" (click)="checkout()">
+            <ion-icon name="cart-outline" slot="start"></ion-icon>
+            Riepilogo ordine
+          </ion-button>
+        </div>
       </ion-toolbar>
-      <div class="ion-padding">
-        <ion-button expand="block" color="success">
-          Procedi all'ordine
-        </ion-button>
-      </div>
     </ion-footer>
   </ng-template>
 </ion-modal>

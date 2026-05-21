@@ -37,6 +37,11 @@ export const routes: Routes = [
           import('../manage/manage.page').then((m) => m.ManagePage),
       },
       {
+        path: 'riepilogo',
+        loadComponent: () =>
+          import('../riepilogo/riepilogo.page').then((m) => m.RiepilogoPage),
+      },
+      {
         path: '',
         redirectTo: '/tabs/home',
         pathMatch: 'full',

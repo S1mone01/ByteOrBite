@@ -275,49 +275,240 @@ ion-tab-button[aria-selected="true"] {
   align-items: flex-end;
 
   @media (min-width: 768px) {
-    --height: 600px;
-    --width: 500px;
-    --border-radius: 20px;
+    --width: 400px;
+    --height: 100%;
+    --border-radius: 0;
+    --box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    
+    // Posiziona il modal a destra
+    &::part(content) {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      height: 100%;
+      border-left: 1px solid rgba(0,0,0,0.1);
+    }
+  }
+
+  ion-header ion-toolbar {
+    --background: var(--ion-color-primary);
+    --color: #ffffff;
+    --min-height: 60px;
+
+    ion-title {
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-size: 1.1rem;
+    }
+
+    .cart-close-btn {
+      width: 34px;
+      height: 34px;
+      min-height: 34px;
+      margin: 0 8px 0 0;
+      --padding-start: 0;
+      --padding-end: 0;
+      background: #0d3d28; // Sfondo applicato direttamente all'host
+      border-radius: 50%; // Forma circolare sull'host
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      --box-shadow: none;
+      --background: transparent; // Rimuove lo sfondo interno di Ionic
+
+      &::part(native) {
+        border-radius: 50%;
+        padding: 0;
+        background: transparent;
+      }
+
+      ion-icon {
+        font-size: 1.4rem;
+        margin: 0;
+        color: #ffffff;
+      }
+
+      &:hover {
+        filter: brightness(1.2);
+      }
+    }
+  }
+
+  ion-content {
+    --background: var(--app-bg);
+    height: 100%;
+    
+    &::part(scroll) {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .empty-cart-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
+    text-align: center;
+    padding: 20px;
+    opacity: 0.5;
+
+    ion-icon {
+      font-size: 5rem;
+      margin-bottom: 15px;
+      color: var(--ion-color-medium);
+    }
+
+    p {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--ion-color-medium);
+    }
+  }
+
+  ion-list {
+    background: transparent;
+    padding: 8px 5px; // Ridotto padding orizzontale a 5px
   }
 
   ion-item {
-    margin-bottom: 10px;
-    border-radius: 12px;
-    --padding-start: 10px;
-    border: 1px solid rgba(0,0,0,0.05);
+    margin-bottom: 8px;
+    border-radius: 14px;
+    --padding-start: 6px; // Ridotto padding interno
+    --inner-padding-end: 6px; // Ridotto padding interno
+    --min-height: 75px;
+    --background: rgba(var(--ion-color-primary-rgb), 0.02);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    border: 1px solid rgba(var(--ion-color-primary-rgb), 0.06);
+    transition: transform 0.2s ease;
+
+    &:active {
+      transform: scale(0.98);
+    }
   }
 
   ion-thumbnail {
-    --border-radius: 8px;
-    width: 60px;
-    height: 60px;
+    --border-radius: 12px;
+    width: 65px; // Thumbnail più compatta
+    height: 65px;
+    margin-right: 12px;
+  }
+
+  ion-label h2 {
+    font-weight: 700;
+    color: var(--app-text);
+    font-size: 1rem; // Titolo leggermente più piccolo
+    margin-bottom: 2px;
   }
 
   .modifiche-text {
     font-size: 0.8rem;
     color: var(--ion-color-medium);
     font-style: italic;
-    white-space: normal;
+    background: rgba(var(--ion-color-primary-rgb), 0.04);
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-top: 2px;
+    display: inline-block;
   }
 
   .cart-item-controls {
     display: flex;
+    flex-direction: row;
     align-items: center;
-    gap: 8px;
+    gap: 4px; // Spazio minimo tra i blocchi
+    background: rgba(var(--ion-color-primary-rgb), 0.08);
+    padding: 0; // Rimosso padding per far aderire i pulsanti
+    border-radius: 6px; // Contenitore squadrato
+    overflow: hidden; // Per mantenere i bordi dei pulsanti entro il contenitore
 
     ion-button {
       --padding-start: 0;
       --padding-end: 0;
+      --border-radius: 0; // Pulsanti perfettamente quadrati
+      height: 32px;
+      width: 32px;
       margin: 0;
-      font-size: 1.5rem;
+      font-size: 1.2rem;
+      background: rgba(var(--ion-color-primary-rgb), 0.05);
+
+      &::part(native) {
+        border-radius: 0;
+      }
     }
 
     .qnt-badge {
       font-weight: 800;
-      font-size: 1.1rem;
-      min-width: 20px;
+      font-size: 1rem;
+      min-width: 28px;
       text-align: center;
+      color: var(--app-text);
+      padding: 0 4px;
+    }
+  }
+}
+
+.cart-footer-toolbar {
+  --background: rgba(var(--ion-color-primary-rgb), 0.06);
+  --padding-top: 10px; // Ridotto da 20px
+  --padding-bottom: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+  border-top: 3px solid var(--ion-color-primary); // Leggermente più sottile (3px invece di 4px)
+  display: flex;
+  flex-direction: column;
+
+  .cart-total-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 8px 10px 8px; // Ridotto ulteriormente a 8px
+    background: transparent;
+    border: none;
+    border-radius: 0;
+
+    .total-label {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--ion-color-medium);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .total-amount {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--ion-color-primary);
+    }
+  }
+
+  .checkout-section {
+    background: transparent;
+    padding: 0 8px 15px 8px; // Ridotto ulteriormente a 8px
+    border-top: none;
+    
+    .checkout-button {
+      --border-radius: 14px;
+      --padding-top: 15px; // Ridotto da 22px
+      --padding-bottom: 15px; // Ridotto da 22px
+      font-weight: 800;
+      font-size: 1rem; // Ridotto da 1.2rem
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 0;
+      height: 50px; // Ridotto da 65px
+      --box-shadow: none;
+      box-shadow: none;
+      
+      ion-icon {
+        font-size: 1.3rem;
+        margin-right: 8px;
+      }
     }
   }
 }

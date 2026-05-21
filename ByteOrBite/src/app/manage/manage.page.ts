@@ -121,11 +121,26 @@ export class ManagePage implements OnInit {
     });
   }
 
+  parseLocation(location: string | undefined): any {
+    if (!location) return null;
+    try {
+      return JSON.parse(location);
+    } catch (e) {
+      // Supporto per vecchio formato o inserimento manuale
+      return { address: location };
+    }
+  }
+
   isOrderModalOpen = false;
   currentOrder: any = {};
 
   openEditOrderModal(ordine: any) {
     this.currentOrder = { ...ordine };
+    // Se la destinazione è un JSON, mostriamo solo l'indirizzo nel campo di input
+    const loc = this.parseLocation(this.currentOrder.destinazione);
+    if (loc && loc.address) {
+      this.currentOrder.destinazione = loc.address;
+    }
     this.isOrderModalOpen = true;
   }
 
@@ -144,10 +159,10 @@ export class ManagePage implements OnInit {
     });
   }
 
-  updateStatoOrdine(id: number, nuovoStato: any) {
+  updateStatoOrdine(id: number, nuovoStato: string) {
     const ordine = this.ordini.find(o => o.id === id);
     if (ordine) {
-      const updatedData = { ...ordine, stato: nuovoStato.detail.value };
+      const updatedData = { ...ordine, stato: nuovoStato };
       this.dataService.updateOrdine(id, updatedData).subscribe({
         next: () => {
           this.showToast('Stato ordine aggiornato');

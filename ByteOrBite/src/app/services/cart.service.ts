@@ -100,6 +100,46 @@ export class CartService {
     this.isCartModalOpenSubject.next(isOpen);
   }
 
+  checkout(discount: number = 0) {
+    const currentUser = this.authService.currentUserValue;
+    const items = this.cartItemsSubject.value;
+    if (!currentUser || items.length === 0) return new Observable();
+
+    const subtotal = items.reduce((acc, item) => acc + (item.prezzo_unitario * item.quantita), 0);
+    const totalToSave = subtotal - discount; // Salviamo solo il subtotale prodotti (al netto dello sconto)
+    const finalTotalForPoints = totalToSave + 1.99; // I punti si calcolano sul totale finale
+
+    const ordineData = {
+      utente_id: currentUser.id,
+      utente_nome: currentUser.name,
+      destinazione: currentUser.location || 'Consegna a domicilio',
+      totale: totalToSave,
+      prodotti: items.map(i => ({
+        prodotto_nome: i.prodotto_nome,
+        quantita: i.quantita,
+        prezzo_unitario: i.prezzo_unitario,
+        modifiche: i.modifiche
+      }))
+    };
+
+    return this.dataService.addOrdine(ordineData).pipe(
+      tap(() => {
+        this.clearCart(currentUser.id);
+        this.setCartModalOpen(false);
+        // Aggiorna i punti utente
+        const nuoviPunti = (currentUser.points || 0) + Math.floor(finalTotalForPoints / 10);
+        this.authService.updateUser(currentUser.id, { points: nuoviPunti }).subscribe();
+      })
+    );
+  }
+
+  clearCart(userId: string) {
+    this.dataService.clearCarrello(userId).subscribe({
+      next: () => this.loadCart(userId),
+      error: (err) => console.error('Errore nello svuotamento del carrello:', err)
+    });
+  }
+
   private updateCartCount(items: any[]) {
     const count = items.reduce((acc, item) => acc + item.quantita, 0);
     this.cartCountSubject.next(count);
