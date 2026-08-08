@@ -53,7 +53,11 @@
                 },
                 {
                   "type": "anyComponentStyle",
+<<<<<<< Updated upstream
                   "maximumWarning": "15kb",
+=======
+                  "maximumWarning": "10kb",
+>>>>>>> Stashed changes
                   "maximumError": "20kb"
                 }
               ],
