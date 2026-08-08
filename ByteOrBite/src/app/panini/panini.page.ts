@@ -11,7 +11,7 @@ import {
   IonButtons
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cartOutline, add, remove, close, cart, removeCircleOutline, addCircleOutline } from 'ionicons/icons';
+import { cartOutline, add, remove, close, cart, removeCircleOutline, addCircleOutline, trash, trashOutline, checkmarkCircleOutline } from 'ionicons/icons';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -35,6 +35,8 @@ export class PaniniPage implements OnInit, OnDestroy {
   selectedPanino: any = null;
   allIngredienti: any[] = [];
   selectedIngredienti: any[] = [];
+  ingredientiBase: any[] = [];
+  ingredientiExtra: any[] = [];
   cartItems: any[] = [];
   private cartItemsSub: Subscription | null = null;
 
@@ -42,7 +44,7 @@ export class PaniniPage implements OnInit, OnDestroy {
     private dataService: DataService,
     private cartService: CartService
   ) {
-    addIcons({ add, remove, close, cart, removeCircleOutline, addCircleOutline });
+    addIcons({ add, remove, close, cart, removeCircleOutline, addCircleOutline, trash, trashOutline, checkmarkCircleOutline });
   }
 
   ngOnInit() {
@@ -121,35 +123,46 @@ export class PaniniPage implements OnInit, OnDestroy {
 
   openDetails(panino: any) {
     this.selectedPanino = { ...panino };
-    // Mappa gli ingredienti del panino (ids) con gli oggetti completi
-    this.selectedIngredienti = this.allIngredienti.map(ing => {
-      return {
-        ...ing,
-        checked: panino.ingredienti.includes(ing.id)
-      };
-    });
+    const baseIds = panino.ingredienti || [];
+    
+    // Separa gli ingredienti base dell'oggetto dagli ingredienti aggiuntivi
+    this.ingredientiBase = this.allIngredienti
+      .filter(ing => baseIds.includes(ing.id))
+      .map(ing => ({ ...ing, isBase: true, checked: true }));
+
+    this.ingredientiExtra = this.allIngredienti
+      .filter(ing => !baseIds.includes(ing.id))
+      .map(ing => ({ ...ing, isBase: false, checked: false }));
+
     this.isModalOpen = true;
   }
 
   closeDetails() {
     this.isModalOpen = false;
     this.selectedPanino = null;
+    this.ingredientiBase = [];
+    this.ingredientiExtra = [];
   }
 
   addSelectedToCart() {
     if (!this.selectedPanino) return;
 
-    // Calcola modifiche (ingredienti aggiunti o rimossi rispetto all'originale)
-    const originalIngIds = this.selectedPanino.ingredienti;
-    const added = this.selectedIngredienti.filter(ing => ing.checked && !originalIngIds.includes(ing.id)).map(ing => `+${ing.nome}`);
-    const removed = this.selectedIngredienti.filter(ing => !ing.checked && originalIngIds.includes(ing.id)).map(ing => `-${ing.nome}`);
+    // Rimozione degli ingredienti base deselezionati
+    const removed = this.ingredientiBase
+      .filter(ing => !ing.checked)
+      .map(ing => `-${ing.nome}`);
+
+    // Aggiunta degli ingredienti extra selezionati
+    const added = this.ingredientiExtra
+      .filter(ing => ing.checked)
+      .map(ing => `+${ing.nome}`);
     
     const modifiche = [...added, ...removed].join(', ');
 
-    // Calcola il prezzo finale (se vogliamo che il prezzo nel carrello rifletta le modifiche)
+    // Calcolo del prezzo finale: gli ingredienti base non aggiungono costi extra
     let prezzoFinale = this.selectedPanino.prezzo;
-    this.selectedIngredienti.forEach(ing => {
-      if (ing.checked && !originalIngIds.includes(ing.id)) {
+    this.ingredientiExtra.forEach(ing => {
+      if (ing.checked) {
         prezzoFinale += ing.prezzo_extra;
       }
     });

@@ -15,8 +15,7 @@
   <!-- Griglia Responsive -->
   <ion-grid>
     <ion-row>
-      <!-- Su smartphone (size="12") occupa tutta la riga, su tablet/PC (size-md="6") si affiancano -->
-      <ion-col size="6" size-md="4" sizeLg="3" sizeXl="2" *ngFor="let panino of panini">
+      <ion-col size="6" size-md="4" size-lg="3" size-xl="2" *ngFor="let panino of panini" class="panino-col">
         
         <ion-card class="panino-card" (click)="openDetails(panino)">
           
@@ -36,11 +35,11 @@
           </ion-card-header>
 
           <ion-card-content>
-            <p class="panino-description" *ngIf="panino.descrizione">{{ panino.descrizione }}</p>
+            <p class="panino-description">{{ panino.descrizione || '&nbsp;' }}</p>
             
             <div class="quantity-selector" (click)="$event.stopPropagation()">
               <ion-button fill="clear" color="danger" (click)="decrementQuantity(panino)" [disabled]="cartQuantities[panino.id] === 0">
-                <ion-icon name="remove"></ion-icon>
+                <ion-icon [name]="cartQuantities[panino.id] === 1 ? 'trash' : 'remove'"></ion-icon>
               </ion-button>
               
               <span class="quantity-text">{{ cartQuantities[panino.id] }}</span>
@@ -76,20 +75,47 @@
           <ion-img [src]="getImageUrl(selectedPanino?.immagine_url)" class="modal-img"></ion-img>
         </div>
 
-        <div class="ion-padding-top">
-          <h3>Ingredienti</h3>
-          <p class="ion-text-muted">Personalizza il tuo panino aggiungendo o rimuovendo ingredienti:</p>
+        <div class="ion-padding-top ingredients-modal-section">
+          <h3>Personalizza Panino</h3>
+          <p class="ion-text-muted">Deseleziona gli ingredienti base o aggiungi extra a tuo piacimento:</p>
           
-          <ion-list lines="none">
-            <ion-item *ngFor="let ing of selectedIngredienti">
-              <ion-checkbox labelPlacement="end" [checked]="ing.checked" (ionChange)="toggleIngrediente(ing)">
-                <ion-label>
-                  <h2>{{ ing.nome }}</h2>
-                  <p *ngIf="ing.prezzo_extra > 0">+ {{ ing.prezzo_extra | currency:'EUR' }}</p>
-                </ion-label>
-              </ion-checkbox>
-            </ion-item>
-          </ion-list>
+          <!-- Sezione Ingredienti Base (senza prezzo) -->
+          <div class="ingredients-group" *ngIf="ingredientiBase.length > 0">
+            <div class="group-header">
+              <ion-icon name="checkmark-circle-outline" color="primary"></ion-icon>
+              <span class="group-title">Ingredienti Base (Inclusi)</span>
+            </div>
+            
+            <ion-list lines="none" class="ingredients-list">
+              <ion-item *ngFor="let ing of ingredientiBase" class="ingredient-item base-ingredient">
+                <ion-checkbox labelPlacement="end" [checked]="ing.checked" (ionChange)="toggleIngrediente(ing)">
+                  <ion-label>
+                    <h2 class="ing-name">{{ ing.nome }}</h2>
+                    <p class="ing-subtitle base-badge">Incluso nel panino</p>
+                  </ion-label>
+                </ion-checkbox>
+              </ion-item>
+            </ion-list>
+          </div>
+
+          <!-- Sezione Ingredienti Extra (con prezzo extra) -->
+          <div class="ingredients-group" *ngIf="ingredientiExtra.length > 0">
+            <div class="group-header">
+              <ion-icon name="add-circle-outline" color="secondary"></ion-icon>
+              <span class="group-title">Aggiunte Extra</span>
+            </div>
+
+            <ion-list lines="none" class="ingredients-list">
+              <ion-item *ngFor="let ing of ingredientiExtra" class="ingredient-item extra-ingredient">
+                <ion-checkbox labelPlacement="end" [checked]="ing.checked" (ionChange)="toggleIngrediente(ing)">
+                  <ion-label>
+                    <h2 class="ing-name">{{ ing.nome }}</h2>
+                    <p class="ing-subtitle extra-price" *ngIf="ing.prezzo_extra > 0">+ {{ ing.prezzo_extra | currency:'EUR':'symbol':'1.2-2' }}</p>
+                  </ion-label>
+                </ion-checkbox>
+              </ion-item>
+            </ion-list>
+          </div>
         </div>
 
         <ion-button expand="block" color="primary" (click)="addSelectedToCart()" class="ion-margin-top">
@@ -103,5 +129,8 @@
   <div *ngIf="panini.length === 0" class="ion-text-center ion-padding">
     <p style="color: var(--app-text);">Nessun panino disponibile al momento.</p>
   </div>
+
+  <!-- Spazio per permettere lo scorrimento completo sopra tab bar e FAB carrello -->
+  <div class="bottom-spacer"></div>
 
 </ion-content>
