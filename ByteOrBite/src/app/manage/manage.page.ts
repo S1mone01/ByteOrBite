@@ -42,7 +42,25 @@ export class ManagePage implements OnInit {
   ordini: any[] = [];
 
   isOrdersVisible = true;
+  isCompletedOrdersVisible = false;
+  isInCorsoOrdersVisible = true;
   isModalOpen = false;
+
+  get ordiniInCorso() {
+    return this.ordini.filter(o => o.stato !== 'completato');
+  }
+
+  get ordiniCompletati() {
+    return this.ordini.filter(o => o.stato === 'completato');
+  }
+
+  toggleCompletedOrders() {
+    this.isCompletedOrdersVisible = !this.isCompletedOrdersVisible;
+  }
+
+  toggleInCorsoOrders() {
+    this.isInCorsoOrdersVisible = !this.isInCorsoOrdersVisible;
+  }
   modalMode: 'add' | 'edit' = 'add';
   currentItem: any = {};
 

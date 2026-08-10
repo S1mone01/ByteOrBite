@@ -1,3 +1,9 @@
+@media (min-width: 768px) {
+  :host > ion-header {
+    display: none;
+  }
+}
+
 .menu-header {
   padding: 30px 20px;
   background: var(--app-bg);

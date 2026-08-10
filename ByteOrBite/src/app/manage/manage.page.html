@@ -17,60 +17,95 @@
       </ion-button>
     </ion-list-header>
 
+    <ng-template #orderCardTemplate let-ordine="ordine">
+      <ion-card class="order-card grid-card">
+        <ion-card-header>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+              <ion-card-title>Ordine #{{ ordine.id }}</ion-card-title>
+              <ion-card-subtitle>{{ ordine.utente_nome }}</ion-card-subtitle>
+            </div>
+            <ion-buttons slot="end">
+              <ion-button color="primary" (click)="openEditOrderModal(ordine)">
+                <ion-icon name="eye-outline"></ion-icon>
+              </ion-button>
+              <ion-button color="danger" (click)="confirmDeleteOrder(ordine.id)">
+                <ion-icon name="trash"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </div>
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="order-info">
+            <p class="data-ora">{{ ordine.data_ora | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p><strong>Dest:</strong> {{ parseLocation(ordine.destinazione)?.address || ordine.destinazione }}</p>
+            <p>
+              <strong>Totale:</strong> {{ (ordine.totale + 1.99) | currency:'EUR' }}
+              <span class="delivery-fee-tag">(incl. 1,99€ sped.)</span>
+            </p>
+            
+            <div class="status-progress-bar">
+              <div class="status-step status-ordinato" [class.active]="ordine.stato === 'ordinato'" (click)="updateStatoOrdine(ordine.id, 'ordinato')">
+                Ordinato
+              </div>
+              <div class="status-step status-in-preparazione" [class.active]="ordine.stato === 'in preparazione'" (click)="updateStatoOrdine(ordine.id, 'in preparazione')">
+                In Prep.
+              </div>
+              <div class="status-step status-spedito" [class.active]="ordine.stato === 'spedito'" (click)="updateStatoOrdine(ordine.id, 'spedito')">
+                Spedito
+              </div>
+              <div class="status-step status-completato" [class.active]="ordine.stato === 'completato'" (click)="updateStatoOrdine(ordine.id, 'completato')">
+                Completato
+              </div>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </ng-template>
+
     <div *ngIf="isOrdersVisible">
-      <ion-grid>
-        <ion-row>
-          <ion-col size="12" size-md="6" size-lg="4" *ngFor="let ordine of ordini">
-            <ion-card class="order-card grid-card">
-              <ion-card-header>
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                  <div>
-                    <ion-card-title>Ordine #{{ ordine.id }}</ion-card-title>
-                    <ion-card-subtitle>{{ ordine.utente_nome }}</ion-card-subtitle>
-                  </div>
-                  <ion-buttons slot="end">
-                    <ion-button color="primary" (click)="openEditOrderModal(ordine)">
-                      <ion-icon name="eye-outline"></ion-icon>
-                    </ion-button>
-                    <ion-button color="danger" (click)="confirmDeleteOrder(ordine.id)">
-                      <ion-icon name="trash"></ion-icon>
-                    </ion-button>
-                  </ion-buttons>
-                </div>
-              </ion-card-header>
+      <!-- Ordini in corso -->
+      <ion-list-header (click)="toggleInCorsoOrders()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; background-color: var(--ion-color-light); border-radius: 8px; margin-bottom: 10px; padding-right: 16px;">
+        <ion-label color="primary">In Corso ({{ ordiniInCorso.length }})</ion-label>
+        <ion-button fill="clear">
+          <ion-icon slot="icon-only" color="primary" [name]="isInCorsoOrdersVisible ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+        </ion-button>
+      </ion-list-header>
+      
+      <div *ngIf="isInCorsoOrdersVisible">
+        <ion-grid *ngIf="ordiniInCorso.length > 0">
+          <ion-row>
+            <ion-col size="12" size-md="6" size-lg="4" *ngFor="let ordine of ordiniInCorso">
+              <ng-container *ngTemplateOutlet="orderCardTemplate; context: { ordine: ordine }"></ng-container>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        
+        <div *ngIf="ordiniInCorso.length === 0" class="ion-padding ion-text-center">
+          <p>Nessun ordine in corso.</p>
+        </div>
+      </div>
 
-              <ion-card-content>
-                <div class="order-info">
-                  <p class="data-ora">{{ ordine.data_ora | date:'dd/MM/yyyy HH:mm' }}</p>
-                  <p><strong>Dest:</strong> {{ parseLocation(ordine.destinazione)?.address || ordine.destinazione }}</p>
-                  <p>
-                    <strong>Totale:</strong> {{ (ordine.totale + 1.99) | currency:'EUR' }}
-                    <span class="delivery-fee-tag">(incl. 1,99€ sped.)</span>
-                  </p>
-                  
-                  <div class="status-progress-bar">
-                    <div class="status-step status-ordinato" [class.active]="ordine.stato === 'ordinato'" (click)="updateStatoOrdine(ordine.id, 'ordinato')">
-                      Ordinato
-                    </div>
-                    <div class="status-step status-in-preparazione" [class.active]="ordine.stato === 'in preparazione'" (click)="updateStatoOrdine(ordine.id, 'in preparazione')">
-                      In Prep.
-                    </div>
-                    <div class="status-step status-spedito" [class.active]="ordine.stato === 'spedito'" (click)="updateStatoOrdine(ordine.id, 'spedito')">
-                      Spedito
-                    </div>
-                    <div class="status-step status-completato" [class.active]="ordine.stato === 'completato'" (click)="updateStatoOrdine(ordine.id, 'completato')">
-                      Completato
-                    </div>
-                  </div>
-                </div>
-              </ion-card-content>
-            </ion-card>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+      <!-- Ordini completati -->
+      <ion-list-header (click)="toggleCompletedOrders()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; background-color: var(--ion-color-light); border-radius: 8px; margin-bottom: 10px; padding-right: 16px;">
+        <ion-label color="medium">Completati ({{ ordiniCompletati.length }})</ion-label>
+        <ion-button fill="clear">
+          <ion-icon slot="icon-only" color="medium" [name]="isCompletedOrdersVisible ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+        </ion-button>
+      </ion-list-header>
 
-      <div *ngIf="ordini.length === 0" class="ion-padding ion-text-center">
-        <p>Nessun ordine presente.</p>
+      <div *ngIf="isCompletedOrdersVisible">
+        <ion-grid *ngIf="ordiniCompletati.length > 0">
+          <ion-row>
+            <ion-col size="12" size-md="6" size-lg="4" *ngFor="let ordine of ordiniCompletati">
+              <ng-container *ngTemplateOutlet="orderCardTemplate; context: { ordine: ordine }"></ng-container>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <div *ngIf="ordiniCompletati.length === 0" class="ion-padding ion-text-center">
+          <p>Nessun ordine completato.</p>
+        </div>
       </div>
     </div>
   </div>
