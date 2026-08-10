@@ -248,3 +248,17 @@ body.ion-palette-dark {
   scrollbar-width: thin;
   scrollbar-color: var(--ion-color-primary) transparent;
 }
+
+/* Centramento e contenimento universale per componenti ion-img */
+ion-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::part(image), img {
+    object-fit: contain !important;
+    object-position: center !important;
+    max-width: 100%;
+    max-height: 100%;
+  }
+}

@@ -74,8 +74,72 @@
       </ion-header>
 
       <ion-content class="ion-padding">
-        <div class="modal-image-container">
-          <ion-img [src]="getImageUrl(selectedPanino?.immagine_url)" class="modal-img"></ion-img>
+        
+        <!-- Vista Esplosa dell'Hamburger -->
+        <div class="exploded-burger-wrapper">
+          <div class="exploded-header">
+            <div class="exploded-title-group">
+              <ion-icon name="layers-outline" color="secondary" class="title-icon"></ion-icon>
+              <span class="exploded-title">Vista Esplosa</span>
+            </div>
+            <ion-badge color="secondary" class="layer-count-badge">
+              {{ getActiveIngredients().length + 2 }} strati
+            </ion-badge>
+          </div>
+
+          <div class="exploded-burger-stack">
+            <!-- Pane Superiore -->
+            <div class="burger-layer bun-top-layer">
+              <div class="bun-graphic bun-top">
+                <div class="sesame-seed s1"></div>
+                <div class="sesame-seed s2"></div>
+                <div class="sesame-seed s3"></div>
+                <div class="sesame-seed s4"></div>
+                <span class="bun-label">Pane Superiore</span>
+              </div>
+            </div>
+
+            <!-- Strati Ingredienti Attivi -->
+            <div class="active-layers-list">
+              <div 
+                *ngFor="let ing of getActiveIngredients(); trackBy: trackByIngId" 
+                class="burger-layer ingredient-layer-item"
+                (click)="toggleIngrediente(ing)"
+                [title]="'Clicca per rimuovere ' + ing.nome"
+              >
+                <div class="layer-pill" [ngClass]="getLayerClass(ing.nome)">
+                  <img 
+                    *ngIf="ing.immagine_url" 
+                    [src]="getImageUrl(ing.immagine_url)" 
+                    [alt]="ing.nome" 
+                    class="layer-icon-img"
+                  />
+                  <div *ngIf="!ing.immagine_url" class="layer-icon-fallback">
+                    <ion-icon [name]="getIngredientIcon(ing.nome)"></ion-icon>
+                  </div>
+                  <span class="layer-title-text">{{ ing.nome }}</span>
+                  <span *ngIf="ing.prezzo_extra > 0" class="layer-price-tag">+{{ ing.prezzo_extra | currency:'EUR':'symbol':'1.2-2' }}</span>
+                  <ion-icon name="close-circle" class="layer-remove-icon"></ion-icon>
+                </div>
+              </div>
+
+              <!-- Messaggio se nessun ingrediente è selezionato -->
+              <div *ngIf="getActiveIngredients().length === 0" class="empty-layers-msg">
+                <span>Nessun ingrediente selezionato</span>
+              </div>
+            </div>
+
+            <!-- Pane Inferiore -->
+            <div class="burger-layer bun-bottom-layer">
+              <div class="bun-graphic bun-bottom">
+                <span class="bun-label">Pane Inferiore</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="exploded-hint">
+            💡 Tocca uno strato per rimuoverlo o selezionalo dalla lista in basso per aggiungerlo.
+          </p>
         </div>
 
         <div class="ion-padding-top ingredients-modal-section">

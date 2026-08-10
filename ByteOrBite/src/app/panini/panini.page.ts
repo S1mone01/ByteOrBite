@@ -11,7 +11,11 @@ import {
   IonButtons
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { cartOutline, add, remove, close, cart, removeCircleOutline, addCircleOutline, trash, trashOutline, checkmarkCircleOutline } from 'ionicons/icons';
+import { 
+  cartOutline, add, remove, close, cart, removeCircleOutline, addCircleOutline, 
+  trash, trashOutline, checkmarkCircleOutline, layersOutline, closeCircle,
+  flameOutline, leafOutline, nutritionOutline, fastFoodOutline
+} from 'ionicons/icons';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -34,7 +38,6 @@ export class PaniniPage implements OnInit, OnDestroy {
   isModalOpen = false;
   selectedPanino: any = null;
   allIngredienti: any[] = [];
-  selectedIngredienti: any[] = [];
   ingredientiBase: any[] = [];
   ingredientiExtra: any[] = [];
   cartItems: any[] = [];
@@ -44,7 +47,11 @@ export class PaniniPage implements OnInit, OnDestroy {
     private dataService: DataService,
     private cartService: CartService
   ) {
-    addIcons({ add, remove, close, cart, removeCircleOutline, addCircleOutline, trash, trashOutline, checkmarkCircleOutline });
+    addIcons({ 
+      add, remove, close, cart, removeCircleOutline, addCircleOutline, 
+      trash, trashOutline, checkmarkCircleOutline, layersOutline, closeCircle,
+      flameOutline, leafOutline, nutritionOutline, fastFoodOutline 
+    });
   }
 
   ngOnInit() {
@@ -144,6 +151,37 @@ export class PaniniPage implements OnInit, OnDestroy {
     this.ingredientiExtra = [];
   }
 
+  getActiveIngredients() {
+    return [
+      ...this.ingredientiBase.filter(ing => ing.checked),
+      ...this.ingredientiExtra.filter(ing => ing.checked)
+    ];
+  }
+
+  trackByIngId(index: number, item: any) {
+    return item.id;
+  }
+
+  getLayerClass(nome: string): string {
+    if (!nome) return 'layer-generic';
+    const n = nome.toLowerCase();
+    if (n.includes('carne') || n.includes('hamburger') || n.includes('bacon')) return 'layer-carne';
+    if (n.includes('formaggio') || n.includes('cheddar') || n.includes('scamorza')) return 'layer-formaggio';
+    if (n.includes('insalata') || n.includes('lattuga') || n.includes('rucola')) return 'layer-insalata';
+    if (n.includes('pomodoro')) return 'layer-pomodoro';
+    if (n.includes('salsa') || n.includes('maionese') || n.includes('ketchup') || n.includes('bbq')) return 'layer-salsa';
+    return 'layer-generic';
+  }
+
+  getIngredientIcon(nome: string): string {
+    if (!nome) return 'fast-food-outline';
+    const n = nome.toLowerCase();
+    if (n.includes('carne') || n.includes('hamburger') || n.includes('bacon')) return 'flame-outline';
+    if (n.includes('insalata') || n.includes('lattuga') || n.includes('pomodoro')) return 'leaf-outline';
+    if (n.includes('formaggio') || n.includes('cheddar')) return 'nutrition-outline';
+    return 'fast-food-outline';
+  }
+
   addSelectedToCart() {
     if (!this.selectedPanino) return;
 
@@ -189,3 +227,4 @@ export class PaniniPage implements OnInit, OnDestroy {
     return `${this.dataService.getApiUrl()}/${path}`;
   }
 }
+
