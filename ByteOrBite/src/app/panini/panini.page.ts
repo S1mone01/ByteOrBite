@@ -131,7 +131,7 @@ export class PaniniPage implements OnInit, OnDestroy {
       .map(ing => ({ ...ing, isBase: true, checked: true }));
 
     this.ingredientiExtra = this.allIngredienti
-      .filter(ing => !baseIds.includes(ing.id) && ing.disponibile != 0)
+      .filter(ing => !baseIds.includes(ing.id))
       .map(ing => ({ ...ing, isBase: false, checked: false }));
 
     this.isModalOpen = true;

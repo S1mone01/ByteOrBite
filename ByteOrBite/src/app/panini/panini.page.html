@@ -110,10 +110,11 @@
 
             <ion-list lines="none" class="ingredients-list">
               <ion-item *ngFor="let ing of ingredientiExtra" class="ingredient-item extra-ingredient">
-                <ion-checkbox labelPlacement="end" [checked]="ing.checked" (ionChange)="toggleIngrediente(ing)">
+                <ion-checkbox labelPlacement="end" [checked]="ing.checked" (ionChange)="toggleIngrediente(ing)" [disabled]="ing.disponibile == 0">
                   <ion-label>
-                    <h2 class="ing-name">{{ ing.nome }}</h2>
-                    <p class="ing-subtitle extra-price" *ngIf="ing.prezzo_extra > 0">+ {{ ing.prezzo_extra | currency:'EUR':'symbol':'1.2-2' }}</p>
+                    <h2 class="ing-name" [style.textDecoration]="ing.disponibile == 0 ? 'line-through' : 'none'" [style.opacity]="ing.disponibile == 0 ? '0.6' : '1'">{{ ing.nome }}</h2>
+                    <p class="ing-subtitle extra-price" *ngIf="ing.prezzo_extra > 0 && ing.disponibile != 0">+ {{ ing.prezzo_extra | currency:'EUR':'symbol':'1.2-2' }}</p>
+                    <p class="ing-subtitle extra-price" *ngIf="ing.disponibile == 0" style="color: var(--ion-color-danger); font-style: italic;">Non disponibile</p>
                   </ion-label>
                 </ion-checkbox>
               </ion-item>
