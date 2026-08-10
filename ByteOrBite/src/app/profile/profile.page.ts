@@ -7,7 +7,7 @@ import {
   IonLabel, IonIcon, IonButton, IonCard, 
   IonCardHeader, IonCardSubtitle, IonCardTitle, 
   IonCardContent, IonGrid, IonRow, IonCol,
-  IonListHeader, IonBadge,
+  IonListHeader, IonBadge, IonAccordionGroup, IonAccordion, IonItem,
   Platform, AlertController, LoadingController, ToastController, ModalController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -38,7 +38,7 @@ import { HttpClient } from '@angular/common/http';
     IonLabel, IonIcon, IonButton, IonCard, 
     IonCardHeader, IonCardSubtitle, IonCardTitle, 
     IonCardContent, IonGrid, IonRow, IonCol,
-    IonListHeader, IonBadge,
+    IonListHeader, IonBadge, IonAccordionGroup, IonAccordion, IonItem,
     CommonModule, FormsModule
   ]
 })
@@ -48,6 +48,14 @@ export class ProfilePage implements OnInit, AfterViewChecked {
   isMobile: boolean;
   ordini: any[] = [];
   
+  get ordiniInCorso() {
+    return this.ordini.filter(o => o.stato !== 'completato');
+  }
+
+  get ordiniCompletati() {
+    return this.ordini.filter(o => o.stato === 'completato');
+  }
+
   private previewMap?: L.Map;
   private lastLat?: number;
   private lastLon?: number;

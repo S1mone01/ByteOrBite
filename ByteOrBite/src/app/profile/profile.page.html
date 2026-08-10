@@ -121,34 +121,79 @@
       </div>
 
       <!-- Cronologia Ordini -->
-      <div class="orders-history-section">
+      <div class="orders-history-section" style="padding-bottom: 40px;">
         <ion-list-header>
           <ion-label>I miei Ordini</ion-label>
         </ion-list-header>
 
         <div *ngIf="ordini.length > 0; else noOrders">
-          <ion-card *ngFor="let ordine of ordini" class="user-order-card">
-            <ion-card-header>
-              <div class="order-card-top">
-                <ion-card-title>Ordine #{{ ordine.id }}</ion-card-title>
-                <ion-badge [color]="ordine.stato === 'completato' ? 'success' : (ordine.stato === 'spedito' ? 'warning' : 'primary')">
-                  {{ ordine.stato | uppercase }}
-                </ion-badge>
+          
+          <!-- Ordini in Corso -->
+          <div *ngIf="ordiniInCorso.length > 0; else noInCorso">
+            <h3 class="orders-subtitle" style="margin-left: 16px; font-size: 1.1em; color: var(--ion-color-medium);">In Corso</h3>
+            <ion-card *ngFor="let ordine of ordiniInCorso" class="user-order-card">
+              <ion-card-header>
+                <div class="order-card-top">
+                  <ion-card-title>Ordine #{{ ordine.id }}</ion-card-title>
+                  <ion-badge [color]="ordine.stato === 'spedito' ? 'warning' : 'primary'">
+                    {{ ordine.stato | uppercase }}
+                  </ion-badge>
+                </div>
+                <ion-card-subtitle>{{ ordine.data_ora | date:'dd/MM/yyyy HH:mm' }}</ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                <div class="order-items-preview">
+                  <p *ngFor="let p of ordine.prodotti">
+                    <strong>{{ p.quantita }}x</strong> {{ p.prodotto_nome }}
+                  </p>
+                </div>
+                <div class="order-card-bottom">
+                  <span class="order-dest">Dest: {{ parseLocation(ordine.destinazione)?.address || ordine.destinazione }}</span>
+                  <span class="order-total">Totale: {{ (ordine.totale + 1.99) | currency:'EUR' }}</span>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </div>
+
+          <ng-template #noInCorso>
+            <div class="no-orders-msg" style="margin: 16px; padding: 16px; text-align: center; border-radius: 12px; background: var(--ion-color-light);">
+              <p style="margin: 0; color: var(--ion-color-medium);">Nessun ordine in corso al momento.</p>
+            </div>
+          </ng-template>
+
+          <!-- Ordini Completati (Accordion) -->
+          <ion-accordion-group *ngIf="ordiniCompletati.length > 0" style="margin-top: 16px;">
+            <ion-accordion value="completati">
+              <ion-item slot="header" color="light" style="border-radius: 12px; margin: 0 16px;">
+                <ion-label>Ordini Completati ({{ ordiniCompletati.length }})</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content" style="padding: 0;">
+                <ion-card *ngFor="let ordine of ordiniCompletati" class="user-order-card">
+                  <ion-card-header>
+                    <div class="order-card-top">
+                      <ion-card-title>Ordine #{{ ordine.id }}</ion-card-title>
+                      <ion-badge color="success">
+                        {{ ordine.stato | uppercase }}
+                      </ion-badge>
+                    </div>
+                    <ion-card-subtitle>{{ ordine.data_ora | date:'dd/MM/yyyy HH:mm' }}</ion-card-subtitle>
+                  </ion-card-header>
+                  <ion-card-content>
+                    <div class="order-items-preview">
+                      <p *ngFor="let p of ordine.prodotti">
+                        <strong>{{ p.quantita }}x</strong> {{ p.prodotto_nome }}
+                      </p>
+                    </div>
+                    <div class="order-card-bottom">
+                      <span class="order-dest">Dest: {{ parseLocation(ordine.destinazione)?.address || ordine.destinazione }}</span>
+                      <span class="order-total">Totale: {{ (ordine.totale + 1.99) | currency:'EUR' }}</span>
+                    </div>
+                  </ion-card-content>
+                </ion-card>
               </div>
-              <ion-card-subtitle>{{ ordine.data_ora | date:'dd/MM/yyyy HH:mm' }}</ion-card-subtitle>
-            </ion-card-header>
-            <ion-card-content>
-              <div class="order-items-preview">
-                <p *ngFor="let p of ordine.prodotti">
-                  <strong>{{ p.quantita }}x</strong> {{ p.prodotto_nome }}
-                </p>
-              </div>
-              <div class="order-card-bottom">
-                <span class="order-dest">Dest: {{ parseLocation(ordine.destinazione)?.address || ordine.destinazione }}</span>
-                <span class="order-total">Totale: {{ (ordine.totale + 1.99) | currency:'EUR' }}</span>
-              </div>
-            </ion-card-content>
-          </ion-card>
+            </ion-accordion>
+          </ion-accordion-group>
+          
         </div>
 
         <ng-template #noOrders>

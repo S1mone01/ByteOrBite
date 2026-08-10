@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { DataService } from './data.service';
 import { AuthService } from './auth.service';
+import { AlertController } from '@ionic/angular/standalone';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +20,9 @@ export class CartService {
 
   constructor(
     private dataService: DataService,
-    private authService: AuthService
+    private authService: AuthService,
+    private alertController: AlertController,
+    private router: Router
   ) {
     this.authService.currentUser$.subscribe(user => {
       if (user) {
@@ -40,10 +44,20 @@ export class CartService {
     });
   }
 
-  addToCart(item: any) {
+  async addToCart(item: any) {
     const currentUser = this.authService.currentUserValue;
     if (!currentUser) {
       console.warn('Utente non loggato, impossibile aggiungere al carrello');
+      const alert = await this.alertController.create({
+        header: 'Accesso Richiesto',
+        message: 'Devi effettuare il login per aggiungere prodotti al carrello.',
+        cssClass: 'modern-alert',
+        buttons: [
+          { text: 'Annulla', role: 'cancel', cssClass: 'alert-button-cancel' },
+          { text: 'Login', cssClass: 'alert-button-confirm', handler: () => this.router.navigate(['/tabs/login']) }
+        ]
+      });
+      await alert.present();
       return;
     }
 

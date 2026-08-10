@@ -17,9 +17,12 @@
     <ion-row>
       <ion-col size="6" size-md="4" size-lg="3" size-xl="2" *ngFor="let panino of panini" class="panino-col">
         
-        <ion-card class="panino-card" (click)="openDetails(panino)">
+        <ion-card class="panino-card" [style.opacity]="panino.disponibile == 0 ? '0.6' : '1'" (click)="panino.disponibile != 0 ? openDetails(panino) : null">
           
-          <div class="img-wrapper">
+          <div class="img-wrapper" style="position: relative;">
+            <div *ngIf="panino.disponibile == 0" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 10; display: flex; align-items: center; justify-content: center; border-radius: 12px 12px 0 0;">
+              <span style="color: white; font-weight: bold; background: var(--ion-color-danger); padding: 4px 8px; border-radius: 4px; font-size: 0.9em;">NON DISPONIBILE</span>
+            </div>
             <ion-img [src]="getImageUrl(panino.immagine_url)" alt="{{ panino.nome }}" class="panino-img"></ion-img>
           </div>
 
@@ -38,13 +41,13 @@
             <p class="panino-description">{{ panino.descrizione || '&nbsp;' }}</p>
             
             <div class="quantity-selector" (click)="$event.stopPropagation()">
-              <ion-button fill="clear" color="danger" (click)="decrementQuantity(panino)" [disabled]="cartQuantities[panino.id] === 0">
+              <ion-button fill="clear" color="danger" (click)="panino.disponibile != 0 ? decrementQuantity(panino) : null" [disabled]="cartQuantities[panino.id] === 0 || panino.disponibile == 0">
                 <ion-icon [name]="cartQuantities[panino.id] === 1 ? 'trash' : 'remove'"></ion-icon>
               </ion-button>
               
-              <span class="quantity-text">{{ cartQuantities[panino.id] }}</span>
+              <span class="quantity-text">{{ cartQuantities[panino.id] || 0 }}</span>
               
-              <ion-button fill="clear" color="success" (click)="incrementQuantity(panino)">
+              <ion-button fill="clear" color="success" (click)="panino.disponibile != 0 ? incrementQuantity(panino) : null" [disabled]="panino.disponibile == 0">
                 <ion-icon name="add"></ion-icon>
               </ion-button>
             </div>

@@ -37,6 +37,16 @@ const Menu = {
                 else resolve({ messaggio: "Menu eliminato" });
             });
         });
+    },
+
+    impostaNonDisponibilePerPanino: (panino_id) => {
+        return new Promise((resolve, reject) => {
+            const sql = "UPDATE menu SET disponibile = 0 WHERE panino_id = ?";
+            db.run(sql, [panino_id], (err) => {
+                if (err) reject(err);
+                else resolve({ messaggio: "Menu associati aggiornati a non disponibili" });
+            });
+        });
     }
 };
 

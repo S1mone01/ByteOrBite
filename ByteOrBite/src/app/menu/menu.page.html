@@ -17,9 +17,12 @@
     <ion-row>
       <ion-col size="6" size-md="4" sizeLg="3" sizeXl="2" *ngFor="let combo of listaMenu">
         
-        <ion-card class="menu-card" (click)="openDetails(combo)">
+        <ion-card class="menu-card" [style.opacity]="combo.disponibile == 0 ? '0.6' : '1'" (click)="combo.disponibile != 0 ? openDetails(combo) : null">
           
-          <div class="img-wrapper">
+          <div class="img-wrapper" style="position: relative;">
+            <div *ngIf="combo.disponibile == 0" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 10; display: flex; align-items: center; justify-content: center; border-radius: 12px 12px 0 0;">
+              <span style="color: white; font-weight: bold; background: var(--ion-color-danger); padding: 4px 8px; border-radius: 4px; font-size: 0.9em;">NON DISPONIBILE</span>
+            </div>
             <ion-img [src]="getImageUrl(combo.immagine_url)" alt="{{ combo.nome }}" class="menu-img"></ion-img>
           </div>
 
@@ -38,13 +41,13 @@
             <p class="menu-description" *ngIf="combo.descrizione">{{ combo.descrizione }}</p>
             
             <div class="quantity-selector" (click)="$event.stopPropagation()">
-              <ion-button fill="clear" color="danger" (click)="decrementQuantity(combo)" [disabled]="cartQuantities[combo.id] === 0">
+              <ion-button fill="clear" color="danger" (click)="combo.disponibile != 0 ? decrementQuantity(combo) : null" [disabled]="cartQuantities[combo.id] === 0 || combo.disponibile == 0">
                 <ion-icon name="remove"></ion-icon>
               </ion-button>
               
               <span class="quantity-text">{{ cartQuantities[combo.id] || 0 }}</span>
               
-              <ion-button fill="clear" color="success" (click)="incrementQuantity(combo)">
+              <ion-button fill="clear" color="success" (click)="combo.disponibile != 0 ? incrementQuantity(combo) : null" [disabled]="combo.disponibile == 0">
                 <ion-icon name="add"></ion-icon>
               </ion-button>
             </div>

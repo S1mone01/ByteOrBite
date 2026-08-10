@@ -275,6 +275,12 @@ app.put('/catalogo/:id', async (req, res) => {
     const { nome, prezzo, immagine_url, disponibile, ingredienti } = req.body;
     try {
         const aggiornato = await Panino.modifica(req.params.id, nome, prezzo, immagine_url, disponibile, ingredienti);
+        
+        const isDisponibile = disponibile === 1 || disponibile === true || disponibile === 'true' || disponibile === '1';
+        if (!isDisponibile) {
+            await Menu.impostaNonDisponibilePerPanino(req.params.id);
+        }
+
         res.json(aggiornato);
     } catch (err) {
         res.status(500).json({ error: "Errore nella modifica" });
