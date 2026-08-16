@@ -14,7 +14,7 @@
       <!-- Colonna Sinistra: Consegna e Prodotti -->
       <div class="left-column">
         <!-- Consegna -->
-        <ion-card class="delivery-card">
+        <ion-card class="delivery-card clickable-address-card" (click)="editAddress()">
           <ion-card-content>
             <div class="delivery-header">
               <ion-icon name="person-outline" color="primary"></ion-icon>
@@ -28,8 +28,13 @@
               <div class="address-header">
                 <ion-icon name="location-outline" color="primary"></ion-icon>
                 <div class="address-info">
-                  <h3>Indirizzo di Consegna</h3>
-                  <p>{{ parseLocation(user.location)?.address || user.location || 'Consegna a domicilio' }}</p>
+                  <div class="address-title-row">
+                    <h3>Indirizzo di Consegna</h3>
+                    <ion-badge color="secondary" class="edit-badge">
+                      <ion-icon name="create-outline"></ion-icon> Modifica
+                    </ion-badge>
+                  </div>
+                  <p class="address-text">{{ parseLocation(user.location)?.address || user.location || 'Clicca per inserire il tuo indirizzo' }}</p>
                 </div>
               </div>
               

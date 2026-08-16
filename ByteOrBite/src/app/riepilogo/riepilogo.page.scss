@@ -72,6 +72,51 @@ ion-header {
   }
 }
 
+.delivery-card {
+  border-radius: 16px;
+  border: 1px solid rgba(var(--ion-color-medium-rgb), 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+
+  &.clickable-address-card {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      border-color: rgba(var(--ion-color-primary-rgb), 0.4);
+    }
+
+    &:active {
+      transform: scale(0.99);
+    }
+
+    .address-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+
+      .edit-badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-weight: 700;
+
+        ion-icon {
+          font-size: 0.85rem;
+          margin: 0;
+          padding: 0;
+          background: transparent;
+        }
+      }
+    }
+  }
+}
+
 .address-section {
   .address-header {
     display: flex;
@@ -85,6 +130,8 @@ ion-header {
     }
 
     .address-info {
+      flex: 1;
+
       h3 {
         margin: 0;
         font-size: 1.1rem;

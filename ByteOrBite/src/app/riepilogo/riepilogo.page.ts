@@ -1,18 +1,25 @@
 import { Component, OnInit, AfterViewChecked, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { 
   IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, 
   IonLabel, IonThumbnail, IonButton, IonButtons, 
   IonBackButton, IonIcon, IonCard, IonCardContent, IonText, IonListHeader,
-  ToastController, IonRadioGroup, IonRadio, IonCheckbox, IonCardHeader, IonCardTitle
+  ToastController, IonRadioGroup, IonRadio, IonCheckbox, IonCardHeader, IonCardTitle,
+  IonBadge, AlertController, LoadingController, ModalController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { locationOutline, personOutline, mapOutline, cashOutline, cardOutline, alertCircleOutline, starOutline, addOutline, removeOutline, checkmarkCircle } from 'ionicons/icons';
+import { 
+  locationOutline, personOutline, mapOutline, cashOutline, 
+  cardOutline, alertCircleOutline, starOutline, addOutline, 
+  removeOutline, checkmarkCircle, createOutline 
+} from 'ionicons/icons';
 import { CartService } from '../services/cart.service';
 import { DataService } from '../services/data.service';
 import { AuthService, User } from '../services/auth.service';
 import { ThemeService } from '../services/theme.service';
+import { MapModalComponent } from '../components/map-modal/map-modal.component';
 import { Observable, Subscription, take } from 'rxjs';
 import { Router } from '@angular/router';
 import * as L from 'leaflet';
@@ -27,7 +34,7 @@ import * as L from 'leaflet';
     IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, 
     IonLabel, IonThumbnail, IonButton, IonButtons, 
     IonBackButton, IonIcon, IonCard, IonCardContent, IonText, IonListHeader,
-    IonRadioGroup, IonRadio, IonCheckbox, IonCardHeader, IonCardTitle
+    IonRadioGroup, IonRadio, IonCheckbox, IonCardHeader, IonCardTitle, IonBadge
   ]
 })
 export class RiepilogoPage implements OnInit, AfterViewChecked, OnDestroy {
@@ -50,12 +57,16 @@ export class RiepilogoPage implements OnInit, AfterViewChecked, OnDestroy {
     private authService: AuthService,
     private themeService: ThemeService,
     private router: Router,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private alertController: AlertController,
+    private loadingController: LoadingController,
+    private modalController: ModalController,
+    private http: HttpClient
   ) {
     addIcons({ 
       locationOutline, personOutline, mapOutline, 
       cashOutline, cardOutline, alertCircleOutline, 
-      starOutline, addOutline, removeOutline, checkmarkCircle 
+      starOutline, addOutline, removeOutline, checkmarkCircle, createOutline 
     });
     this.cartItems$ = this.cartService.cartItems$;
     this.currentUser$ = this.authService.currentUser$;
@@ -140,6 +151,149 @@ export class RiepilogoPage implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
+  async editAddress() {
+    const alert = await this.alertController.create({
+      header: 'Modifica Indirizzo',
+      message: 'Scegli la modalità per aggiornare la posizione di consegna:',
+      cssClass: 'modern-alert location-alert',
+      buttons: [
+        {
+          text: 'Manuale',
+          cssClass: 'alert-button-option inline-button',
+          handler: () => this.showManualLocationInput()
+        },
+        {
+          text: 'Mappa Interattiva',
+          cssClass: 'alert-button-option inline-button',
+          handler: () => this.openMapModal()
+        },
+        {
+          text: 'Annulla',
+          role: 'cancel',
+          cssClass: 'alert-button-cancel full-width-button'
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async showManualLocationInput() {
+    const alert = await this.alertController.create({
+      header: 'Inserisci Indirizzo',
+      cssClass: 'modern-alert',
+      inputs: [
+        {
+          name: 'location',
+          type: 'text',
+          placeholder: 'Via, Città, CAP',
+        }
+      ],
+      buttons: [
+        { text: 'Annulla', role: 'cancel', cssClass: 'alert-button-cancel' },
+        { 
+          text: 'Salva', 
+          cssClass: 'alert-button-confirm',
+          handler: async (data) => {
+            if (data.location) {
+              const loading = await this.loadingController.create({
+                message: 'Ricerca posizione in corso...'
+              });
+              await loading.present();
+
+              this.geocodeAddress(data.location).subscribe({
+                next: (res) => {
+                  loading.dismiss();
+                  if (res && res.length > 0) {
+                    const bestMatch = res[0];
+                    const locationData = JSON.stringify({
+                      address: bestMatch.display_name,
+                      lat: parseFloat(bestMatch.lat),
+                      lon: parseFloat(bestMatch.lon)
+                    });
+                    this.saveLocation(locationData);
+                  } else {
+                    this.saveLocation(data.location);
+                    this.showToast('Indirizzo non trovato sulla mappa, salvato come testo.', 'warning');
+                  }
+                },
+                error: (err) => {
+                  loading.dismiss();
+                  console.error('Errore geocoding', err);
+                  this.saveLocation(data.location);
+                  this.showToast('Errore durante la ricerca della posizione.', 'danger');
+                }
+              });
+            }
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  geocodeAddress(address: string): Observable<any[]> {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`;
+    return this.http.get<any[]>(url);
+  }
+
+  async openMapModal() {
+    const user = JSON.parse(localStorage.getItem('byte_or_bite_user') || '{}');
+    const loc = this.parseLocation(user.location);
+    let initialLat, initialLon;
+
+    if (loc && loc.lat && loc.lon) {
+      initialLat = loc.lat;
+      initialLon = loc.lon;
+    }
+
+    const modal = await this.modalController.create({
+      component: MapModalComponent,
+      cssClass: 'full-screen-modal',
+      componentProps: { initialLat, initialLon }
+    });
+    
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+    if (data && data.address) {
+      const locationData = JSON.stringify({
+        address: data.address,
+        lat: data.coords.lat,
+        lon: data.coords.lon
+      });
+      this.saveLocation(locationData);
+    }
+  }
+
+  saveLocation(locationData: string) {
+    this.currentUser$.pipe(take(1)).subscribe(user => {
+      if (user && user.id) {
+        this.authService.updateUser(user.id, { location: locationData }).subscribe({
+          next: () => {
+            this.showToast('Indirizzo di consegna aggiornato!', 'success');
+            this.lastLat = undefined;
+            this.lastLon = undefined;
+            setTimeout(() => this.updatePreviewMap(), 100);
+          },
+          error: (err) => {
+            console.error('Errore durante l\'aggiornamento dell\'indirizzo:', err);
+            this.showToast('Errore nel salvataggio dell\'indirizzo', 'danger');
+          }
+        });
+      }
+    });
+  }
+
+  async showToast(message: string, color: string = 'success') {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2500,
+      color,
+      position: 'bottom'
+    });
+    await toast.present();
+  }
+
   getImageUrl(path: string) {
     if (!path) return 'assets/1024v5.png';
     if (path.startsWith('http') || path.startsWith('assets/')) {
@@ -173,13 +327,11 @@ export class RiepilogoPage implements OnInit, AfterViewChecked, OnDestroy {
 
   async confirmOrder() {
     this.currentUser$.pipe(take(1)).subscribe(user => {
-      // Calcoliamo lo sconto effettivo basato sui punti
       this.cartItems$.pipe(take(1)).subscribe(items => {
         const discount = this.getPointsDiscount(user, items);
         
         this.cartService.checkout(discount).subscribe({
           next: async () => {
-            // Se sono stati usati punti, scaliamoli
             if (this.usePoints && user && user.id && user.points !== undefined) {
               const usedPoints = discount * 10;
               this.authService.updateUser(user.id, { points: user.points - usedPoints }).subscribe();
@@ -202,3 +354,4 @@ export class RiepilogoPage implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 }
+

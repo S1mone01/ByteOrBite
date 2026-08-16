@@ -59,7 +59,7 @@
     </ion-row>
   </ion-grid>
 
-  <!-- Modal Dettagli Menu -->
+  <!-- Modal Dettagli & Personalizzazione Menu -->
   <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeDetails()" class="custom-modal">
     <ng-template>
       <ion-header>
@@ -81,12 +81,72 @@
         <div class="ion-padding-top">
           <h3>{{ selectedMenu?.nome }}</h3>
           <p class="ion-text-muted" *ngIf="selectedMenu?.descrizione">{{ selectedMenu?.descrizione }}</p>
-          <p class="price-detail">Prezzo: <strong>{{ selectedMenu?.prezzo | currency:'EUR':'symbol':'1.2-2' }}</strong></p>
         </div>
 
-        <ion-button expand="block" color="primary" (click)="addSelectedToCart()" class="ion-margin-top">
-          Aggiungi al Carrello
-        </ion-button>
+        <!-- Personalizzazione Combo -->
+        <div class="combo-customization-section">
+          
+          <!-- Selezione Patatine -->
+          <div class="combo-group" *ngIf="listaPatatine.length > 0">
+            <div class="group-header">
+              <ion-icon name="fast-food-outline" color="secondary"></ion-icon>
+              <span class="group-title">Scegli le Patatine</span>
+            </div>
+
+            <div class="options-grid">
+              <div 
+                *ngFor="let p of listaPatatine" 
+                class="option-card"
+                [class.selected]="selectedPatatina?.id === p.id"
+                (click)="selectPatatina(p)"
+              >
+                <img [src]="getImageUrl(p.immagine_url)" class="option-img" *ngIf="p.immagine_url" />
+                <div class="option-info">
+                  <span class="option-name">{{ p.nome }}</span>
+                  <span class="option-extra" *ngIf="p.sovrapprezzo > 0">+{{ p.sovrapprezzo | currency:'EUR':'symbol':'1.2-2' }}</span>
+                </div>
+                <ion-icon name="checkmark-circle-outline" class="select-check" *ngIf="selectedPatatina?.id === p.id"></ion-icon>
+              </div>
+            </div>
+          </div>
+
+          <!-- Selezione Bibita -->
+          <div class="combo-group" *ngIf="listaBibite.length > 0">
+            <div class="group-header">
+              <ion-icon name="wine-outline" color="primary"></ion-icon>
+              <span class="group-title">Scegli la Bibita</span>
+            </div>
+
+            <div class="options-grid">
+              <div 
+                *ngFor="let b of listaBibite" 
+                class="option-card"
+                [class.selected]="selectedBibita?.id === b.id"
+                (click)="selectBibita(b)"
+              >
+                <img [src]="getImageUrl(b.immagine_url)" class="option-img" *ngIf="b.immagine_url" />
+                <div class="option-info">
+                  <span class="option-name">{{ b.nome }}</span>
+                  <span class="option-extra" *ngIf="b.sovrapprezzo > 0">+{{ b.sovrapprezzo | currency:'EUR':'symbol':'1.2-2' }}</span>
+                </div>
+                <ion-icon name="checkmark-circle-outline" class="select-check" *ngIf="selectedBibita?.id === b.id"></ion-icon>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer-section">
+          <div class="price-summary">
+            <span>Prezzo Totale Menu:</span>
+            <strong class="total-price-tag">{{ calculateTotalPrice() | currency:'EUR':'symbol':'1.2-2' }}</strong>
+          </div>
+
+          <ion-button expand="block" color="primary" (click)="addSelectedToCart()" class="ion-margin-top">
+            Aggiungi al Carrello ({{ calculateTotalPrice() | currency:'EUR':'symbol':'1.2-2' }})
+          </ion-button>
+        </div>
+
       </ion-content>
     </ng-template>
   </ion-modal>
