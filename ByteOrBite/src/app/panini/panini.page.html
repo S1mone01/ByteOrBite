@@ -104,8 +104,8 @@
               <div 
                 *ngFor="let ing of getActiveIngredients(); trackBy: trackByIngId" 
                 class="burger-layer ingredient-layer-item"
-                (click)="toggleIngrediente(ing)"
-                [title]="'Clicca per rimuovere ' + ing.nome"
+                (click)="removeIngredientFromStack(ing)"
+                [title]="'Clicca per diminuire o rimuovere ' + ing.nome"
               >
                 <div class="layer-pill" [ngClass]="getLayerClass(ing.nome)">
                   <img 
@@ -117,8 +117,10 @@
                   <div *ngIf="!ing.immagine_url" class="layer-icon-fallback">
                     <ion-icon [name]="getIngredientIcon(ing.nome)"></ion-icon>
                   </div>
-                  <span class="layer-title-text">{{ ing.nome }}</span>
-                  <span *ngIf="ing.prezzo_extra > 0" class="layer-price-tag">+{{ ing.prezzo_extra | currency:'EUR':'symbol':'1.2-2' }}</span>
+                  <span class="layer-title-text">
+                    <span *ngIf="ing.totalQty > 1" class="layer-qty-prefix">{{ ing.totalQty }}x </span>{{ ing.nome }}
+                  </span>
+                  <span *ngIf="ing.extraPriceTotal > 0" class="layer-price-tag">+{{ ing.extraPriceTotal | currency:'EUR':'symbol':'1.2-2' }}</span>
                   <ion-icon name="close-circle" class="layer-remove-icon"></ion-icon>
                 </div>
               </div>
@@ -155,12 +157,23 @@
             
             <ion-list lines="none" class="ingredients-list">
               <ion-item *ngFor="let ing of ingredientiBase" class="ingredient-item base-ingredient">
-                <ion-checkbox labelPlacement="end" [checked]="ing.checked" (ionChange)="toggleIngrediente(ing)">
-                  <ion-label>
-                    <h2 class="ing-name">{{ ing.nome }}</h2>
-                    <p class="ing-subtitle base-badge">Incluso nel panino</p>
-                  </ion-label>
-                </ion-checkbox>
+                <div class="ing-item-content">
+                  <div class="ing-icon-box">
+                    <img 
+                      *ngIf="ing.immagine_url" 
+                      [src]="getImageUrl(ing.immagine_url)" 
+                      [alt]="ing.nome" 
+                      class="ing-selection-img"
+                    />
+                    <ion-icon *ngIf="!ing.immagine_url" [name]="getIngredientIcon(ing.nome)" class="ing-selection-icon"></ion-icon>
+                  </div>
+                  <ion-checkbox labelPlacement="end" [checked]="ing.checked" (ionChange)="toggleIngrediente(ing)">
+                    <ion-label>
+                      <h2 class="ing-name">{{ ing.nome }}</h2>
+                      <p class="ing-subtitle base-badge">Incluso nel panino</p>
+                    </ion-label>
+                  </ion-checkbox>
+                </div>
               </ion-item>
             </ion-list>
           </div>
@@ -174,13 +187,49 @@
 
             <ion-list lines="none" class="ingredients-list">
               <ion-item *ngFor="let ing of ingredientiExtra" class="ingredient-item extra-ingredient">
-                <ion-checkbox labelPlacement="end" [checked]="ing.checked" (ionChange)="toggleIngrediente(ing)" [disabled]="ing.disponibile == 0">
-                  <ion-label>
+                <div class="ing-item-content">
+                  <div class="ing-icon-box">
+                    <img 
+                      *ngIf="ing.immagine_url" 
+                      [src]="getImageUrl(ing.immagine_url)" 
+                      [alt]="ing.nome" 
+                      class="ing-selection-img"
+                    />
+                    <ion-icon *ngIf="!ing.immagine_url" [name]="getIngredientIcon(ing.nome)" class="ing-selection-icon"></ion-icon>
+                  </div>
+
+                  <div class="ing-text-group">
                     <h2 class="ing-name" [style.textDecoration]="ing.disponibile == 0 ? 'line-through' : 'none'" [style.opacity]="ing.disponibile == 0 ? '0.6' : '1'">{{ ing.nome }}</h2>
                     <p class="ing-subtitle extra-price" *ngIf="ing.prezzo_extra > 0 && ing.disponibile != 0">+ {{ ing.prezzo_extra | currency:'EUR':'symbol':'1.2-2' }}</p>
                     <p class="ing-subtitle extra-price" *ngIf="ing.disponibile == 0" style="color: var(--ion-color-danger); font-style: italic;">Non disponibile</p>
-                  </ion-label>
-                </ion-checkbox>
+                  </div>
+
+                  <div class="extra-qty-controls">
+                    <ion-button 
+                      fill="clear" 
+                      color="danger" 
+                      class="qty-btn"
+                      (click)="decrementExtra(ing)" 
+                      [disabled]="(extraQuantities[ing.id] || 0) === 0 || ing.disponibile == 0"
+                    >
+                      <ion-icon name="remove"></ion-icon>
+                    </ion-button>
+
+                    <span class="qty-count" [class.has-qty]="(extraQuantities[ing.id] || 0) > 0">
+                      {{ extraQuantities[ing.id] || 0 }}
+                    </span>
+
+                    <ion-button 
+                      fill="clear" 
+                      color="success" 
+                      class="qty-btn"
+                      (click)="incrementExtra(ing)" 
+                      [disabled]="ing.disponibile == 0"
+                    >
+                      <ion-icon name="add"></ion-icon>
+                    </ion-button>
+                  </div>
+                </div>
               </ion-item>
             </ion-list>
           </div>
