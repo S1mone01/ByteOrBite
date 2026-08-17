@@ -40,6 +40,9 @@ export class PaniniPage implements OnInit, OnDestroy {
   allIngredienti: any[] = [];
   ingredientiBase: any[] = [];
   ingredientiExtra: any[] = [];
+  extraQuantities: { [key: number]: number } = {};
+  hasBunTop: boolean = true;
+  hasBunBottom: boolean = true;
   cartItems: any[] = [];
   private cartItemsSub: Subscription | null = null;
 
@@ -67,6 +70,12 @@ export class PaniniPage implements OnInit, OnDestroy {
     if (this.cartItemsSub) this.cartItemsSub.unsubscribe();
   }
 
+  isBun(nome: string): boolean {
+    if (!nome) return false;
+    const n = nome.toLowerCase();
+    return n.includes('pane superiore') || n.includes('pane inferiore') || n === 'pane';
+  }
+
   aggiornaQuantitaLocali(items: any[]) {
     // Reset quantita
     Object.keys(this.cartQuantities).forEach(key => this.cartQuantities[+key] = 0);
@@ -85,11 +94,14 @@ export class PaniniPage implements OnInit, OnDestroy {
       next: (data) => {
         this.panini = data;
         this.panini.forEach(p => {
+          if (p.disponibile_db === undefined) {
+            p.disponibile_db = p.disponibile;
+          }
           if (this.cartQuantities[p.id] === undefined) {
             this.cartQuantities[p.id] = 0;
           }
         });
-        // Forza aggiornamento dopo il caricamento dei panini
+        this.calcolaDisponibilitaPanini();
         this.aggiornaQuantitaLocali(this.cartItems);
       },
       error: (err) => {
@@ -102,6 +114,36 @@ export class PaniniPage implements OnInit, OnDestroy {
     this.dataService.getIngredienti().subscribe({
       next: (data) => {
         this.allIngredienti = data;
+        this.calcolaDisponibilitaPanini();
+      }
+    });
+  }
+
+  calcolaDisponibilitaPanini() {
+    if (!this.panini || !this.panini.length || !this.allIngredienti || !this.allIngredienti.length) return;
+
+    this.panini.forEach(panino => {
+      if (panino.disponibile_db === undefined) {
+        panino.disponibile_db = panino.disponibile;
+      }
+
+      // Se il panino stesso è segnato come non disponibile nel DB
+      if (panino.disponibile_db == 0) {
+        panino.disponibile = 0;
+        return;
+      }
+
+      // Se almeno uno degli ingredienti base del panino non è disponibile, rende il panino non disponibile
+      const baseIds = panino.ingredienti || [];
+      const haIngredienteNonDisponibile = baseIds.some((ingId: any) => {
+        const ing = this.allIngredienti.find(i => i.id == ingId);
+        return ing && (ing.disponibile == 0 || ing.disponibile === false);
+      });
+
+      if (haIngredienteNonDisponibile) {
+        panino.disponibile = 0;
+      } else {
+        panino.disponibile = panino.disponibile_db;
       }
     });
   }
@@ -129,14 +171,40 @@ export class PaniniPage implements OnInit, OnDestroy {
     this.selectedPanino = { ...panino };
     const baseIds = panino.ingredienti || [];
     
-    // Separa gli ingredienti base dell'oggetto dagli ingredienti aggiuntivi
+    this.hasBunTop = true;
+    this.hasBunBottom = true;
+
+    // Inizializza quantita extra per tutti gli ingredienti a 0
+    this.extraQuantities = {};
+    this.allIngredienti.forEach(ing => {
+      this.extraQuantities[ing.id] = 0;
+    });
+
+    // Gli ingredienti base del panino (inclusi nel prezzo base)
     this.ingredientiBase = this.allIngredienti
       .filter(ing => baseIds.includes(ing.id))
-      .map(ing => ({ ...ing, isBase: true, checked: true }));
+      .map(ing => {
+        const isTop = ing.nome.toLowerCase().includes('pane superiore');
+        const isBottom = ing.nome.toLowerCase().includes('pane inferiore');
+        return {
+          ...ing,
+          isBase: true,
+          checked: true,
+          isBunTop: isTop,
+          isBunBottom: isBottom
+        };
+      });
 
+    // Sincronizza stato pani se presenti negli ingredienti base da DB
+    const topIng = this.ingredientiBase.find(i => i.isBunTop);
+    if (topIng) this.hasBunTop = topIng.checked;
+    const bottomIng = this.ingredientiBase.find(i => i.isBunBottom);
+    if (bottomIng) this.hasBunBottom = bottomIng.checked;
+
+    // Tutti gli ingredienti disponibili per aggiunta extra (esclusi pane superiore e inferiore)
     this.ingredientiExtra = this.allIngredienti
-      .filter(ing => !baseIds.includes(ing.id))
-      .map(ing => ({ ...ing, isBase: false, checked: false }));
+      .filter(ing => !this.isBun(ing.nome))
+      .map(ing => ({ ...ing, isBase: false }));
 
     this.isModalOpen = true;
   }
@@ -146,13 +214,83 @@ export class PaniniPage implements OnInit, OnDestroy {
     this.selectedPanino = null;
     this.ingredientiBase = [];
     this.ingredientiExtra = [];
+    this.extraQuantities = {};
+    this.hasBunTop = true;
+    this.hasBunBottom = true;
+  }
+
+  toggleBunTop() {
+    this.hasBunTop = !this.hasBunTop;
+    const topIng = this.ingredientiBase.find(i => i.isBunTop || i.nome.toLowerCase().includes('pane superiore'));
+    if (topIng) {
+      topIng.checked = this.hasBunTop;
+    }
+  }
+
+  toggleBunBottom() {
+    this.hasBunBottom = !this.hasBunBottom;
+    const bottomIng = this.ingredientiBase.find(i => i.isBunBottom || i.nome.toLowerCase().includes('pane inferiore'));
+    if (bottomIng) {
+      bottomIng.checked = this.hasBunBottom;
+    }
+  }
+
+  incrementExtra(ing: any) {
+    if (ing.disponibile == 0) return;
+    this.extraQuantities[ing.id] = (this.extraQuantities[ing.id] || 0) + 1;
+  }
+
+  decrementExtra(ing: any) {
+    if ((this.extraQuantities[ing.id] || 0) > 0) {
+      this.extraQuantities[ing.id]--;
+    }
   }
 
   getActiveIngredients() {
-    return [
-      ...this.ingredientiBase.filter(ing => ing.checked),
-      ...this.ingredientiExtra.filter(ing => ing.checked)
-    ];
+    const result: any[] = [];
+
+    this.allIngredienti.forEach(ing => {
+      if (this.isBun(ing.nome)) return; // I pani hanno la vista grafica dedicata in cima e in fondo
+
+      const baseItem = this.ingredientiBase.find(b => b.id === ing.id);
+      const hasBase = baseItem && baseItem.checked ? 1 : 0;
+      const extraQty = this.extraQuantities[ing.id] || 0;
+      const totalQty = hasBase + extraQty;
+
+      if (totalQty > 0) {
+        result.push({
+          ...ing,
+          isBase: hasBase > 0 && extraQty === 0,
+          hasBase: hasBase > 0,
+          extraQty: extraQty,
+          totalQty: totalQty,
+          extraPriceTotal: extraQty * (ing.prezzo_extra || 0)
+        });
+      }
+    });
+
+    return result;
+  }
+
+  removeIngredientFromStack(ing: any) {
+    if (this.extraQuantities[ing.id] && this.extraQuantities[ing.id] > 0) {
+      this.extraQuantities[ing.id]--;
+    } else {
+      const baseItem = this.ingredientiBase.find(b => b.id === ing.id);
+      if (baseItem) {
+        baseItem.checked = false;
+      }
+    }
+  }
+
+  toggleIngrediente(ing: any) {
+    ing.checked = !ing.checked;
+    if (ing.isBunTop || ing.nome.toLowerCase().includes('pane superiore')) {
+      this.hasBunTop = ing.checked;
+    }
+    if (ing.isBunBottom || ing.nome.toLowerCase().includes('pane inferiore')) {
+      this.hasBunBottom = ing.checked;
+    }
   }
 
   trackByIngId(index: number, item: any) {
@@ -182,23 +320,46 @@ export class PaniniPage implements OnInit, OnDestroy {
   addSelectedToCart() {
     if (!this.selectedPanino) return;
 
-    // Rimozione degli ingredienti base deselezionati
-    const removed = this.ingredientiBase
-      .filter(ing => !ing.checked)
-      .map(ing => `-${ing.nome}`);
+    const removed: string[] = [];
 
-    // Aggiunta degli ingredienti extra selezionati
-    const added = this.ingredientiExtra
-      .filter(ing => ing.checked)
-      .map(ing => `+${ing.nome}`);
-    
+    // Se il pane superiore o inferiore è stato rimosso
+    const hasTopBaseIng = this.ingredientiBase.some(i => i.isBunTop || i.nome.toLowerCase().includes('pane superiore'));
+    const hasBottomBaseIng = this.ingredientiBase.some(i => i.isBunBottom || i.nome.toLowerCase().includes('pane inferiore'));
+
+    if (!this.hasBunTop && !hasTopBaseIng) {
+      removed.push('-Pane Superiore');
+    }
+    if (!this.hasBunBottom && !hasBottomBaseIng) {
+      removed.push('-Pane Inferiore');
+    }
+
+    this.ingredientiBase.forEach(ing => {
+      if (!ing.checked) {
+        removed.push(`-${ing.nome}`);
+      }
+    });
+
+    // Aggiunta degli ingredienti extra selezionati con quantita
+    const added: string[] = [];
+    this.allIngredienti.forEach(ing => {
+      if (this.isBun(ing.nome)) return;
+      const qty = this.extraQuantities[ing.id] || 0;
+      if (qty === 1) {
+        added.push(`+${ing.nome}`);
+      } else if (qty > 1) {
+        added.push(`+${qty}x ${ing.nome}`);
+      }
+    });
+
     const modifiche = [...added, ...removed].join(', ');
 
-    // Calcolo del prezzo finale: gli ingredienti base non aggiungono costi extra
+    // Calcolo del prezzo finale
     let prezzoFinale = this.selectedPanino.prezzo;
-    this.ingredientiExtra.forEach(ing => {
-      if (ing.checked) {
-        prezzoFinale += ing.prezzo_extra;
+    this.allIngredienti.forEach(ing => {
+      if (this.isBun(ing.nome)) return;
+      const qty = this.extraQuantities[ing.id] || 0;
+      if (qty > 0) {
+        prezzoFinale += qty * (ing.prezzo_extra || 0);
       }
     });
 
@@ -210,10 +371,6 @@ export class PaniniPage implements OnInit, OnDestroy {
     });
 
     this.closeDetails();
-  }
-
-  toggleIngrediente(ing: any) {
-    ing.checked = !ing.checked;
   }
 
   getImageUrl(path: string) {
