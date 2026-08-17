@@ -83,19 +83,25 @@
               <span class="exploded-title">Vista Esplosa</span>
             </div>
             <ion-badge color="secondary" class="layer-count-badge">
-              {{ getActiveIngredients().length + 2 }} strati
+              {{ getActiveIngredients().length + (hasBunTop ? 1 : 0) + (hasBunBottom ? 1 : 0) }} strati
             </ion-badge>
           </div>
 
           <div class="exploded-burger-stack">
-            <!-- Pane Superiore -->
-            <div class="burger-layer bun-top-layer">
+            <!-- Pane Superiore (Cliccabile / Rimovibile) -->
+            <div 
+              *ngIf="hasBunTop" 
+              class="burger-layer bun-top-layer interactive-bun"
+              (click)="toggleBunTop()"
+              title="Clicca per rimuovere il Pane Superiore"
+            >
               <div class="bun-graphic bun-top">
                 <div class="sesame-seed s1"></div>
                 <div class="sesame-seed s2"></div>
                 <div class="sesame-seed s3"></div>
                 <div class="sesame-seed s4"></div>
                 <span class="bun-label">Pane Superiore</span>
+                <ion-icon name="close-circle" class="bun-remove-icon"></ion-icon>
               </div>
             </div>
 
@@ -131,16 +137,22 @@
               </div>
             </div>
 
-            <!-- Pane Inferiore -->
-            <div class="burger-layer bun-bottom-layer">
+            <!-- Pane Inferiore (Cliccabile / Rimovibile) -->
+            <div 
+              *ngIf="hasBunBottom" 
+              class="burger-layer bun-bottom-layer interactive-bun"
+              (click)="toggleBunBottom()"
+              title="Clicca per rimuovere il Pane Inferiore"
+            >
               <div class="bun-graphic bun-bottom">
                 <span class="bun-label">Pane Inferiore</span>
+                <ion-icon name="close-circle" class="bun-remove-icon"></ion-icon>
               </div>
             </div>
           </div>
 
           <p class="exploded-hint">
-            💡 Tocca uno strato per rimuoverlo o selezionalo dalla lista in basso per aggiungerlo.
+            💡 Tocca uno strato (compreso il pane) per rimuoverlo o selezionalo dalla lista in basso per personalizzarlo.
           </p>
         </div>
 

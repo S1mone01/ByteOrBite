@@ -478,6 +478,17 @@ ion-col.panino-col, ion-col {
     /* PANE SUPERIORE */
     .bun-top-layer {
       z-index: 100;
+      cursor: pointer;
+
+      &:hover .bun-graphic.bun-top {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 22px rgba(231, 111, 81, 0.5);
+        .bun-remove-icon {
+          opacity: 1;
+          transform: scale(1.1);
+        }
+      }
+
       .bun-graphic.bun-top {
         width: 90%;
         height: 48px;
@@ -489,6 +500,7 @@ ion-col.panino-col, ion-col {
         justify-content: center;
         box-shadow: 0 6px 16px rgba(231, 111, 81, 0.35);
         border: 2px solid #e76f51;
+        transition: all 0.25s ease;
 
         .bun-label {
           color: #ffffff;
@@ -497,6 +509,15 @@ ion-col.panino-col, ion-col {
           text-shadow: 0 1px 3px rgba(0,0,0,0.5);
           letter-spacing: 1px;
           text-transform: uppercase;
+        }
+
+        .bun-remove-icon {
+          position: absolute;
+          right: 14px;
+          font-size: 1.3rem;
+          color: #ffffff;
+          opacity: 0.6;
+          transition: all 0.2s ease;
         }
 
         .sesame-seed {
@@ -647,6 +668,17 @@ ion-col.panino-col, ion-col {
     /* PANE INFERIORE */
     .bun-bottom-layer {
       z-index: 10;
+      cursor: pointer;
+
+      &:hover .bun-graphic.bun-bottom {
+        transform: translateY(2px) scale(1.02);
+        box-shadow: 0 6px 16px rgba(212, 163, 115, 0.5);
+        .bun-remove-icon {
+          opacity: 1;
+          transform: scale(1.1);
+        }
+      }
+
       .bun-graphic.bun-bottom {
         width: 85%;
         height: 34px;
@@ -657,6 +689,8 @@ ion-col.panino-col, ion-col {
         justify-content: center;
         box-shadow: 0 4px 12px rgba(212, 163, 115, 0.3);
         border: 2px solid #d4a373;
+        position: relative;
+        transition: all 0.25s ease;
 
         .bun-label {
           color: #ffffff;
@@ -665,6 +699,15 @@ ion-col.panino-col, ion-col {
           text-shadow: 0 1px 3px rgba(0,0,0,0.5);
           letter-spacing: 1px;
           text-transform: uppercase;
+        }
+
+        .bun-remove-icon {
+          position: absolute;
+          right: 14px;
+          font-size: 1.2rem;
+          color: #ffffff;
+          opacity: 0.6;
+          transition: all 0.2s ease;
         }
       }
     }
