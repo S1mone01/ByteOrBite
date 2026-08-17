@@ -13,7 +13,7 @@ import { addIcons } from 'ionicons';
 import { 
   locationOutline, personOutline, mapOutline, cashOutline, 
   cardOutline, alertCircleOutline, starOutline, addOutline, 
-  removeOutline, checkmarkCircle, createOutline 
+  removeOutline, checkmarkCircle, createOutline, ticketOutline, sparklesOutline 
 } from 'ionicons/icons';
 import { CartService } from '../services/cart.service';
 import { DataService } from '../services/data.service';
@@ -42,8 +42,9 @@ export class RiepilogoPage implements OnInit, AfterViewChecked, OnDestroy {
   currentUser$: Observable<User | null>;
   paymentMethod: string = 'contanti';
   deliveryFee: number = 1.99;
-  usePoints: boolean = false;
-  pointsToUse: number = 0;
+  
+  useCoupon: boolean = false;
+  selectedCouponPercentage: number = 0;
   
   private previewMap?: L.Map;
   private lastLat?: number;
@@ -66,7 +67,8 @@ export class RiepilogoPage implements OnInit, AfterViewChecked, OnDestroy {
     addIcons({ 
       locationOutline, personOutline, mapOutline, 
       cashOutline, cardOutline, alertCircleOutline, 
-      starOutline, addOutline, removeOutline, checkmarkCircle, createOutline 
+      starOutline, addOutline, removeOutline, checkmarkCircle, createOutline,
+      ticketOutline, sparklesOutline
     });
     this.cartItems$ = this.cartService.cartItems$;
     this.currentUser$ = this.authService.currentUser$;
@@ -307,36 +309,66 @@ export class RiepilogoPage implements OnInit, AfterViewChecked, OnDestroy {
     return items.reduce((acc, item) => acc + (item.prezzo_unitario * item.quantita), 0);
   }
 
-  getPointsDiscount(user: User | null, items: any[] | null): number {
-    if (!this.usePoints || !user || !user.points || !items) return 0;
-    
-    const subtotal = this.getCartSubtotal(items) + this.deliveryFee;
-    const maxDiscountPossible = subtotal - 1; // Deve rimanere almeno 1 euro
-    
-    if (maxDiscountPossible <= 0) return 0;
+  // Restituisce i coupon sbloccati in base ai punti dell'utente (ogni 10 punti 5% di sconto, max 30%)
+  getAvailableCoupons(userPoints: number = 0) {
+    const allCoupons = [
+      { points: 10, percentage: 5, label: '5% Sconto (10 Punti)' },
+      { points: 20, percentage: 10, label: '10% Sconto (20 Punti)' },
+      { points: 30, percentage: 15, label: '15% Sconto (30 Punti)' },
+      { points: 40, percentage: 20, label: '20% Sconto (40 Punti)' },
+      { points: 50, percentage: 25, label: '25% Sconto (50 Punti)' },
+      { points: 60, percentage: 30, label: '30% Sconto - MAX (60 Punti)' }
+    ];
 
-    const discountFromPoints = Math.floor(user.points / 10);
-    return Math.min(discountFromPoints, maxDiscountPossible);
+    return allCoupons.filter(c => c.points <= userPoints);
+  }
+
+  onCouponToggle(userPoints: number = 0) {
+    if (this.useCoupon) {
+      const available = this.getAvailableCoupons(userPoints);
+      if (available.length > 0) {
+        this.selectedCouponPercentage = available[available.length - 1].percentage;
+      } else {
+        this.selectedCouponPercentage = 0;
+      }
+    } else {
+      this.selectedCouponPercentage = 0;
+    }
+  }
+
+  selectCouponTier(percentage: number) {
+    this.selectedCouponPercentage = percentage;
+  }
+
+  getPointsDiscount(user: User | null, items: any[] | null): number {
+    if (!this.useCoupon || !user || !user.points || !items || !this.selectedCouponPercentage) return 0;
+    
+    const subtotal = this.getCartSubtotal(items);
+    if (subtotal <= 0) return 0;
+
+    const discount = (subtotal * this.selectedCouponPercentage) / 100;
+    return Math.round(discount * 100) / 100;
+  }
+
+  getUsedPoints(): number {
+    if (!this.useCoupon || !this.selectedCouponPercentage) return 0;
+    return (this.selectedCouponPercentage / 5) * 10;
   }
 
   getFinalTotal(user: User | null, items: any[] | null) {
     const subtotal = this.getCartSubtotal(items);
     const discount = this.getPointsDiscount(user, items);
-    return subtotal + this.deliveryFee - discount;
+    return Math.max(0, subtotal - discount) + this.deliveryFee;
   }
 
   async confirmOrder() {
     this.currentUser$.pipe(take(1)).subscribe(user => {
       this.cartItems$.pipe(take(1)).subscribe(items => {
         const discount = this.getPointsDiscount(user, items);
+        const usedPoints = this.getUsedPoints();
         
-        this.cartService.checkout(discount).subscribe({
+        this.cartService.checkout(discount, usedPoints).subscribe({
           next: async () => {
-            if (this.usePoints && user && user.id && user.points !== undefined) {
-              const usedPoints = discount * 10;
-              this.authService.updateUser(user.id, { points: user.points - usedPoints }).subscribe();
-            }
-
             const toast = await this.toastController.create({
               message: 'Ordine inviato con successo! Grazie per aver scelto ByteOrBite.',
               duration: 3000,
@@ -354,4 +386,5 @@ export class RiepilogoPage implements OnInit, AfterViewChecked, OnDestroy {
     });
   }
 }
+
 

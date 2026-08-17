@@ -98,21 +98,41 @@
           </ion-radio-group>
         </div>
 
-        <!-- Sconto Punti -->
-        <ion-card class="points-discount-card" *ngIf="user.points && user.points >= 10">
+        <!-- Sistema Coupon Punti -->
+        <ion-card class="points-coupon-card" *ngIf="user.points && user.points >= 10">
           <ion-card-content>
-            <div class="points-info">
-              <ion-icon name="star-outline" color="warning"></ion-icon>
-              <div class="points-text">
-                <h3>Utilizza i tuoi punti</h3>
-                <p>Hai <strong>{{ user.points }}</strong> punti disponibili.</p>
-                <p class="discount-hint">Ogni 10 punti ricevi 1€ di sconto!</p>
+            <div class="coupon-header">
+              <div class="header-left">
+                <ion-icon name="ticket-outline" color="warning" class="coupon-icon"></ion-icon>
+                <div class="coupon-header-text">
+                  <h3>Riscatta Coupon Punti</h3>
+                  <p>Hai <strong>{{ user.points }}</strong> punti accumulati (10 Punti = 5% Sconto)</p>
+                </div>
               </div>
-              <ion-checkbox [(ngModel)]="usePoints" slot="end"></ion-checkbox>
+              <ion-checkbox [(ngModel)]="useCoupon" (ionChange)="onCouponToggle(user.points)"></ion-checkbox>
             </div>
-            <div class="active-discount-msg" *ngIf="usePoints">
-              <ion-icon name="checkmark-circle" color="success"></ion-icon>
-              <span>Sconto di {{ getPointsDiscount(user, cartItems$ | async) | currency:'EUR' }} applicato!</span>
+
+            <!-- Sezione Selezione Livello Coupon -->
+            <div class="coupon-selection-body" *ngIf="useCoupon">
+              <p class="section-subtitle">Scegli il coupon da applicare all'ordine (max 30%):</p>
+              
+              <div class="coupon-tiers-grid">
+                <div 
+                  *ngFor="let coupon of getAvailableCoupons(user.points)"
+                  class="coupon-tier-pill"
+                  [class.selected]="selectedCouponPercentage === coupon.percentage"
+                  (click)="selectCouponTier(coupon.percentage)"
+                >
+                  <div class="tier-percentage">-{{ coupon.percentage }}%</div>
+                  <div class="tier-cost">{{ coupon.points }} Punti</div>
+                  <ion-icon name="checkmark-circle" class="check-icon" *ngIf="selectedCouponPercentage === coupon.percentage"></ion-icon>
+                </div>
+              </div>
+
+              <div class="active-coupon-banner" *ngIf="selectedCouponPercentage > 0">
+                <ion-icon name="sparkles-outline" color="success"></ion-icon>
+                <span>Coupon <strong>-{{ selectedCouponPercentage }}%</strong> attivo! Risparmi {{ getPointsDiscount(user, cartItems$ | async) | currency:'EUR':'symbol':'1.2-2' }} (costo: {{ getUsedPoints() }} punti)</span>
+              </div>
             </div>
           </ion-card-content>
         </ion-card>
@@ -125,15 +145,15 @@
           <ion-card-content>
             <div class="cost-row">
               <span>Subtotale prodotti:</span>
-              <span>{{ getCartSubtotal(cartItems$ | async) | currency:'EUR' }}</span>
+              <span>{{ getCartSubtotal(cartItems$ | async) | currency:'EUR':'symbol':'1.2-2' }}</span>
             </div>
             <div class="cost-row">
               <span>Spese di consegna:</span>
-              <span>{{ 1.99 | currency:'EUR' }}</span>
+              <span>{{ 1.99 | currency:'EUR':'symbol':'1.2-2' }}</span>
             </div>
-            <div class="cost-row discount" *ngIf="usePoints && getPointsDiscount(user, cartItems$ | async) > 0">
-              <span>Sconto punti:</span>
-              <span>-{{ getPointsDiscount(user, cartItems$ | async) | currency:'EUR' }}</span>
+            <div class="cost-row discount" *ngIf="useCoupon && getPointsDiscount(user, cartItems$ | async) > 0">
+              <span>Sconto Coupon (-{{ selectedCouponPercentage }}%):</span>
+              <span>-{{ getPointsDiscount(user, cartItems$ | async) | currency:'EUR':'symbol':'1.2-2' }}</span>
             </div>
             <div class="total-row">
               <span>Totale Finale:</span>

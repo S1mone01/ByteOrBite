@@ -71,13 +71,11 @@ export class PaniniPage implements OnInit, OnDestroy {
     // Reset quantita
     Object.keys(this.cartQuantities).forEach(key => this.cartQuantities[+key] = 0);
     
-    // Solo i panini "base" (senza modifiche) vengono mostrati nel selettore della card
+    // Conteggia tutti i panini presenti nel carrello con lo stesso nome, sia base che personalizzati
     items.forEach(item => {
-      if (item.tipo_prodotto === 'panino' && (!item.modifiche || item.modifiche === '')) {
-        const panino = this.panini.find(p => p.nome === item.prodotto_nome);
-        if (panino) {
-          this.cartQuantities[panino.id] = item.quantita;
-        }
+      const panino = this.panini.find(p => p.nome === item.prodotto_nome);
+      if (panino) {
+        this.cartQuantities[panino.id] = (this.cartQuantities[panino.id] || 0) + item.quantita;
       }
     });
   }
@@ -113,18 +111,17 @@ export class PaniniPage implements OnInit, OnDestroy {
     this.cartService.addToCart({
       ...panino,
       quantita: 1,
-      modifiche: '' // Default version from the card
+      modifiche: '' // Version base dalla card
     });
   }
 
   decrementQuantity(panino: any, event?: Event) {
     if (event) event.stopPropagation();
-    const existingItem = this.cartItems.find(
-      i => i.prodotto_nome === panino.nome && (!i.modifiche || i.modifiche === '')
-    );
+    const matchingItems = this.cartItems.filter(i => i.prodotto_nome === panino.nome);
     
-    if (existingItem) {
-      this.cartService.updateQuantity(existingItem.id, existingItem.quantita - 1);
+    if (matchingItems.length > 0) {
+      const itemToDecrement = matchingItems[matchingItems.length - 1];
+      this.cartService.updateQuantity(itemToDecrement.id, itemToDecrement.quantita - 1);
     }
   }
 
