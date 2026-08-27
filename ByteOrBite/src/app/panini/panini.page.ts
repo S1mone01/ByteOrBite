@@ -8,7 +8,7 @@ import {
   IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
   IonCardTitle, IonCardContent, IonButton, IonIcon, 
   IonText, IonBadge, IonImg, IonModal, IonList, IonItem, IonLabel, IonCheckbox,
-  IonButtons
+  IonButtons, IonFooter
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
@@ -28,7 +28,7 @@ import { FormsModule } from '@angular/forms';
     IonHeader, IonToolbar, IonTitle, IonContent, 
     IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
     IonCardTitle, IonCardContent, IonButton, IonIcon, 
-    IonText, IonBadge, IonImg, IonModal, IonList, IonItem, IonLabel, IonCheckbox, IonButtons
+    IonText, IonBadge, IonImg, IonModal, IonList, IonItem, IonLabel, IonCheckbox, IonButtons, IonFooter
   ],
 })
 export class PaniniPage implements OnInit, OnDestroy {
@@ -315,6 +315,36 @@ export class PaniniPage implements OnInit, OnDestroy {
     if (n.includes('insalata') || n.includes('lattuga') || n.includes('pomodoro')) return 'leaf-outline';
     if (n.includes('formaggio') || n.includes('cheddar')) return 'nutrition-outline';
     return 'fast-food-outline';
+  }
+
+  getPrezzoFinale(): number {
+    if (!this.selectedPanino) return 0;
+    let prezzoFinale = this.selectedPanino.prezzo;
+    this.allIngredienti.forEach(ing => {
+      if (this.isBun(ing.nome)) return;
+      const qty = this.extraQuantities[ing.id] || 0;
+      if (qty > 0) {
+        prezzoFinale += qty * (ing.prezzo_extra || 0);
+      }
+    });
+    return prezzoFinale;
+  }
+
+  getLayerOverlap(): number {
+    const total = this.getActiveIngredients().length + (this.hasBunTop ? 1 : 0) + (this.hasBunBottom ? 1 : 0);
+    // Un overlap dinamico ma limitato per evitare schiacciamenti
+    if (total <= 4) return -12;
+    if (total <= 6) return -15;
+    if (total <= 8) return -18;
+    return -20;
+  }
+
+  getBurgerMaxWidth(): string {
+    const total = this.getActiveIngredients().length + (this.hasBunTop ? 1 : 0) + (this.hasBunBottom ? 1 : 0);
+    // Meno aggressivo sul restringimento
+    if (total <= 5) return '380px';
+    if (total <= 7) return '320px';
+    return '280px';
   }
 
   addSelectedToCart() {

@@ -47,17 +47,8 @@ export class CartService {
   async addToCart(item: any) {
     const currentUser = this.authService.currentUserValue;
     if (!currentUser) {
-      console.warn('Utente non loggato, impossibile aggiungere al carrello');
-      const alert = await this.alertController.create({
-        header: 'Accesso Richiesto',
-        message: 'Devi effettuare il login per aggiungere prodotti al carrello.',
-        cssClass: 'modern-alert',
-        buttons: [
-          { text: 'Annulla', role: 'cancel', cssClass: 'alert-button-cancel' },
-          { text: 'Login', cssClass: 'alert-button-confirm', handler: () => this.router.navigate(['/tabs/login']) }
-        ]
-      });
-      await alert.present();
+      console.warn('Utente non loggato, reindirizzamento al login');
+      this.router.navigate(['/tabs/login']);
       return;
     }
 

@@ -1,9 +1,20 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { 
-  IonContent
+  IonContent,
+  IonButton,
+  IonIcon,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { starOutline, arrowForwardOutline, fastFoodOutline, restaurantOutline, personOutline } from 'ionicons/icons';
+import { starOutline, arrowForwardOutline, fastFoodOutline, restaurantOutline, personOutline, personCircleOutline } from 'ionicons/icons';
+import { DataService } from '../services/data.service';
 
 @Component({
   selector: 'app-home',
@@ -11,11 +22,29 @@ import { starOutline, arrowForwardOutline, fastFoodOutline, restaurantOutline, p
   styleUrls: ['home.page.scss'],
   standalone: true,
   imports: [
-    IonContent
+    IonContent,
+    IonButton,
+    IonIcon,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
+    RouterLink
   ],
 })
 export class HomePage {
-  constructor() {
-    addIcons({ starOutline, arrowForwardOutline, fastFoodOutline, restaurantOutline, personOutline });
+  constructor(private dataService: DataService) {
+    addIcons({ starOutline, arrowForwardOutline, fastFoodOutline, restaurantOutline, personOutline, personCircleOutline });
+  }
+
+  getImageUrl(path: string) {
+    if (!path) return 'assets/1024v5.png';
+    if (path.startsWith('http') || path.startsWith('assets/')) {
+      return path;
+    }
+    return `${this.dataService.getApiUrl()}/${path}`;
   }
 }

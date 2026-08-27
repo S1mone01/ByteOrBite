@@ -1,3 +1,70 @@
 <ion-content>
-  <!-- Spazio pronto per i tuoi contenuti della Home -->
+  <div class="home-container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="hero-overlay">
+        <img src="assets/verticale.png" alt="ByteOrBite Logo" class="hero-logo">
+        <p class="ion-text-center">Il gusto a portata di click</p>
+        <ion-button color="primary" shape="round" size="large" routerLink="/tabs/menu">
+          Ordina Ora
+          <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Highlights Section -->
+    <div class="highlights-section">
+      <h2 class="section-title">Scopri il Nostro Mondo</h2>
+      <ion-grid>
+        <ion-row class="ion-justify-content-center">
+          <!-- Card 1: Panini -->
+          <ion-col size="12" size-md="4" size-lg="3">
+            <ion-card routerLink="/tabs/panini">
+              <img [src]="getImageUrl('uploads/panini/1779790463812-536875792.jpg')" alt="I Nostri Panini" />
+              <ion-card-header>
+                <ion-card-title>
+                  <ion-icon name="fast-food-outline"></ion-icon> I Nostri Panini
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                Gusta i nostri deliziosi panini preparati con ingredienti freschi e di qualità.
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <!-- Card 2: Menu Completo -->
+          <ion-col size="12" size-md="4" size-lg="3">
+            <ion-card routerLink="/tabs/menu">
+              <img [src]="getImageUrl('uploads/menu/1786186120571-946822353.png')" alt="Menu Completo" />
+              <ion-card-header>
+                <ion-card-title>
+                  <ion-icon name="restaurant-outline"></ion-icon> Menu Completo
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                Scopri tutte le nostre offerte, dai fritti ai dolci, per un pasto completo.
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <!-- Card 3: Profilo/Preferiti -->
+          <ion-col size="12" size-md="4" size-lg="3">
+            <ion-card routerLink="/tabs/profile">
+              <div class="profile-icon-container">
+                <ion-icon name="person-circle-outline"></ion-icon>
+              </div>
+              <ion-card-header>
+                <ion-card-title>
+                  <ion-icon name="person-outline"></ion-icon> Area Personale
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                Gestisci i tuoi ordini, i tuoi preferiti e il tuo account in modo semplice.
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+  </div>
 </ion-content>

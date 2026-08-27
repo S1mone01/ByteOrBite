@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
+import { authGuard } from '../guards/auth.guard';
+import { guestGuard } from '../guards/guest.guard';
+import { adminGuard } from '../guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -25,21 +28,25 @@ export const routes: Routes = [
         path: 'login',
         loadComponent: () =>
           import('../login/login.page').then((m) => m.LoginPage),
+        canActivate: [guestGuard]
       },
       {
         path: 'profile',
         loadComponent: () =>
           import('../profile/profile.page').then((m) => m.ProfilePage),
+        canActivate: [authGuard]
       },
       {
         path: 'manage',
         loadComponent: () =>
           import('../manage/manage.page').then((m) => m.ManagePage),
+        canActivate: [authGuard, adminGuard]
       },
       {
         path: 'riepilogo',
         loadComponent: () =>
           import('../riepilogo/riepilogo.page').then((m) => m.RiepilogoPage),
+        canActivate: [authGuard]
       },
       {
         path: '',

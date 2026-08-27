@@ -73,63 +73,52 @@
         </ion-toolbar>
       </ion-header>
 
-      <ion-content class="ion-padding">
+      <ion-content>
         
         <!-- Vista Esplosa dell'Hamburger -->
-        <div class="exploded-burger-wrapper">
-          <div class="exploded-header">
-            <div class="exploded-title-group">
-              <ion-icon name="layers-outline" color="secondary" class="title-icon"></ion-icon>
-              <span class="exploded-title">Vista Esplosa</span>
-            </div>
-            <ion-badge color="secondary" class="layer-count-badge">
-              {{ getActiveIngredients().length + (hasBunTop ? 1 : 0) + (hasBunBottom ? 1 : 0) }} strati
-            </ion-badge>
-          </div>
-
-          <div class="exploded-burger-stack">
+        
+        <ion-grid class="split-layout-grid">
+          <ion-row>
+            <ion-col size="12" size-md="6" class="left-col-sticky ion-padding-top ion-padding-horizontal">
+          <div class="exploded-burger-wrapper">
+            <div class="exploded-burger-stack" [style.maxWidth]="getBurgerMaxWidth()" style="transition: max-width 0.3s ease;">
             <!-- Pane Superiore (Cliccabile / Rimovibile) -->
-            <div 
-              *ngIf="hasBunTop" 
-              class="burger-layer bun-top-layer interactive-bun"
-              (click)="toggleBunTop()"
-              title="Clicca per rimuovere il Pane Superiore"
-            >
-              <div class="bun-graphic bun-top">
-                <div class="sesame-seed s1"></div>
-                <div class="sesame-seed s2"></div>
-                <div class="sesame-seed s3"></div>
-                <div class="sesame-seed s4"></div>
-                <span class="bun-label">Pane Superiore</span>
-                <ion-icon name="close-circle" class="bun-remove-icon"></ion-icon>
+              <div 
+                *ngIf="hasBunTop" 
+                class="burger-layer bun-top-layer interactive-bun"
+                (click)="toggleBunTop()"
+                title="Clicca per rimuovere il Pane Superiore"
+              >
+                <div class="ingredient-image-stack">
+                  <img [src]="getImageUrl('uploads/ingredienti/1786361381842-886183848.jpeg')" alt="Pane Superiore" class="real-ingredient-img bun-img">
+                </div>
               </div>
-            </div>
 
             <!-- Strati Ingredienti Attivi -->
             <div class="active-layers-list">
-              <div 
-                *ngFor="let ing of getActiveIngredients(); trackBy: trackByIngId" 
-                class="burger-layer ingredient-layer-item"
-                (click)="removeIngredientFromStack(ing)"
-                [title]="'Clicca per diminuire o rimuovere ' + ing.nome"
-              >
-                <div class="layer-pill" [ngClass]="getLayerClass(ing.nome)">
-                  <img 
-                    *ngIf="ing.immagine_url" 
-                    [src]="getImageUrl(ing.immagine_url)" 
-                    [alt]="ing.nome" 
-                    class="layer-icon-img"
-                  />
-                  <div *ngIf="!ing.immagine_url" class="layer-icon-fallback">
-                    <ion-icon [name]="getIngredientIcon(ing.nome)"></ion-icon>
+              <ng-container *ngFor="let ing of getActiveIngredients(); trackBy: trackByIngId; let i = index">
+                <div 
+                  *ngIf="ing.immagine_url"
+                  class="burger-layer ingredient-layer-item"
+                  [style.z-index]="100 - i"
+                  [style.marginTop.%]="getLayerOverlap()"
+                  (click)="removeIngredientFromStack(ing)"
+                  [title]="'Clicca per diminuire o rimuovere ' + ing.nome"
+                >
+                  <div class="ingredient-image-stack">
+                    <img 
+                      [src]="getImageUrl(ing.immagine_url)" 
+                      [alt]="ing.nome" 
+                      class="real-ingredient-img"
+                    />
+                    
+                    <!-- Overlay per extra info sull'immagine -->
+                    <div class="ingredient-overlay-info" *ngIf="ing.totalQty > 1">
+                      <span class="qty-badge">{{ ing.totalQty }}x</span>
+                    </div>
                   </div>
-                  <span class="layer-title-text">
-                    <span *ngIf="ing.totalQty > 1" class="layer-qty-prefix">{{ ing.totalQty }}x </span>{{ ing.nome }}
-                  </span>
-                  <span *ngIf="ing.extraPriceTotal > 0" class="layer-price-tag">+{{ ing.extraPriceTotal | currency:'EUR':'symbol':'1.2-2' }}</span>
-                  <ion-icon name="close-circle" class="layer-remove-icon"></ion-icon>
                 </div>
-              </div>
+              </ng-container>
 
               <!-- Messaggio se nessun ingrediente è selezionato -->
               <div *ngIf="getActiveIngredients().length === 0" class="empty-layers-msg">
@@ -138,27 +127,26 @@
             </div>
 
             <!-- Pane Inferiore (Cliccabile / Rimovibile) -->
-            <div 
-              *ngIf="hasBunBottom" 
-              class="burger-layer bun-bottom-layer interactive-bun"
-              (click)="toggleBunBottom()"
-              title="Clicca per rimuovere il Pane Inferiore"
-            >
-              <div class="bun-graphic bun-bottom">
-                <span class="bun-label">Pane Inferiore</span>
-                <ion-icon name="close-circle" class="bun-remove-icon"></ion-icon>
+              <div 
+                *ngIf="hasBunBottom" 
+                class="burger-layer bun-bottom-layer interactive-bun"
+                [style.marginTop.%]="getLayerOverlap()"
+                (click)="toggleBunBottom()"
+                title="Clicca per rimuovere il Pane Inferiore"
+              >
+              <div class="ingredient-image-stack">
+                <img [src]="getImageUrl('uploads/ingredienti/1786361392128-794946643.jpeg')" alt="Pane Inferiore" class="real-ingredient-img bun-img">
               </div>
             </div>
           </div>
 
-          <p class="exploded-hint">
-            💡 Tocca uno strato (compreso il pane) per rimuoverlo o selezionalo dalla lista in basso per personalizzarlo.
-          </p>
-        </div>
+          </div>
 
-        <div class="ion-padding-top ingredients-modal-section">
+        
+            </ion-col>
+            <ion-col size="12" size-md="6" class="right-col-scroll ion-padding">
+          <div class="ingredients-modal-section">
           <h3>Personalizza Panino</h3>
-          <p class="ion-text-muted">Deseleziona gli ingredienti base o aggiungi extra a tuo piacimento:</p>
           
           <!-- Sezione Ingredienti Base (senza prezzo) -->
           <div class="ingredients-group" *ngIf="ingredientiBase.length > 0">
@@ -247,10 +235,25 @@
           </div>
         </div>
 
-        <ion-button expand="block" color="primary" (click)="addSelectedToCart()" class="ion-margin-top">
-          Aggiungi al Carrello
-        </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
       </ion-content>
+      <ion-footer class="custom-modal-footer">
+        <ion-toolbar>
+          <div class="cart-footer-content">
+            <div class="price-box">
+              <span class="price-label">Totale:</span>
+              <span class="price-value">{{ getPrezzoFinale() | currency:'EUR':'symbol':'1.2-2' }}</span>
+            </div>
+            <ion-button color="primary" shape="round" class="add-cart-btn" (click)="addSelectedToCart()">
+              <ion-icon name="cart-outline" slot="start"></ion-icon>
+              Aggiungi
+            </ion-button>
+          </div>
+        </ion-toolbar>
+      </ion-footer>
     </ng-template>
   </ion-modal>
 
