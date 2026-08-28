@@ -14,7 +14,7 @@ import {
   starOutline, settingsOutline, cartOutline, cart, close, removeCircleOutline, addCircleOutline,
   trash, arrowForwardOutline, removeOutline, addOutline, chevronDownOutline, arrowDownOutline
 } from 'ionicons/icons';
-import { RouterLink, Router, NavigationEnd } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { ThemeService } from '../services/theme.service';
 import { CartService } from '../services/cart.service';
@@ -27,7 +27,7 @@ import { BehaviorSubject, Observable, filter, map, startWith } from 'rxjs';
   styleUrls: ['tabs.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, RouterLink,
+    CommonModule, RouterLink, RouterLinkActive,
     IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel,
     IonHeader, IonToolbar, IonButtons, IonButton,
     IonPopover, IonList, IonItem, IonContent,

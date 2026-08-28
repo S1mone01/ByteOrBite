@@ -66,7 +66,7 @@ ion-toolbar {
     transform: translateX(-50%);
   }
 
-  &:hover {
+  &:hover, &.active-link {
     --color: var(--ion-color-primary);
     &::after {
       width: 70%;
@@ -236,7 +236,7 @@ ion-tab-button[aria-selected="true"] {
   .custom-panino-icon svg {
     color: var(--ion-color-primary);
   }
-  ion-icon {
+  ion-icon, .mobile-logo-icon {
     transform: scale(1.1);
   }
 }
