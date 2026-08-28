@@ -8,6 +8,10 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <!-- SEZIONE ORDINI -->
   <div class="orders-section">
     <ion-list-header (click)="toggleOrders()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">

@@ -8,7 +8,8 @@ import {
   IonCardHeader, IonCardSubtitle, IonCardTitle, 
   IonCardContent, IonGrid, IonRow, IonCol,
   IonListHeader, IonBadge, IonAccordionGroup, IonAccordion, IonItem,
-  Platform, AlertController, LoadingController, ToastController, ModalController
+  Platform, AlertController, LoadingController, ToastController, ModalController,
+  IonRefresher, IonRefresherContent
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
@@ -39,6 +40,7 @@ import { HttpClient } from '@angular/common/http';
     IonCardHeader, IonCardSubtitle, IonCardTitle, 
     IonCardContent, IonGrid, IonRow, IonCol,
     IonListHeader, IonBadge, IonAccordionGroup, IonAccordion, IonItem,
+    IonRefresher, IonRefresherContent,
     CommonModule, FormsModule
   ]
 })
@@ -92,6 +94,10 @@ export class ProfilePage implements OnInit, AfterViewChecked {
       // Forza il refresh se il tema cambia
       this.updatePreviewMap();
     });
+  }
+
+  ionViewWillEnter() {
+    this.loadOrderHistory();
   }
 
   ngAfterViewChecked() {
@@ -160,14 +166,32 @@ export class ProfilePage implements OnInit, AfterViewChecked {
     }
   }
 
-  loadOrderHistory() {
+  loadOrderHistory(event?: any) {
     const user = JSON.parse(localStorage.getItem('byte_or_bite_user') || '{}');
     if (user.id) {
       this.dataService.getOrdiniByUtente(user.id).subscribe({
-        next: (res) => this.ordini = res,
-        error: (err) => console.error('Errore caricamento ordini', err)
+        next: (res) => {
+          this.ordini = res;
+          if (event) {
+            event.target.complete();
+          }
+        },
+        error: (err) => {
+          console.error('Errore caricamento ordini', err);
+          if (event) {
+            event.target.complete();
+          }
+        }
       });
+    } else {
+      if (event) {
+        event.target.complete();
+      }
     }
+  }
+
+  handleRefresh(event: any) {
+    this.loadOrderHistory(event);
   }
 
   toggleTheme() {

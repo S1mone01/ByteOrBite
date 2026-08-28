@@ -7,7 +7,8 @@ import {
   IonButtons, IonInput, IonToggle, IonSelect, IonSelectOption, IonCard,
   IonCardHeader, IonCardTitle, IonCardContent, IonBadge, IonListHeader,
   IonCardSubtitle, IonText, AlertController, ToastController,
-  IonGrid, IonRow, IonCol, IonBackButton
+  IonGrid, IonRow, IonCol, IonBackButton,
+  IonRefresher, IonRefresherContent
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
@@ -28,7 +29,7 @@ import { DataService } from '../services/data.service';
     IonButtons, IonInput, IonToggle, IonSelect, IonSelectOption, IonCard, 
     IonCardHeader, IonCardTitle, IonCardContent, IonBadge, IonListHeader, 
     IonCardSubtitle, IonText, IonGrid, IonRow, IonCol,
-    IonBackButton,
+    IonBackButton, IonRefresher, IonRefresherContent,
     CommonModule, FormsModule
   ]
 })
@@ -81,6 +82,11 @@ export class ManagePage implements OnInit {
     this.loadOrdini();
   }
 
+  ionViewWillEnter() {
+    this.loadAllData();
+    this.loadOrdini();
+  }
+
   getImageUrl(path: string) {
     if (!path) return 'assets/1024v5.png';
     if (path.startsWith('http') || path.startsWith('assets/')) {
@@ -109,7 +115,7 @@ export class ManagePage implements OnInit {
     this.isOrdersVisible = !this.isOrdersVisible;
   }
 
-  loadAllData() {
+  loadAllData(event?: any) {
     this.dataService.getPanini().subscribe({
       next: (res) => this.panini = res,
       error: (err) => this.showToast('Errore nel caricamento dei panini', 'danger')
@@ -132,11 +138,26 @@ export class ManagePage implements OnInit {
     });
   }
 
-  loadOrdini() {
+  loadOrdini(event?: any) {
     this.dataService.getOrdini().subscribe({
-      next: (res) => this.ordini = res,
-      error: (err) => this.showToast('Errore nel caricamento degli ordini', 'danger')
+      next: (res) => {
+        this.ordini = res;
+        if (event) {
+          event.target.complete();
+        }
+      },
+      error: (err) => {
+        this.showToast('Errore nel caricamento degli ordini', 'danger');
+        if (event) {
+          event.target.complete();
+        }
+      }
     });
+  }
+
+  handleRefresh(event: any) {
+    this.loadAllData();
+    this.loadOrdini(event);
   }
 
   parseLocation(location: string | undefined): any {
