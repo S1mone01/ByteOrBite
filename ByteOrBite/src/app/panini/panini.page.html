@@ -38,7 +38,7 @@
           </ion-card-header>
 
           <ion-card-content>
-            <p class="panino-description">{{ panino.descrizione || '&nbsp;' }}</p>
+            <p class="panino-description" [innerHTML]="panino.descrizione || '&nbsp;'"></p>
             
             <div class="quantity-selector" (click)="$event.stopPropagation()">
               <ion-button fill="clear" color="danger" (click)="panino.disponibile != 0 ? decrementQuantity(panino) : null" [disabled]="cartQuantities[panino.id] === 0 || panino.disponibile == 0">

@@ -12,7 +12,8 @@ import {
   homeOutline, fastFoodOutline, personOutline, 
   sunnyOutline, moonOutline, logOutOutline, personCircleOutline,
   starOutline, settingsOutline, cartOutline, cart, close, removeCircleOutline, addCircleOutline,
-  trash, arrowForwardOutline, removeOutline, addOutline, chevronDownOutline, arrowDownOutline
+  trash, arrowForwardOutline, removeOutline, addOutline, chevronDownOutline, arrowDownOutline,
+  pizzaOutline, wineOutline
 } from 'ionicons/icons';
 import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../services/auth.service';
@@ -59,7 +60,8 @@ export class TabsPage implements OnInit {
       homeOutline, fastFoodOutline, personOutline, 
       sunnyOutline, moonOutline, logOutOutline, personCircleOutline,
       starOutline, settingsOutline, cartOutline, cart, close, removeCircleOutline, addCircleOutline,
-      trash, arrowForwardOutline, removeOutline, addOutline, chevronDownOutline, arrowDownOutline
+      trash, arrowForwardOutline, removeOutline, addOutline, chevronDownOutline, arrowDownOutline,
+      pizzaOutline, wineOutline
     });
     this.currentUser$ = this.authService.currentUser$;
     this.isDarkMode$ = this.themeService.isDarkMode$;

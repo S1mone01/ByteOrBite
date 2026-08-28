@@ -189,7 +189,7 @@ export class MenuPage implements OnInit, OnDestroy {
 
     const modificheList: string[] = [];
     if (this.selectedPatatina) {
-      modificheList.push(`Patatine: ${this.selectedPatatina.nome}`);
+      modificheList.push(`Starter: ${this.selectedPatatina.nome}`);
     }
     if (this.selectedBibita) {
       modificheList.push(`Bibita: ${this.selectedBibita.nome}`);

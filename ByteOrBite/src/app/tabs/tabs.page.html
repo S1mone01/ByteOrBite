@@ -10,6 +10,8 @@
       <ion-button routerLink="/tabs/home" routerLinkActive="active-link" fill="clear">Home</ion-button>
       <ion-button routerLink="/tabs/menu" routerLinkActive="active-link" fill="clear">Menu</ion-button>
       <ion-button routerLink="/tabs/panini" routerLinkActive="active-link" fill="clear">Panini</ion-button>
+      <ion-button routerLink="/tabs/starter" routerLinkActive="active-link" fill="clear">Starter</ion-button>
+      <ion-button routerLink="/tabs/bibite" routerLinkActive="active-link" fill="clear">Bibite</ion-button>
     </div>
 
     <ion-buttons slot="end">
@@ -106,6 +108,20 @@
         </div>
       </div>
       <ion-label>Panini</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="starter" href="/tabs/starter">
+      <div class="icon-wrapper">
+        <ion-icon aria-hidden="true" name="pizza-outline"></ion-icon>
+      </div>
+      <ion-label>Starter</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button tab="bibite" href="/tabs/bibite">
+      <div class="icon-wrapper">
+        <ion-icon aria-hidden="true" name="wine-outline"></ion-icon>
+      </div>
+      <ion-label>Bibite</ion-label>
     </ion-tab-button>
 
     <ion-tab-button [tab]="(currentUser$ | async) ? 'profile' : 'login'" [href]="(currentUser$ | async) ? '/tabs/profile' : '/tabs/login'">

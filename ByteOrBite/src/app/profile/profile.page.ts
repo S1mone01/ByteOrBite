@@ -9,7 +9,7 @@ import {
   IonCardContent, IonGrid, IonRow, IonCol,
   IonListHeader, IonBadge, IonAccordionGroup, IonAccordion, IonItem,
   Platform, AlertController, LoadingController, ToastController, ModalController,
-  IonRefresher, IonRefresherContent
+  IonRefresher, IonRefresherContent, IonProgressBar
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
@@ -40,7 +40,7 @@ import { HttpClient } from '@angular/common/http';
     IonCardHeader, IonCardSubtitle, IonCardTitle, 
     IonCardContent, IonGrid, IonRow, IonCol,
     IonListHeader, IonBadge, IonAccordionGroup, IonAccordion, IonItem,
-    IonRefresher, IonRefresherContent,
+    IonRefresher, IonRefresherContent, IonProgressBar,
     CommonModule, FormsModule
   ]
 })
@@ -196,6 +196,34 @@ export class ProfilePage implements OnInit, AfterViewChecked {
 
   toggleTheme() {
     this.themeService.toggleTheme();
+  }
+
+  getNextMilestone(points: number = 0): { points: number, discount: number, maxReached?: boolean } {
+    const milestones: { points: number, discount: number, maxReached?: boolean }[] = [
+      { points: 10, discount: 5, maxReached: false },
+      { points: 20, discount: 10, maxReached: false },
+      { points: 30, discount: 15, maxReached: false },
+      { points: 40, discount: 20, maxReached: false },
+      { points: 50, discount: 25, maxReached: false },
+      { points: 60, discount: 30, maxReached: false }
+    ];
+
+    for (let milestone of milestones) {
+      if (points < milestone.points) {
+        return milestone;
+      }
+    }
+    
+    // Se ha raggiunto o superato i 60 punti
+    return { points: 60, discount: 30, maxReached: true };
+  }
+
+  getProgressPercentage(points: number = 0) {
+    const milestone = this.getNextMilestone(points);
+    if ((milestone as any).maxReached) {
+      return 1;
+    }
+    return points / milestone.points;
   }
 
   logout() {

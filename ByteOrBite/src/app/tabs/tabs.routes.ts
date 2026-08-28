@@ -25,6 +25,16 @@ export const routes: Routes = [
           import('../panini/panini.page').then((m) => m.PaniniPage),
       },
       {
+        path: 'starter',
+        loadComponent: () =>
+          import('../starter/starter.page').then((m) => m.StarterPage),
+      },
+      {
+        path: 'bibite',
+        loadComponent: () =>
+          import('../bibite/bibite.page').then((m) => m.BibitePage),
+      },
+      {
         path: 'login',
         loadComponent: () =>
           import('../login/login.page').then((m) => m.LoginPage),

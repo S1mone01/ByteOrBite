@@ -45,7 +45,15 @@
                 <span>I tuoi Punti</span>
               </div>
               <div class="points-value">{{ user.points || 0 }}</div>
-              <div class="points-footer">Accumula punti con ogni ordine</div>
+              <div class="points-progress-container">
+                <ng-container *ngIf="getNextMilestone(user.points || 0) as milestone">
+                  <div class="progress-info">
+                    <span *ngIf="!milestone.maxReached">Raggiungi {{ milestone.points }} pt per il {{ milestone.discount }}% di sconto</span>
+                    <span *ngIf="milestone.maxReached">Sconto massimo del {{ milestone.discount }}% raggiunto!</span>
+                  </div>
+                  <ion-progress-bar color="light" [value]="getProgressPercentage(user.points || 0)" class="points-progress-bar"></ion-progress-bar>
+                </ng-container>
+              </div>
             </div>
           </ion-col>
 
