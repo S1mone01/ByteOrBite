@@ -54,6 +54,9 @@ ion-toolbar {
   height: 40px;
   --transition: 0.3s ease;
 
+  .short-text { display: none; }
+  .full-text { display: inline; }
+
   &::after {
     content: '';
     position: absolute;
@@ -71,6 +74,23 @@ ion-toolbar {
     &::after {
       width: 70%;
     }
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1050px) {
+  .desktop-nav-center {
+    gap: 15px;
+  }
+  .desktop-nav-center ion-button {
+    --padding-start: 5px;
+    --padding-end: 5px;
+    font-size: 18px; /* Slightly larger for just the initial */
+  }
+  .desktop-nav-center ion-button .short-text {
+    display: inline;
+  }
+  .desktop-nav-center ion-button .full-text {
+    display: none;
   }
 }
 
