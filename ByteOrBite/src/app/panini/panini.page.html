@@ -85,6 +85,7 @@
             <!-- Pane Superiore (Cliccabile / Rimovibile) -->
               <div 
                 *ngIf="hasBunTop" 
+                @slideInOut
                 class="burger-layer bun-top-layer interactive-bun"
                 (click)="toggleBunTop()"
                 title="Clicca per rimuovere il Pane Superiore"
@@ -99,6 +100,7 @@
               <ng-container *ngFor="let ing of getActiveIngredients(); trackBy: trackByIngId; let i = index">
                 <div 
                   *ngIf="ing.immagine_url"
+                  @slideInOut
                   class="burger-layer ingredient-layer-item"
                   [style.z-index]="100 - i"
                   [style.marginTop.%]="getLayerOverlap()"
@@ -119,16 +121,12 @@
                   </div>
                 </div>
               </ng-container>
-
-              <!-- Messaggio se nessun ingrediente è selezionato -->
-              <div *ngIf="getActiveIngredients().length === 0" class="empty-layers-msg">
-                <span>Nessun ingrediente selezionato</span>
-              </div>
             </div>
 
             <!-- Pane Inferiore (Cliccabile / Rimovibile) -->
               <div 
                 *ngIf="hasBunBottom" 
+                @slideInOut
                 class="burger-layer bun-bottom-layer interactive-bun"
                 [style.marginTop.%]="getLayerOverlap()"
                 (click)="toggleBunBottom()"

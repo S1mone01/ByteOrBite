@@ -454,6 +454,7 @@ ion-col.panino-col, ion-col {
   height: 100%;
   max-height: 100%;
   width: 100%;
+  overflow: hidden; // Previene scrollbar orizzontali durante le animazioni laterali degli ingredienti
 
   .exploded-header {
     width: 100%;
@@ -557,7 +558,8 @@ ion-col.panino-col, ion-col {
       width: 100%;
       display: flex;
       justify-content: center;
-      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      will-change: transform, opacity;
+      transition: margin-top 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
       
       /* Permette allo strato di ridursi in altezza se il contenitore è troppo piccolo */
       flex: 1 1 auto;

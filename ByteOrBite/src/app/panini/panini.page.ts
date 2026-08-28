@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { DataService } from '../services/data.service';
 import { CartService } from '../services/cart.service';
 import { Subscription } from 'rxjs';
+import { trigger, transition, style, animate } from '@angular/animations';
 import { 
   IonHeader, IonToolbar, IonTitle, IonContent, 
   IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
@@ -30,6 +31,17 @@ import { FormsModule } from '@angular/forms';
     IonCardTitle, IonCardContent, IonButton, IonIcon, 
     IonText, IonBadge, IonImg, IonModal, IonList, IonItem, IonLabel, IonCheckbox, IonButtons, IonFooter
   ],
+  animations: [
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({ transform: 'translateX(-120%) scale(0.85)', opacity: 0 }),
+        animate('380ms cubic-bezier(0.34, 1.4, 0.64, 1)', style({ transform: 'translateX(0) scale(1)', opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('280ms cubic-bezier(0.4, 0, 0.2, 1)', style({ transform: 'translateX(120%) scale(0.85)', opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class PaniniPage implements OnInit, OnDestroy {
 
