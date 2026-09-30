@@ -243,8 +243,21 @@
           <div class="cart-footer-content">
             <div class="price-box">
               <span class="price-label">Totale:</span>
-              <span class="price-value">{{ getPrezzoFinale() | currency:'EUR':'symbol':'1.2-2' }}</span>
+              <span class="price-value">{{ (getPrezzoFinale() * modalQuantity) | currency:'EUR':'symbol':'1.2-2' }}</span>
             </div>
+
+            <div class="modal-qty-selector">
+              <ion-button fill="clear" color="danger" class="qty-btn" (click)="decrementModalQuantity()" [disabled]="modalQuantity <= 1">
+                <ion-icon name="remove"></ion-icon>
+              </ion-button>
+              
+              <span class="qty-count">{{ modalQuantity }}</span>
+              
+              <ion-button fill="clear" color="success" class="qty-btn" (click)="incrementModalQuantity()">
+                <ion-icon name="add"></ion-icon>
+              </ion-button>
+            </div>
+
             <ion-button color="primary" shape="round" class="add-cart-btn" (click)="addSelectedToCart()">
               <ion-icon name="cart-outline" slot="start"></ion-icon>
               Aggiungi

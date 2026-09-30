@@ -55,6 +55,7 @@ export class PaniniPage implements OnInit, OnDestroy {
   ingredientiBase: any[] = [];
   ingredientiExtra: any[] = [];
   extraQuantities: { [key: number]: number } = {};
+  modalQuantity: number = 1;
   hasBunTop: boolean = true;
   hasBunBottom: boolean = true;
   cartItems: any[] = [];
@@ -168,11 +169,7 @@ export class PaniniPage implements OnInit, OnDestroy {
 
   incrementQuantity(panino: any, event?: Event) {
     if (event) event.stopPropagation();
-    this.cartService.addToCart({
-      ...panino,
-      quantita: 1,
-      modifiche: '' // Version base dalla card
-    });
+    this.openDetails(panino);
   }
 
   decrementQuantity(panino: any, event?: Event) {
@@ -187,6 +184,7 @@ export class PaniniPage implements OnInit, OnDestroy {
 
   openDetails(panino: any) {
     this.selectedPanino = { ...panino };
+    this.modalQuantity = 1;
     const baseIds = panino.ingredienti || [];
     
     this.hasBunTop = true;
@@ -237,8 +235,19 @@ export class PaniniPage implements OnInit, OnDestroy {
         this.extraQuantities = {};
         this.hasBunTop = true;
         this.hasBunBottom = true;
+        this.modalQuantity = 1;
       }
     }, 300);
+  }
+
+  incrementModalQuantity() {
+    this.modalQuantity++;
+  }
+
+  decrementModalQuantity() {
+    if (this.modalQuantity > 1) {
+      this.modalQuantity--;
+    }
   }
 
   toggleBunTop() {
@@ -437,7 +446,7 @@ export class PaniniPage implements OnInit, OnDestroy {
     this.cartService.addToCart({
       ...this.selectedPanino,
       prezzo: prezzoFinale,
-      quantita: 1,
+      quantita: this.modalQuantity,
       modifiche: modifiche
     });
 

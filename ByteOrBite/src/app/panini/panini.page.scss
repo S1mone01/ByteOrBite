@@ -889,6 +889,7 @@ ion-col.panino-col, ion-col {
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    gap: 8px;
 
     .price-box {
       display: flex;
@@ -906,6 +907,36 @@ ion-col.panino-col, ion-col {
         font-size: 1.4rem;
         font-weight: 900;
         color: var(--ion-color-secondary);
+      }
+    }
+
+    .modal-qty-selector {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      background: rgba(var(--ion-color-medium-rgb), 0.08);
+      border-radius: 8px;
+      padding: 2px 4px;
+
+      .qty-btn {
+        --padding-start: 2px;
+        --padding-end: 2px;
+        margin: 0;
+        height: 30px;
+        width: 30px;
+        font-size: 1.1rem;
+
+        &[disabled] {
+          opacity: 0.25;
+        }
+      }
+
+      .qty-count {
+        font-weight: 800;
+        font-size: 0.95rem;
+        min-width: 22px;
+        text-align: center;
+        color: #ffffff;
       }
     }
     
