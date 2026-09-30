@@ -9,7 +9,6 @@ import {
   IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
   IonCardTitle, IonCardContent, IonButton, IonIcon, 
   IonText, IonBadge, IonImg, IonModal, IonButtons,
-  IonList, IonItem, IonLabel, IonRadioGroup, IonRadio,
   ModalController, ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -30,8 +29,7 @@ import { Router } from '@angular/router';
     IonHeader, IonToolbar, IonTitle, IonContent, 
     IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
     IonCardTitle, IonCardContent, IonButton, IonIcon, 
-    IonText, IonBadge, IonImg, IonModal, IonButtons,
-    IonList, IonItem, IonLabel, IonRadioGroup, IonRadio
+    IonText, IonBadge, IonImg, IonModal, IonButtons
   ]
 })
 export class MenuPage implements OnInit, OnDestroy {

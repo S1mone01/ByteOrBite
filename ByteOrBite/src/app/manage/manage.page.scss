@@ -151,10 +151,33 @@ ion-list {
 }
 
 ion-modal {
-  --height: 90%;
-  --width: 600px;
+  --height: auto;
+  --max-height: 85vh;
+  --width: 520px;
+  --max-width: 92vw;
   --border-radius: 20px;
-  --box-shadow: 0 28px 48px rgba(0,0,0,0.4);
+  --box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
+
+  .ion-page {
+    position: relative;
+    display: block;
+    contain: content;
+  }
+
+  ion-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    contain: none;
+    height: auto;
+    max-height: calc(85vh - 56px);
+
+    &::part(scroll) {
+      position: relative;
+      top: 0;
+      bottom: 0;
+    }
+  }
 }
 
 // Padding in fondo alla pagina
@@ -165,9 +188,15 @@ ion-modal {
 // Media query per schermi piccoli (mobile)
 @media (max-width: 768px) {
   ion-modal {
-    --width: 100%;
-    --height: 100%;
-    --border-radius: 0;
+    --width: 94vw;
+    --max-width: 480px;
+    --height: auto;
+    --max-height: 88vh;
+    --border-radius: 18px;
+
+    ion-content {
+      max-height: calc(88vh - 56px);
+    }
   }
 
   .orders-section, .database-section {
