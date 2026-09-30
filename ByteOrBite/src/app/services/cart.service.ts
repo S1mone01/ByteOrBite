@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { DataService } from './data.service';
 import { AuthService } from './auth.service';
-import { AlertController } from '@ionic/angular/standalone';
+import { AlertController, ModalController, ToastController } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -22,6 +22,8 @@ export class CartService {
     private dataService: DataService,
     private authService: AuthService,
     private alertController: AlertController,
+    private modalController: ModalController,
+    private toastController: ToastController,
     private router: Router
   ) {
     this.authService.currentUser$.subscribe(user => {
@@ -48,7 +50,20 @@ export class CartService {
     const currentUser = this.authService.currentUserValue;
     if (!currentUser) {
       console.warn('Utente non loggato, reindirizzamento al login');
-      this.router.navigate(['/tabs/login']);
+      try {
+        const topModal = await this.modalController.getTop();
+        if (topModal) {
+          await topModal.dismiss();
+        }
+      } catch (e) {}
+      await this.router.navigate(['/tabs/login']);
+      const toast = await this.toastController.create({
+        message: 'Accedi per completare il tuo ordine',
+        duration: 2500,
+        color: 'warning',
+        position: 'bottom'
+      });
+      await toast.present();
       return;
     }
 

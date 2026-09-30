@@ -1,52 +1,134 @@
-#map {
-    height: 100%;
+:host {
+  display: block;
+  height: 100%;
+}
+
+.search-container {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 1000;
+
+  ion-searchbar {
+    --background: var(--ion-card-background, #ffffff);
+    --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    --border-radius: 12px;
+    padding: 0;
+  }
+}
+
+.search-results-card {
+  margin-top: 6px;
+  background: var(--ion-card-background, #ffffff);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  max-height: 250px;
+  overflow-y: auto;
+  border: 1px solid var(--ion-color-light-shade, #eee);
+
+  ion-list {
+    background: transparent;
+    padding: 0;
+  }
+
+  ion-item {
+    --background: transparent;
+    font-size: 0.9rem;
+  }
+}
+
+.map-wrapper {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  iframe {
     width: 100%;
-    background-color: var(--ion-color-light); /* Colore di fallback */
+    height: 100%;
+    border: none;
+    display: block;
+    transition: filter 0.3s ease-in-out;
+  }
+
+  &.dark-map iframe {
+    filter: invert(90%) hue-rotate(180deg) contrast(95%);
+  }
+}
+
+:host-context(.ion-palette-dark) {
+  .map-wrapper iframe {
+    filter: invert(90%) hue-rotate(180deg) contrast(95%);
+  }
+
+  .address-overlay {
+    background: rgba(35, 35, 35, 0.9);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .search-results-card {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.map-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 12px;
+  color: var(--ion-color-medium);
 }
 
 .address-overlay {
-    position: absolute;
-    bottom: 30px;
-    left: 20px;
-    right: 20px;
-    background: var(--ion-card-background, white);
-    padding: 15px;
-    border-radius: 12px;
-    z-index: 1000;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--ion-color-light-shade, #eee);
+  position: absolute;
+  bottom: 24px;
+  left: 16px;
+  right: 16px;
+  background: var(--ion-card-background, white);
+  padding: 14px 18px;
+  border-radius: 14px;
+  z-index: 1000;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ion-color-light-shade, #eee);
+  backdrop-filter: blur(8px);
 }
 
 .address-text {
-    font-size: 0.95rem;
-    color: var(--ion-text-color, #333);
-    text-align: center;
-    font-weight: 600;
-    line-height: 1.4;
+  font-size: 0.95rem;
+  color: var(--ion-text-color, #333);
+  text-align: center;
+  font-weight: 600;
+  line-height: 1.4;
+
+  .geocoding-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
 }
 
 .locate-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    width: 50px;
-    height: 50px;
-    margin: 0;
-    --border-radius: 50%;
-    --box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    --background: var(--ion-color-light);
-    --color: var(--ion-color-primary);
-    --padding-start: 0;
-    --padding-end: 0;
-}
-
-/* Fix per Leaflet in dark mode */
-:host-context(.ion-palette-dark) {
-    .leaflet-container {
-        background: #262626;
-    }
+  position: absolute;
+  bottom: 96px;
+  right: 16px;
+  z-index: 1000;
+  width: 48px;
+  height: 48px;
+  margin: 0;
+  --border-radius: 50%;
+  --box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  --background: var(--ion-card-background, white);
+  --color: var(--ion-color-primary);
+  --padding-start: 0;
+  --padding-end: 0;
 }

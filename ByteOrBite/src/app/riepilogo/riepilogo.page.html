@@ -39,7 +39,18 @@
               </div>
               
               <div *ngIf="parseLocation(user.location)?.lat" class="map-preview-container">
-                <div id="riepilogo-map-preview" class="map-preview-box"></div>
+                <div id="riepilogo-map-preview" class="map-preview-box" [class.dark-map]="isDarkMode$ | async">
+                  <iframe 
+                    [src]="getMapPreviewUrl(parseLocation(user.location)?.lat, parseLocation(user.location)?.lon)" 
+                    width="100%" 
+                    height="100%" 
+                    frameborder="0" 
+                    style="border:0; pointer-events: none;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade">
+                  </iframe>
+                </div>
               </div>
             </div>
           </ion-card-content>

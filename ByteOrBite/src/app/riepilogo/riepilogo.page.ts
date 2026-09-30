@@ -20,9 +20,9 @@ import { DataService } from '../services/data.service';
 import { AuthService, User } from '../services/auth.service';
 import { ThemeService } from '../services/theme.service';
 import { MapModalComponent } from '../components/map-modal/map-modal.component';
-import { Observable, Subscription, take } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { Router } from '@angular/router';
-import * as L from 'leaflet';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-riepilogo',
@@ -37,20 +37,18 @@ import * as L from 'leaflet';
     IonRadioGroup, IonRadio, IonCheckbox, IonCardHeader, IonCardTitle, IonBadge
   ]
 })
-export class RiepilogoPage implements OnInit, AfterViewChecked, OnDestroy {
+export class RiepilogoPage implements OnInit {
   cartItems$: Observable<any[]>;
   currentUser$: Observable<User | null>;
+  isDarkMode$: Observable<boolean>;
   paymentMethod: string = 'contanti';
   deliveryFee: number = 1.99;
   
   useCoupon: boolean = false;
   selectedCouponPercentage: number = 0;
   
-  private previewMap?: L.Map;
-  private lastLat?: number;
-  private lastLon?: number;
-  private lastTheme?: boolean;
-  private themeSub?: Subscription;
+  private cachedMapUrlString: string = '';
+  private cachedMapUrl: SafeResourceUrl | null = null;
 
   constructor(
     private cartService: CartService,
@@ -62,7 +60,8 @@ export class RiepilogoPage implements OnInit, AfterViewChecked, OnDestroy {
     private alertController: AlertController,
     private loadingController: LoadingController,
     private modalController: ModalController,
-    private http: HttpClient
+    private http: HttpClient,
+    private sanitizer: DomSanitizer
   ) {
     addIcons({ 
       locationOutline, personOutline, mapOutline, 
@@ -72,76 +71,19 @@ export class RiepilogoPage implements OnInit, AfterViewChecked, OnDestroy {
     });
     this.cartItems$ = this.cartService.cartItems$;
     this.currentUser$ = this.authService.currentUser$;
+    this.isDarkMode$ = this.themeService.isDarkMode$;
   }
 
-  ngOnInit() {
-    this.themeSub = this.themeService.isDarkMode$.subscribe(() => {
-      this.updatePreviewMap();
-    });
-  }
+  ngOnInit() {}
 
-  ngOnDestroy() {
-    if (this.themeSub) {
-      this.themeSub.unsubscribe();
+  getMapPreviewUrl(lat?: number, lon?: number): SafeResourceUrl | null {
+    if (!lat || !lon) return null;
+    const url = `https://maps.google.com/maps?q=${lat},${lon}&hl=it&z=15&output=embed`;
+    if (this.cachedMapUrlString !== url) {
+      this.cachedMapUrlString = url;
+      this.cachedMapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
-    if (this.previewMap) {
-      this.previewMap.remove();
-    }
-  }
-
-  ngAfterViewChecked() {
-    this.updatePreviewMap();
-  }
-
-  updatePreviewMap() {
-    const user = JSON.parse(localStorage.getItem('byte_or_bite_user') || '{}');
-    const loc = this.parseLocation(user.location);
-    const isDark = this.themeService.currentThemeValue;
-    
-    if (loc && loc.lat && loc.lon) {
-      if (this.lastLat === loc.lat && this.lastLon === loc.lon && this.lastTheme === isDark && this.previewMap) {
-        return;
-      }
-
-      this.lastLat = loc.lat;
-      this.lastLon = loc.lon;
-      this.lastTheme = isDark;
-
-      setTimeout(() => {
-        const container = document.getElementById('riepilogo-map-preview');
-        if (container) {
-          if (this.previewMap) {
-            this.previewMap.remove();
-          }
-
-          this.previewMap = L.map('riepilogo-map-preview', {
-            zoomControl: false,
-            dragging: false,
-            touchZoom: false,
-            doubleClickZoom: false,
-            scrollWheelZoom: false,
-            attributionControl: false
-          }).setView([loc.lat, loc.lon], 15);
-
-          const tileUrl = isDark 
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-
-          L.tileLayer(tileUrl).addTo(this.previewMap);
-
-          const defaultIcon = L.icon({
-            iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-            iconSize: [20, 32],
-            iconAnchor: [10, 32]
-          });
-
-          L.marker([loc.lat, loc.lon], { icon: defaultIcon }).addTo(this.previewMap);
-          
-          this.previewMap.invalidateSize();
-        }
-      }, 100);
-    }
+    return this.cachedMapUrl;
   }
 
   parseLocation(location: string | undefined): any {
@@ -273,9 +215,6 @@ export class RiepilogoPage implements OnInit, AfterViewChecked, OnDestroy {
         this.authService.updateUser(user.id, { location: locationData }).subscribe({
           next: () => {
             this.showToast('Indirizzo di consegna aggiornato!', 'success');
-            this.lastLat = undefined;
-            this.lastLon = undefined;
-            setTimeout(() => this.updatePreviewMap(), 100);
           },
           error: (err) => {
             console.error('Errore durante l\'aggiornamento dell\'indirizzo:', err);

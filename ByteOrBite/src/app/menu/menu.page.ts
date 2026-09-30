@@ -9,13 +9,16 @@ import {
   IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
   IonCardTitle, IonCardContent, IonButton, IonIcon, 
   IonText, IonBadge, IonImg, IonModal, IonButtons,
-  IonList, IonItem, IonLabel, IonRadioGroup, IonRadio
+  IonList, IonItem, IonLabel, IonRadioGroup, IonRadio,
+  ModalController, ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
   cartOutline, add, remove, close, cart, removeCircleOutline, 
   addCircleOutline, fastFoodOutline, wineOutline, checkmarkCircleOutline
 } from 'ionicons/icons';
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
@@ -47,7 +50,11 @@ export class MenuPage implements OnInit, OnDestroy {
 
   constructor(
     private dataService: DataService,
-    private cartService: CartService
+    private cartService: CartService,
+    private authService: AuthService,
+    private router: Router,
+    private modalController: ModalController,
+    private toastController: ToastController
   ) { 
     addIcons({ 
       cartOutline, add, remove, close, cart, 
@@ -159,9 +166,13 @@ export class MenuPage implements OnInit, OnDestroy {
 
   closeDetails() {
     this.isModalOpen = false;
-    this.selectedMenu = null;
-    this.selectedPatatina = null;
-    this.selectedBibita = null;
+    setTimeout(() => {
+      if (!this.isModalOpen) {
+        this.selectedMenu = null;
+        this.selectedPatatina = null;
+        this.selectedBibita = null;
+      }
+    }, 300);
   }
 
   selectPatatina(patatina: any) {
@@ -184,8 +195,27 @@ export class MenuPage implements OnInit, OnDestroy {
     return total;
   }
 
-  addSelectedToCart() {
+  async addSelectedToCart() {
     if (!this.selectedMenu) return;
+
+    if (!this.authService.isLoggedIn()) {
+      this.closeDetails();
+      try {
+        const topModal = await this.modalController.getTop();
+        if (topModal) {
+          await topModal.dismiss();
+        }
+      } catch (e) {}
+      await this.router.navigate(['/tabs/login']);
+      const toast = await this.toastController.create({
+        message: 'Accedi per completare il tuo ordine',
+        duration: 2500,
+        color: 'warning',
+        position: 'bottom'
+      });
+      await toast.present();
+      return;
+    }
 
     const modificheList: string[] = [];
     if (this.selectedPatatina) {

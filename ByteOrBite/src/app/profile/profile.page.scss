@@ -338,6 +338,18 @@
     z-index: 1;
     position: relative;
 
+    iframe {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border: none;
+      transition: filter 0.3s ease-in-out;
+    }
+
+    &.dark-map iframe {
+      filter: invert(90%) hue-rotate(180deg) contrast(95%);
+    }
+
     .map-expand-button {
       position: absolute;
       bottom: 10px;
@@ -360,10 +372,14 @@
   }
 }
 
-/* Fix per Leaflet preview in dark mode */
+/* Stili preview in dark mode */
 :host-context(.ion-palette-dark) {
   .map-preview-box-bottom {
     border-color: #444;
+
+    iframe {
+      filter: invert(90%) hue-rotate(180deg) contrast(95%);
+    }
 
     .map-expand-button {
       --background: #333;

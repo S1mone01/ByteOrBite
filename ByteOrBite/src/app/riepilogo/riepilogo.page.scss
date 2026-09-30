@@ -161,6 +161,24 @@ ion-header {
 .map-preview-box {
   width: 100%;
   height: 100%;
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: none;
+    transition: filter 0.3s ease-in-out;
+  }
+
+  &.dark-map iframe {
+    filter: invert(90%) hue-rotate(180deg) contrast(95%);
+  }
+}
+
+:host-context(.ion-palette-dark) {
+  .map-preview-box iframe {
+    filter: invert(90%) hue-rotate(180deg) contrast(95%);
+  }
 }
 
 /* Prodotti */

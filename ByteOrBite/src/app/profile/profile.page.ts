@@ -21,11 +21,11 @@ import {
 } from 'ionicons/icons';
 import { AuthService, User } from '../services/auth.service';
 import { ThemeService } from '../services/theme.service';
-import { Observable, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { MapModalComponent } from '../components/map-modal/map-modal.component';
-import * as L from 'leaflet';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -44,7 +44,7 @@ import { HttpClient } from '@angular/common/http';
     CommonModule, FormsModule
   ]
 })
-export class ProfilePage implements OnInit, AfterViewChecked {
+export class ProfilePage implements OnInit {
   currentUser$: Observable<User | null>;
   isDarkMode$: Observable<boolean>;
   isMobile: boolean;
@@ -58,11 +58,8 @@ export class ProfilePage implements OnInit, AfterViewChecked {
     return this.ordini.filter(o => o.stato === 'completato');
   }
 
-  private previewMap?: L.Map;
-  private lastLat?: number;
-  private lastLon?: number;
-  private lastTheme?: boolean;
-  private themeSub?: Subscription;
+  private cachedMapUrlString: string = '';
+  private cachedMapUrl: SafeResourceUrl | null = null;
 
   constructor(
     private authService: AuthService,
@@ -74,7 +71,8 @@ export class ProfilePage implements OnInit, AfterViewChecked {
     private toastController: ToastController,
     private dataService: DataService,
     private modalController: ModalController,
-    private http: HttpClient
+    private http: HttpClient,
+    private sanitizer: DomSanitizer
   ) {
     addIcons({ 
       personOutline, mailOutline, locationOutline, 
@@ -90,70 +88,20 @@ export class ProfilePage implements OnInit, AfterViewChecked {
 
   ngOnInit() {
     this.loadOrderHistory();
-    this.themeSub = this.themeService.isDarkMode$.subscribe(() => {
-      // Forza il refresh se il tema cambia
-      this.updatePreviewMap();
-    });
   }
 
   ionViewWillEnter() {
     this.loadOrderHistory();
   }
 
-  ngAfterViewChecked() {
-    this.updatePreviewMap();
-  }
-
-  updatePreviewMap() {
-    const user = JSON.parse(localStorage.getItem('byte_or_bite_user') || '{}');
-    const loc = this.parseLocation(user.location);
-    const isDark = this.themeService.currentThemeValue;
-    
-    if (loc && loc.lat && loc.lon) {
-      if (this.lastLat === loc.lat && this.lastLon === loc.lon && this.lastTheme === isDark && this.previewMap) {
-        return;
-      }
-
-      this.lastLat = loc.lat;
-      this.lastLon = loc.lon;
-      this.lastTheme = isDark;
-
-      setTimeout(() => {
-        const container = document.getElementById('profile-map-preview');
-        if (container) {
-          if (this.previewMap) {
-            this.previewMap.remove();
-          }
-
-          this.previewMap = L.map('profile-map-preview', {
-            zoomControl: false,
-            dragging: false,
-            touchZoom: false,
-            doubleClickZoom: false,
-            scrollWheelZoom: false,
-            attributionControl: false
-          }).setView([loc.lat, loc.lon], 15);
-
-          const isDark = this.themeService.currentThemeValue;
-          const tileUrl = isDark 
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-
-          L.tileLayer(tileUrl).addTo(this.previewMap);
-
-          const defaultIcon = L.icon({
-            iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-            iconSize: [20, 32],
-            iconAnchor: [10, 32]
-          });
-
-          L.marker([loc.lat, loc.lon], { icon: defaultIcon }).addTo(this.previewMap);
-          
-          this.previewMap.invalidateSize();
-        }
-      }, 100);
+  getMapPreviewUrl(lat?: number, lon?: number): SafeResourceUrl | null {
+    if (!lat || !lon) return null;
+    const url = `https://maps.google.com/maps?q=${lat},${lon}&hl=it&z=15&output=embed`;
+    if (this.cachedMapUrlString !== url) {
+      this.cachedMapUrlString = url;
+      this.cachedMapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
+    return this.cachedMapUrl;
   }
 
   parseLocation(location: string | undefined): any {
@@ -228,7 +176,7 @@ export class ProfilePage implements OnInit, AfterViewChecked {
 
   logout() {
     this.authService.logout();
-    this.router.navigate(['/tabs/login']);
+    this.router.navigate(['/tabs/home']);
   }
 
   async editField(field: string) {

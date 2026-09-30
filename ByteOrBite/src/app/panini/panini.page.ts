@@ -9,7 +9,7 @@ import {
   IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
   IonCardTitle, IonCardContent, IonButton, IonIcon, 
   IonText, IonBadge, IonImg, IonModal, IonList, IonItem, IonLabel, IonCheckbox,
-  IonButtons, IonFooter
+  IonButtons, IonFooter, ModalController, ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
@@ -18,6 +18,8 @@ import {
   flameOutline, leafOutline, nutritionOutline, fastFoodOutline
 } from 'ionicons/icons';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-panini',
@@ -60,7 +62,11 @@ export class PaniniPage implements OnInit, OnDestroy {
 
   constructor(
     private dataService: DataService,
-    private cartService: CartService
+    private cartService: CartService,
+    private authService: AuthService,
+    private router: Router,
+    private modalController: ModalController,
+    private toastController: ToastController
   ) {
     addIcons({ 
       add, remove, close, cart, removeCircleOutline, addCircleOutline, 
@@ -223,12 +229,16 @@ export class PaniniPage implements OnInit, OnDestroy {
 
   closeDetails() {
     this.isModalOpen = false;
-    this.selectedPanino = null;
-    this.ingredientiBase = [];
-    this.ingredientiExtra = [];
-    this.extraQuantities = {};
-    this.hasBunTop = true;
-    this.hasBunBottom = true;
+    setTimeout(() => {
+      if (!this.isModalOpen) {
+        this.selectedPanino = null;
+        this.ingredientiBase = [];
+        this.ingredientiExtra = [];
+        this.extraQuantities = {};
+        this.hasBunTop = true;
+        this.hasBunBottom = true;
+      }
+    }, 300);
   }
 
   toggleBunTop() {
@@ -359,8 +369,27 @@ export class PaniniPage implements OnInit, OnDestroy {
     return '280px';
   }
 
-  addSelectedToCart() {
+  async addSelectedToCart() {
     if (!this.selectedPanino) return;
+
+    if (!this.authService.isLoggedIn()) {
+      this.closeDetails();
+      try {
+        const topModal = await this.modalController.getTop();
+        if (topModal) {
+          await topModal.dismiss();
+        }
+      } catch (e) {}
+      await this.router.navigate(['/tabs/login']);
+      const toast = await this.toastController.create({
+        message: 'Accedi per completare il tuo ordine',
+        duration: 2500,
+        color: 'warning',
+        position: 'bottom'
+      });
+      await toast.present();
+      return;
+    }
 
     const removed: string[] = [];
 

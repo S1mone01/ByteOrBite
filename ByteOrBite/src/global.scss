@@ -262,3 +262,21 @@ ion-img {
     max-height: 100%;
   }
 }
+
+/* Transizione e modalità scura per tutte le mappe Google Maps */
+iframe[src*="maps.google.com"],
+.map-wrapper iframe,
+.map-preview-box iframe,
+.map-preview-box-bottom iframe {
+  transition: filter 0.35s ease-in-out;
+}
+
+body.ion-palette-dark {
+  iframe[src*="maps.google.com"],
+  .map-wrapper iframe,
+  .map-preview-box iframe,
+  .map-preview-box-bottom iframe,
+  .dark-map iframe {
+    filter: invert(90%) hue-rotate(180deg) contrast(95%);
+  }
+}

@@ -36,7 +36,6 @@
               }
             ],
             "styles": [
-              "node_modules/leaflet/dist/leaflet.css",
               "src/global.scss", 
               "src/theme/variables.scss"
             ],
@@ -118,7 +117,6 @@
               }
             ],
             "styles": [
-              "node_modules/leaflet/dist/leaflet.css",
               "src/global.scss", 
               "src/theme/variables.scss"
             ],

@@ -1,16 +1,19 @@
-import { Component, OnInit, AfterViewInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { 
   IonHeader, IonToolbar, IonTitle, IonButtons, 
-  IonButton, IonContent, IonIcon,
-  ModalController, LoadingController, ToastController
+  IonButton, IonContent, IonIcon, IonSearchbar,
+  IonList, IonItem, IonLabel, IonSpinner,
+  ModalController, ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { closeOutline, checkmarkOutline, locateOutline } from 'ionicons/icons';
-import * as L from 'leaflet';
+import { closeOutline, checkmarkOutline, locateOutline, locationOutline, searchOutline } from 'ionicons/icons';
 import { HttpClient } from '@angular/common/http';
+
 import { ThemeService } from '../../services/theme.service';
-import { Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-map-modal',
@@ -18,128 +21,153 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./map-modal.component.scss'],
   standalone: true,
   imports: [
+    CommonModule,
+    FormsModule,
     IonHeader, IonToolbar, IonTitle, IonButtons, 
-    IonButton, IonContent, IonIcon,
-    CommonModule
+    IonButton, IonContent, IonIcon, IonSearchbar,
+    IonList, IonItem, IonLabel, IonSpinner
   ]
 })
-export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MapModalComponent implements OnInit {
   @Input() initialLat?: number;
   @Input() initialLon?: number;
 
-  map!: L.Map;
-  marker!: L.Marker;
-  tileLayer!: L.TileLayer;
   selectedAddress: string = '';
   selectedCoords: { lat: number, lon: number } | null = null;
+  mapUrl: SafeResourceUrl | null = null;
+  isDarkMode$: Observable<boolean>;
+  
+  searchQuery: string = '';
+  searchResults: any[] = [];
+  isSearching: boolean = false;
   isGeocoding: boolean = false;
-  private themeSub?: Subscription;
+  isLocating: boolean = false;
+
+  private currentRawUrl: string = '';
 
   constructor(
     private modalController: ModalController,
     private http: HttpClient,
-    private loadingController: LoadingController,
     private toastController: ToastController,
+    private sanitizer: DomSanitizer,
     private themeService: ThemeService
   ) {
-    addIcons({ closeOutline, checkmarkOutline, locateOutline });
+    addIcons({ closeOutline, checkmarkOutline, locateOutline, locationOutline, searchOutline });
+    this.isDarkMode$ = this.themeService.isDarkMode$;
   }
 
-  ngOnInit() {}
-
-  ngAfterViewInit() {
-    // Piccolo delay per assicurarsi che il container sia renderizzato correttamente nel modal
-    setTimeout(() => {
-      this.initMap();
-    }, 300);
-  }
-
-  ngOnDestroy() {
-    if (this.themeSub) {
-      this.themeSub.unsubscribe();
-    }
-  }
-
-  initMap() {
-    const defaultLat = this.initialLat || 45.4642; // Milano
-    const defaultLon = this.initialLon || 9.1900;
-
-    this.map = L.map('map', {
-      zoomControl: false // Lo nascondiamo per un look più pulito su mobile
-    }).setView([defaultLat, defaultLon], 13);
-
-    // Gestione del tema
-    this.themeSub = this.themeService.isDarkMode$.subscribe(isDark => {
-      if (this.tileLayer) {
-        this.map.removeLayer(this.tileLayer);
-      }
-
-      const tileUrl = isDark 
-        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-        : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      
-      const attribution = isDark
-        ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-
-      this.tileLayer = L.tileLayer(tileUrl, { attribution }).addTo(this.map);
-    });
-
-    // Fix for missing icons in Leaflet when used with build systems
-    const defaultIcon = L.icon({
-      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41]
-    });
-
-    this.marker = L.marker([defaultLat, defaultLon], {
-      draggable: true,
-      icon: defaultIcon
-    }).addTo(this.map);
-
-    this.marker.on('dragend', (event) => {
-      const position = event.target.getLatLng();
-      this.updatePosition(position.lat, position.lng);
-    });
-
-    this.map.on('click', (event: L.LeafletMouseEvent) => {
-      const position = event.latlng;
-      this.marker.setLatLng(position);
-      this.updatePosition(position.lat, position.lng);
-    });
-
-    // Importante per ricalcolare le dimensioni del contenitore
-    this.map.invalidateSize();
-
+  ngOnInit() {
     if (this.initialLat && this.initialLon) {
-      this.updatePosition(this.initialLat, this.initialLon);
+      this.selectedCoords = { lat: this.initialLat, lon: this.initialLon };
+      this.updateMapUrl(this.initialLat, this.initialLon);
+      this.reverseGeocode(this.initialLat, this.initialLon);
     } else {
       this.getCurrentLocation();
     }
   }
 
-  async getCurrentLocation() {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          this.map.setView([lat, lon], 16);
-          this.marker.setLatLng([lat, lon]);
-          this.updatePosition(lat, lon);
-        },
-        (error) => {
-          console.error('Error getting location', error);
-          this.showToast('Impossibile recuperare la posizione GPS', 'warning');
-        }
-      );
+  updateMapUrl(lat: number, lon: number) {
+    const rawUrl = `https://maps.google.com/maps?q=${lat},${lon}&hl=it&z=16&output=embed`;
+    if (this.currentRawUrl !== rawUrl) {
+      this.currentRawUrl = rawUrl;
+      this.mapUrl = this.sanitizer.bypassSecurityTrustResourceUrl(rawUrl);
     }
   }
 
-  updatePosition(lat: number, lon: number) {
+  async getCurrentLocation() {
+    if ('geolocation' in navigator) {
+      this.isLocating = true;
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.isLocating = false;
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          this.selectedCoords = { lat, lon };
+          this.updateMapUrl(lat, lon);
+          this.reverseGeocode(lat, lon);
+          this.showToast('Posizione GPS rilevata!', 'success');
+        },
+        (error) => {
+          this.isLocating = false;
+          console.error('Error getting location', error);
+          if (!this.selectedCoords) {
+            const defaultLat = 45.4642; // Milano
+            const defaultLon = 9.1900;
+            this.selectedCoords = { lat: defaultLat, lon: defaultLon };
+            this.updateMapUrl(defaultLat, defaultLon);
+            this.reverseGeocode(defaultLat, defaultLon);
+          }
+          this.showToast('Impossibile recuperare la posizione GPS', 'warning');
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    } else {
+      if (!this.selectedCoords) {
+        const defaultLat = 45.4642;
+        const defaultLon = 9.1900;
+        this.selectedCoords = { lat: defaultLat, lon: defaultLon };
+        this.updateMapUrl(defaultLat, defaultLon);
+        this.reverseGeocode(defaultLat, defaultLon);
+      }
+    }
+  }
+
+  onSearchInput(event: any) {
+    const query = event.detail?.value !== undefined ? event.detail.value : this.searchQuery;
+    if (!query || query.trim().length < 3) {
+      this.searchResults = [];
+      return;
+    }
+
+    this.isSearching = true;
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query.trim())}&limit=5&addressdetails=1`;
+    this.http.get<any[]>(url).subscribe({
+      next: (results) => {
+        this.isSearching = false;
+        this.searchResults = results || [];
+      },
+      error: (err) => {
+        this.isSearching = false;
+        console.error('Search geocoding error', err);
+        this.searchResults = [];
+      }
+    });
+  }
+
+  searchAddress() {
+    if (!this.searchQuery || this.searchQuery.trim().length < 3) return;
+    this.isSearching = true;
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(this.searchQuery.trim())}&limit=5&addressdetails=1`;
+    this.http.get<any[]>(url).subscribe({
+      next: (results) => {
+        this.isSearching = false;
+        if (results && results.length > 0) {
+          this.selectSearchResult(results[0]);
+        } else {
+          this.showToast('Nessun indirizzo trovato', 'warning');
+        }
+      },
+      error: (err) => {
+        this.isSearching = false;
+        console.error('Search error', err);
+        this.showToast('Errore durante la ricerca', 'danger');
+      }
+    });
+  }
+
+  selectSearchResult(result: any) {
+    const lat = parseFloat(result.lat);
+    const lon = parseFloat(result.lon);
     this.selectedCoords = { lat, lon };
-    this.reverseGeocode(lat, lon);
+    this.selectedAddress = result.display_name;
+    this.searchQuery = result.display_name;
+    this.searchResults = [];
+    this.updateMapUrl(lat, lon);
+  }
+
+  clearSearch() {
+    this.searchQuery = '';
+    this.searchResults = [];
   }
 
   reverseGeocode(lat: number, lon: number) {
@@ -150,6 +178,7 @@ export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isGeocoding = false;
         if (data && data.display_name) {
           this.selectedAddress = data.display_name;
+          this.searchQuery = data.display_name;
         } else {
           this.selectedAddress = `Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
         }

@@ -122,6 +122,7 @@ export class TabsPage implements OnInit {
 
   logout() {
     this.authService.logout();
+    this.router.navigate(['/tabs/home']);
   }
 
   openCart() {
