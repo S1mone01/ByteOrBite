@@ -5,7 +5,7 @@ import {
   IonContent, IonHeader, IonTitle, IonToolbar, IonSegment, IonSegmentButton, 
   IonLabel, IonList, IonItem, IonThumbnail, IonButton, IonIcon, IonModal, 
   IonButtons, IonInput, IonToggle, IonSelect, IonSelectOption, IonCard,
-  IonCardHeader, IonCardTitle, IonCardContent, IonBadge, IonListHeader,
+  IonCardHeader, IonCardTitle, IonCardContent, IonListHeader,
   IonCardSubtitle, IonText, AlertController, ToastController,
   IonGrid, IonRow, IonCol, IonBackButton,
   IonRefresher, IonRefresherContent
@@ -27,7 +27,7 @@ import { DataService } from '../services/data.service';
     IonContent, IonHeader, IonTitle, IonToolbar, IonSegment, IonSegmentButton, 
     IonLabel, IonList, IonItem, IonThumbnail, IonButton, IonIcon, IonModal, 
     IonButtons, IonInput, IonToggle, IonSelect, IonSelectOption, IonCard, 
-    IonCardHeader, IonCardTitle, IonCardContent, IonBadge, IonListHeader, 
+    IonCardHeader, IonCardTitle, IonCardContent, IonListHeader, 
     IonCardSubtitle, IonText, IonGrid, IonRow, IonCol,
     IonBackButton, IonRefresher, IonRefresherContent,
     CommonModule, FormsModule

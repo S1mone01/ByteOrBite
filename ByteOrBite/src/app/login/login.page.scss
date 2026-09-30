@@ -196,9 +196,34 @@ ion-list {
 }
 
 .terms-modal {
-  --height: 80%;
+  --height: auto;
+  --max-height: 85vh;
+  --width: 540px;
+  --max-width: 92vw;
   --border-radius: 20px;
+  --box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
   
+  .ion-page {
+    position: relative;
+    display: block;
+    contain: content;
+  }
+
+  ion-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    contain: none;
+    height: auto;
+    max-height: calc(85vh - 56px);
+
+    &::part(scroll) {
+      position: relative;
+      top: 0;
+      bottom: 0;
+    }
+  }
+
   ion-toolbar {
     --color: #ffffff;
   }

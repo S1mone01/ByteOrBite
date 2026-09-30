@@ -280,3 +280,31 @@ body.ion-palette-dark {
     filter: invert(90%) hue-rotate(180deg) contrast(95%);
   }
 }
+
+/* Modali ad altezza dinamica (si adattano automaticamente al contenuto) */
+ion-modal.auto-height,
+.auto-height-modal {
+  --height: auto;
+  --max-height: 88vh;
+
+  .ion-page {
+    position: relative;
+    display: block;
+    contain: content;
+  }
+
+  ion-content {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    contain: none;
+    height: auto;
+    max-height: calc(88vh - 56px);
+
+    &::part(scroll) {
+      position: relative;
+      top: 0;
+      bottom: 0;
+    }
+  }
+}
