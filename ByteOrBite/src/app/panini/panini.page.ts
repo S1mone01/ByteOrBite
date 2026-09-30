@@ -55,9 +55,9 @@ export class PaniniPage implements OnInit, OnDestroy {
   ingredientiBase: any[] = [];
   ingredientiExtra: any[] = [];
   extraQuantities: { [key: number]: number } = {};
-  modalQuantity: number = 1;
   hasBunTop: boolean = true;
   hasBunBottom: boolean = true;
+  modalQuantity: number = 1;
   cartItems: any[] = [];
   private cartItemsSub: Subscription | null = null;
 
@@ -169,7 +169,11 @@ export class PaniniPage implements OnInit, OnDestroy {
 
   incrementQuantity(panino: any, event?: Event) {
     if (event) event.stopPropagation();
-    this.openDetails(panino);
+    this.cartService.addToCart({
+      ...panino,
+      quantita: 1,
+      modifiche: '' // Version base dalla card
+    });
   }
 
   decrementQuantity(panino: any, event?: Event) {
