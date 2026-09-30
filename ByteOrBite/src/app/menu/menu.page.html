@@ -136,18 +136,35 @@
 
         </div>
 
-        <div class="modal-footer-section">
-          <div class="price-summary">
-            <span>Prezzo Totale Menu:</span>
-            <strong class="total-price-tag">{{ calculateTotalPrice() | currency:'EUR':'symbol':'1.2-2' }}</strong>
-          </div>
-
-          <ion-button expand="block" color="primary" (click)="addSelectedToCart()" class="ion-margin-top">
-            Aggiungi al Carrello ({{ calculateTotalPrice() | currency:'EUR':'symbol':'1.2-2' }})
-          </ion-button>
-        </div>
-
       </ion-content>
+
+      <ion-footer class="custom-modal-footer">
+        <ion-toolbar>
+          <div class="cart-footer-content">
+            <div class="price-box">
+              <span class="price-label">Totale:</span>
+              <span class="price-value">{{ (calculateTotalPrice() * modalQuantity) | currency:'EUR':'symbol':'1.2-2' }}</span>
+            </div>
+
+            <div class="modal-qty-selector">
+              <ion-button fill="clear" color="danger" class="qty-btn" (click)="decrementModalQuantity()" [disabled]="modalQuantity <= 1">
+                <ion-icon name="remove"></ion-icon>
+              </ion-button>
+              
+              <span class="qty-count">{{ modalQuantity }}</span>
+              
+              <ion-button fill="clear" color="success" class="qty-btn" (click)="incrementModalQuantity()">
+                <ion-icon name="add"></ion-icon>
+              </ion-button>
+            </div>
+
+            <ion-button color="primary" shape="round" class="add-cart-btn" (click)="addSelectedToCart()">
+              <ion-icon name="cart-outline" slot="start"></ion-icon>
+              Aggiungi
+            </ion-button>
+          </div>
+        </ion-toolbar>
+      </ion-footer>
     </ng-template>
   </ion-modal>
 

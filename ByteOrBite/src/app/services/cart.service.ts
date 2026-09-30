@@ -73,7 +73,7 @@ export class CartService {
     );
 
     if (existingItem) {
-      this.updateQuantity(existingItem.id, existingItem.quantita + 1);
+      this.updateQuantity(existingItem.id, existingItem.quantita + (item.quantita || 1));
     } else {
       const cartItem = {
         utente_id: currentUser.id,

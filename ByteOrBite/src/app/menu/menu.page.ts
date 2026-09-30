@@ -5,7 +5,7 @@ import { DataService } from 'src/app/services/data.service';
 import { CartService } from 'src/app/services/cart.service';
 import { Subscription } from 'rxjs';
 import { 
-  IonHeader, IonToolbar, IonTitle, IonContent, 
+  IonHeader, IonToolbar, IonTitle, IonContent, IonFooter,
   IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
   IonCardTitle, IonCardContent, IonButton, IonIcon, 
   IonText, IonBadge, IonImg, IonModal, IonButtons,
@@ -27,7 +27,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [
     CommonModule, FormsModule,
-    IonHeader, IonToolbar, IonTitle, IonContent, 
+    IonHeader, IonToolbar, IonTitle, IonContent, IonFooter,
     IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
     IonCardTitle, IonCardContent, IonButton, IonIcon, 
     IonText, IonBadge, IonImg, IonModal, IonButtons,
@@ -44,6 +44,7 @@ export class MenuPage implements OnInit, OnDestroy {
   selectedMenu: any = null;
   selectedPatatina: any = null;
   selectedBibita: any = null;
+  modalQuantity: number = 1;
   
   cartItems: any[] = [];
   private cartItemsSub: Subscription | null = null;
@@ -125,12 +126,7 @@ export class MenuPage implements OnInit, OnDestroy {
 
   incrementQuantity(combo: any, event?: Event) {
     if (event) event.stopPropagation();
-    this.cartService.addToCart({
-      ...combo,
-      tipo: 'menu',
-      quantita: 1,
-      modifiche: ''
-    });
+    this.openDetails(combo);
   }
 
   decrementQuantity(combo: any, event?: Event) {
@@ -146,6 +142,7 @@ export class MenuPage implements OnInit, OnDestroy {
 
   openDetails(combo: any) {
     this.selectedMenu = { ...combo };
+    this.modalQuantity = 1;
     
     // Seleziona la patatina predefinita se presente nel combo, altrimenti la prima disponibile
     if (combo.patatine_id) {
@@ -171,8 +168,19 @@ export class MenuPage implements OnInit, OnDestroy {
         this.selectedMenu = null;
         this.selectedPatatina = null;
         this.selectedBibita = null;
+        this.modalQuantity = 1;
       }
     }, 300);
+  }
+
+  incrementModalQuantity() {
+    this.modalQuantity++;
+  }
+
+  decrementModalQuantity() {
+    if (this.modalQuantity > 1) {
+      this.modalQuantity--;
+    }
   }
 
   selectPatatina(patatina: any) {
@@ -232,7 +240,7 @@ export class MenuPage implements OnInit, OnDestroy {
       ...this.selectedMenu,
       prezzo: prezzoFinale,
       tipo: 'menu',
-      quantita: 1,
+      quantita: this.modalQuantity,
       modifiche: modificheStr
     });
 
