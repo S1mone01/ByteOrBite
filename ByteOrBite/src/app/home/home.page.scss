@@ -67,17 +67,42 @@ ion-card {
     transform: translateY(-5px);
   }
 
-  img {
+  .img-wrapper {
     height: 200px;
     width: 100%;
-    object-fit: cover;
-    object-position: center;
-    /* Zoom effect on hover */
-    transition: transform 0.3s ease;
+    background: #ffffff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  &:hover img {
-    transform: scale(1.05);
+  .home-card-img {
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    object-position: center;
+    transition: transform 0.3s ease;
+
+    &.panini-img {
+      padding: 6px;
+    }
+
+    &.menu-img {
+      padding: 0;
+      transform: scale(1.22);
+    }
+  }
+
+  &:hover {
+    .home-card-img.panini-img {
+      transform: scale(1.06);
+    }
+    .home-card-img.menu-img {
+      transform: scale(1.28);
+    }
   }
 
   .profile-icon-container {
@@ -130,8 +155,8 @@ ion-card {
   }
 
   ion-card {
-    img, .profile-icon-container {
-      height: 200px; /* Restored card size since we can scroll now */
+    .img-wrapper, img, .profile-icon-container {
+      height: 200px;
     }
   }
 
@@ -140,3 +165,4 @@ ion-card {
     margin-bottom: 20px;
   }
 }
+

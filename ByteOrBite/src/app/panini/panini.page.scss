@@ -67,11 +67,11 @@ ion-col.panino-col, ion-col {
     width: 100%;
     height: 180px;
     overflow: hidden;
-    background: rgba(0, 0, 0, 0.03);
+    background: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0;
+    padding: 8px;
   }
 
   .panino-img {
@@ -83,10 +83,12 @@ ion-col.panino-col, ion-col {
     transition: transform 0.3s ease;
 
     &::part(image), img {
-      object-fit: cover !important;
+      object-fit: contain !important;
       object-position: center !important;
       width: 100%;
       height: 100%;
+      max-width: 100%;
+      max-height: 100%;
       margin: auto;
     }
   }
@@ -227,7 +229,7 @@ ion-col.panino-col, ion-col {
     border-radius: 15px;
     overflow: hidden;
     margin-bottom: 20px;
-    background: rgba(0, 0, 0, 0.04);
+    background: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;

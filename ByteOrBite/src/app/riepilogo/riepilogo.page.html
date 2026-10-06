@@ -110,9 +110,9 @@
         </div>
 
         <!-- Sistema Coupon Punti -->
-        <ion-card class="points-coupon-card" *ngIf="user.points && user.points >= 10">
+        <ion-card class="points-coupon-card" [class.selected]="useCoupon" *ngIf="user.points && user.points >= 10">
           <ion-card-content>
-            <div class="coupon-header">
+            <div class="coupon-header" (click)="toggleCoupon(user.points)">
               <div class="header-left">
                 <ion-icon name="ticket-outline" color="warning" class="coupon-icon"></ion-icon>
                 <div class="coupon-header-text">
@@ -120,7 +120,13 @@
                   <p>Hai <strong>{{ user.points }}</strong> punti accumulati (10 Punti = 5% Sconto)</p>
                 </div>
               </div>
-              <ion-checkbox [(ngModel)]="useCoupon" (ionChange)="onCouponToggle(user.points)"></ion-checkbox>
+              <ion-checkbox 
+                shape="round" 
+                color="warning" 
+                [(ngModel)]="useCoupon" 
+                (click)="$event.stopPropagation()" 
+                (ionChange)="onCouponToggle(user.points)">
+              </ion-checkbox>
             </div>
 
             <!-- Sezione Selezione Livello Coupon -->

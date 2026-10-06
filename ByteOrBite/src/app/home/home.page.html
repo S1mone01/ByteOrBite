@@ -20,7 +20,9 @@
           <!-- Card 1: Panini -->
           <ion-col size="12" size-md="4" size-lg="3">
             <ion-card routerLink="/tabs/panini">
-              <img [src]="getImageUrl('uploads/panini/1779790463812-536875792.jpg')" alt="I Nostri Panini" />
+              <div class="img-wrapper">
+                <img [src]="getImageUrl('uploads/panini/1779790463812-536875792.jpg')" alt="I Nostri Panini" class="home-card-img panini-img" />
+              </div>
               <ion-card-header>
                 <ion-card-title>
                   <ion-icon name="fast-food-outline"></ion-icon> I Nostri Panini
@@ -35,7 +37,9 @@
           <!-- Card 2: Menu Completo -->
           <ion-col size="12" size-md="4" size-lg="3">
             <ion-card routerLink="/tabs/menu">
-              <img [src]="getImageUrl('uploads/menu/1786186120571-946822353.png')" alt="Menu Completo" />
+              <div class="img-wrapper">
+                <img [src]="getImageUrl('uploads/menu/1786186120571-946822353.png')" alt="Menu Completo" class="home-card-img menu-img" />
+              </div>
               <ion-card-header>
                 <ion-card-title>
                   <ion-icon name="restaurant-outline"></ion-icon> Menu Completo

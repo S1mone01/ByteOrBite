@@ -1,6 +1,7 @@
 .summary-container {
   max-width: 1200px;
   margin: 0 auto;
+  padding-bottom: 24px;
 }
 
 ion-header {
@@ -25,57 +26,23 @@ ion-header {
 }
 
 .left-column, .right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   width: 100%;
 }
 
-/* Colonna Sinistra / Cards */
+/* Colonna Sinistra: Card Consegna */
 .delivery-card {
-  margin: 0 0 24px 0;
+  margin: 0;
   border-radius: 16px;
-  box-shadow: none;
-  border: 1px solid rgba(var(--ion-color-medium-rgb), 0.2);
+  border: 1px solid rgba(var(--ion-color-medium-rgb), 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   overflow: hidden;
 
   ion-card-content {
-    padding: 20px;
+    padding: 16px;
   }
-}
-
-.delivery-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(var(--ion-color-medium-rgb), 0.1);
-
-  ion-icon {
-    font-size: 32px;
-    background: rgba(var(--ion-color-primary-rgb), 0.1);
-    padding: 12px;
-    border-radius: 12px;
-  }
-
-  .user-info {
-    .user-name {
-      margin: 0;
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--ion-text-color);
-    }
-
-    .user-email {
-      margin: 2px 0 0;
-      color: var(--ion-color-medium);
-      font-size: 0.95rem;
-    }
-  }
-}
-
-.delivery-card {
-  border-radius: 16px;
-  border: 1px solid rgba(var(--ion-color-medium-rgb), 0.15);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
 
   &.clickable-address-card {
     cursor: pointer;
@@ -83,7 +50,7 @@ ion-header {
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
       border-color: rgba(var(--ion-color-primary-rgb), 0.4);
     }
 
@@ -117,6 +84,37 @@ ion-header {
   }
 }
 
+.delivery-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(var(--ion-color-medium-rgb), 0.1);
+
+  ion-icon {
+    font-size: 28px;
+    background: rgba(var(--ion-color-primary-rgb), 0.1);
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .user-info {
+    .user-name {
+      margin: 0;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--ion-text-color);
+    }
+
+    .user-email {
+      margin: 2px 0 0;
+      color: var(--ion-color-medium);
+      font-size: 0.9rem;
+    }
+  }
+}
+
 .address-section {
   .address-header {
     display: flex;
@@ -125,7 +123,7 @@ ion-header {
     margin-bottom: 12px;
 
     ion-icon {
-      font-size: 24px;
+      font-size: 22px;
       margin-top: 2px;
     }
 
@@ -134,7 +132,7 @@ ion-header {
 
       h3 {
         margin: 0;
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         font-weight: 700;
         color: var(--ion-color-primary);
       }
@@ -143,13 +141,14 @@ ion-header {
         margin: 4px 0 0;
         color: var(--ion-text-color);
         line-height: 1.4;
+        font-size: 0.9rem;
       }
     }
   }
 }
 
 .map-preview-container {
-  margin-top: 16px;
+  margin-top: 14px;
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid rgba(var(--ion-color-medium-rgb), 0.2);
@@ -184,41 +183,49 @@ ion-header {
 /* Prodotti */
 .product-list {
   background: transparent;
-  margin-bottom: 24px;
+  margin: 0;
+  padding: 0;
   
   ion-list-header {
-    padding-left: 8px;
+    --min-height: 36px;
+    padding: 0 4px;
     margin-bottom: 12px;
+
     ion-label {
       font-size: 1.2rem;
       font-weight: 700;
       color: var(--ion-text-color);
+      margin: 0;
     }
   }
 }
 
 .riepilogo-item {
   --background: var(--ion-card-background, #fff);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   border-radius: 16px;
-  box-shadow: none;
-  border: 1px solid rgba(var(--ion-color-medium-rgb), 0.2);
-  --padding-start: 12px;
-  --padding-end: 12px;
-  --padding-top: 8px;
-  --padding-bottom: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(var(--ion-color-medium-rgb), 0.15);
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
   
+  &:last-child {
+    margin-bottom: 0;
+  }
+
   ion-thumbnail {
     --border-radius: 12px;
-    width: 64px;
-    height: 64px;
-    margin-right: 16px;
+    width: 60px;
+    height: 60px;
+    margin-right: 14px;
   }
 
   ion-label {
     h2 {
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
     }
     p {
       font-size: 0.9rem;
@@ -226,31 +233,41 @@ ion-header {
   }
 
   ion-text {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     color: var(--ion-color-primary);
   }
 }
 
 /* Pagamento */
 .payment-section {
-  margin-bottom: 30px;
+  margin: 0;
 
   ion-list-header {
-    padding-left: 8px;
-    margin-bottom: 8px;
+    --min-height: 36px;
+    padding: 0 4px;
+    margin-bottom: 12px;
+
     ion-label {
       font-size: 1.2rem;
       font-weight: 700;
       color: var(--ion-text-color);
+      margin: 0;
     }
   }
 
+  ion-radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
   .payment-card {
-    margin: 8px 0;
-    border-radius: 12px;
-    box-shadow: none;
-    border: 1px solid rgba(var(--ion-color-medium-rgb), 0.2);
+    margin: 0;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(var(--ion-color-medium-rgb), 0.15);
     transition: all 0.2s ease;
+    cursor: pointer;
 
     &.selected {
       border-color: var(--ion-color-success);
@@ -260,6 +277,7 @@ ion-header {
     &.disabled {
       opacity: 0.6;
       background: rgba(var(--ion-color-medium-rgb), 0.05);
+      cursor: not-allowed;
       
       ion-label h3 {
         color: var(--ion-color-medium);
@@ -268,21 +286,26 @@ ion-header {
 
     ion-item {
       --background: transparent;
-      --padding-start: 12px;
-      --inner-padding-end: 12px;
+      --padding-start: 16px;
+      --inner-padding-end: 16px;
+      --padding-top: 10px;
+      --padding-bottom: 10px;
+      --min-height: 64px;
 
       ion-icon {
         font-size: 24px;
-        margin-right: 12px;
+        margin-right: 14px;
       }
 
       h3 {
         font-weight: 700;
+        font-size: 1.05rem;
         margin-bottom: 2px;
       }
 
       p {
         font-size: 0.85rem;
+        color: var(--ion-color-medium);
       }
     }
   }
@@ -290,49 +313,71 @@ ion-header {
 
 /* Sistema Coupon Punti */
 .points-coupon-card {
-  margin: 0 0 20px 0;
+  margin: 0;
   border-radius: 16px;
-  border: 2px dashed rgba(var(--ion-color-warning-rgb), 0.7);
-  background: rgba(var(--ion-color-warning-rgb), 0.05);
-  box-shadow: none;
+  border: 1.5px dashed rgba(var(--ion-color-warning-rgb), 0.6);
+  background: rgba(var(--ion-color-warning-rgb), 0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+
+  &.selected {
+    border-color: var(--ion-color-warning);
+    border-style: solid;
+    background: rgba(var(--ion-color-warning-rgb), 0.08);
+  }
+
+  ion-card-content {
+    padding: 16px;
+  }
 
   .coupon-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 14px;
+    cursor: pointer;
 
     .header-left {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       flex: 1;
 
       .coupon-icon {
-        font-size: 32px;
+        font-size: 26px;
         flex-shrink: 0;
       }
 
       .coupon-header-text {
         h3 {
-          margin: 0;
-          font-weight: 800;
+          margin: 0 0 2px 0;
+          font-weight: 700;
           font-size: 1.05rem;
           color: var(--app-text);
         }
 
         p {
-          margin: 2px 0 0;
+          margin: 0;
           font-size: 0.85rem;
           color: var(--ion-color-medium);
         }
       }
     }
+
+    /* Selettore tondo identico a quello dei metodi di pagamento */
+    ion-checkbox {
+      --size: 22px;
+      --border-radius: 50%;
+      --checkbox-border-radius: 50%;
+      --border-width: 2px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
   }
 
   .coupon-selection-body {
-    margin-top: 15px;
-    padding-top: 12px;
+    margin-top: 14px;
+    padding-top: 14px;
     border-top: 1px dashed rgba(var(--ion-color-warning-rgb), 0.25);
 
     .section-subtitle {
@@ -345,13 +390,13 @@ ion-header {
     .coupon-tiers-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      gap: 8px;
+      gap: 10px;
       margin-bottom: 12px;
 
       .coupon-tier-pill {
         border: 1.5px solid rgba(var(--ion-color-warning-rgb), 0.4);
         border-radius: 12px;
-        padding: 8px;
+        padding: 10px 8px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -419,25 +464,34 @@ ion-header {
   }
 }
 
-/* Riepilogo Riepilogo */
+/* Riepilogo Costi */
 .order-summary-card {
-  margin: 0 0 40px 0;
+  margin: 0;
   border-radius: 16px;
   border: 1px solid rgba(var(--ion-color-primary-rgb), 0.3);
-  box-shadow: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   background: var(--ion-card-background, #fff);
+
+  ion-card-header {
+    padding: 16px 16px 12px 16px;
+  }
 
   ion-card-title {
     font-weight: 800;
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     color: var(--ion-color-primary);
+  }
+
+  ion-card-content {
+    padding: 0 16px 16px 16px;
   }
 
   .cost-row {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 12px;
-    font-size: 1.05rem;
+    font-size: 1rem;
     color: var(--ion-color-medium);
 
     &.discount {
@@ -450,30 +504,31 @@ ion-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 2px solid rgba(var(--ion-color-medium-rgb), 0.1);
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(var(--ion-color-medium-rgb), 0.15);
     
     span:first-child {
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       font-weight: 700;
       color: var(--ion-text-color);
     }
 
     .final-price {
-      font-size: 2.2rem;
+      font-size: 2rem;
       font-weight: 900;
       color: var(--ion-color-primary);
     }
   }
 
   .confirm-btn-final {
-    margin-top: 25px;
-    height: 60px;
+    margin-top: 20px;
+    height: 54px;
     --border-radius: 14px;
     font-weight: 800;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 }
 
@@ -493,8 +548,8 @@ ion-header {
 @media (min-width: 992px) {
   .riepilogo-grid {
     display: grid;
-    grid-template-columns: 1.5fr 1fr;
+    grid-template-columns: 1.4fr 1fr;
     align-items: start;
-    gap: 30px;
+    gap: 24px;
   }
 }

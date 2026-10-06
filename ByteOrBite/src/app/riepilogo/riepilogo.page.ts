@@ -275,6 +275,11 @@ export class RiepilogoPage implements OnInit {
     }
   }
 
+  toggleCoupon(userPoints: number = 0) {
+    this.useCoupon = !this.useCoupon;
+    this.onCouponToggle(userPoints);
+  }
+
   selectCouponTier(percentage: number) {
     this.selectedCouponPercentage = percentage;
   }
