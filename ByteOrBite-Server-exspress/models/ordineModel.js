@@ -40,7 +40,7 @@ const Ordine = {
     // Recupera i prodotti di un singolo ordine
     getProdottiByOrdineId: (ordineId) => {
         return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM ordine_prodotti WHERE ordine_id = ?`;
+            const sql = `SELECT * FROM ordine_dettagli WHERE ordine_id = ?`;
             db.all(sql, [ordineId], (err, rows) => {
                 if (err) reject(err);
                 else resolve(rows);
@@ -60,7 +60,7 @@ const Ordine = {
                         return;
                     }
                     const ordineId = this.lastID;
-                    const stmt = db.prepare(`INSERT INTO ordine_prodotti (ordine_id, prodotto_nome, quantita, prezzo_unitario, modifiche) VALUES (?, ?, ?, ?, ?)`);
+                    const stmt = db.prepare(`INSERT INTO ordine_dettagli (ordine_id, prodotto_nome, quantita, prezzo_unitario, modifiche) VALUES (?, ?, ?, ?, ?)`);
                     
                     prodotti.forEach(p => {
                         stmt.run(ordineId, p.prodotto_nome, p.quantita, p.prezzo_unitario, p.modifiche || '');

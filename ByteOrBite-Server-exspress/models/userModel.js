@@ -4,7 +4,7 @@ const User = {
     // Creazione nuovo utente
     create: (name, email, password, role = 'user') => {
         return new Promise((resolve, reject) => {
-            const sql = `INSERT INTO users (name, email, password, points, role) VALUES (?, ?, ?, 0, ?)`;
+            const sql = `INSERT INTO utenti (name, email, password, points, role) VALUES (?, ?, ?, 0, ?)`;
             db.run(sql, [name, email, password, role], function(err) {
                 if (err) reject(err);
                 else resolve({ id: this.lastID, name, email, points: 0, role, location: null });
@@ -15,7 +15,7 @@ const User = {
     // Ricerca per email
     findByEmail: (email) => {
         return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM users WHERE email = ?`;
+            const sql = `SELECT * FROM utenti WHERE email = ?`;
             db.get(sql, [email], (err, row) => {
                 if (err) reject(err);
                 else resolve(row);
@@ -26,7 +26,7 @@ const User = {
     // Ricerca per ID
     findById: (id) => {
         return new Promise((resolve, reject) => {
-            const sql = `SELECT * FROM users WHERE id = ?`;
+            const sql = `SELECT * FROM utenti WHERE id = ?`;
             db.get(sql, [id], (err, row) => {
                 if (err) reject(err);
                 else resolve(row);
@@ -40,7 +40,7 @@ const User = {
             const fields = Object.keys(data).map(key => `${key} = ?`).join(', ');
             const values = Object.values(data);
             values.push(id);
-            const sql = `UPDATE users SET ${fields} WHERE id = ?`;
+            const sql = `UPDATE utenti SET ${fields} WHERE id = ?`;
             db.run(sql, values, function(err) {
                 if (err) reject(err);
                 else {

@@ -1,14 +1,14 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
-const userDB = new sqlite3.Database(path.join(__dirname, 'database.sqlite'), (err) => {
-    if (err) console.error('Errore connessione database.sqlite:', err.message);
-    else console.log('Connesso a database.sqlite (Utenti)');
+const userDB = new sqlite3.Database(path.join(__dirname, 'utenti.sqlite'), (err) => {
+    if (err) console.error('Errore connessione utenti.sqlite:', err.message);
+    else console.log('Connesso a utenti.sqlite (Utenti)');
 });
 
-const catalogDB = new sqlite3.Database(path.join(__dirname, 'catalogo_panini.sqlite'), (err) => {
-    if (err) console.error('Errore connessione catalogo_panini.sqlite:', err.message);
-    else console.log('Connesso a catalogo_panini.sqlite (Catalogo)');
+const catalogDB = new sqlite3.Database(path.join(__dirname, 'catalogo.sqlite'), (err) => {
+    if (err) console.error('Errore connessione catalogo.sqlite:', err.message);
+    else console.log('Connesso a catalogo.sqlite (Catalogo)');
 });
 
 const cartDB = new sqlite3.Database(path.join(__dirname, 'carrello.sqlite'), (err) => {
