@@ -454,6 +454,6 @@ app.delete('/ingredienti/:id', async (req, res) => {
 
 
 
-app.listen(PORT, () => {
-    console.log(`Server avviato sulla porta ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server avviato su 0.0.0.0:${PORT} (accessibile da tutta la rete locale)`);
 });
