@@ -1,7 +1,14 @@
 <ion-header class="desktop-header">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <div class="logo-container">
+      <div class="logo-container"
+        (touchstart)="startHomePress($event)"
+        (touchend)="endHomePress($event)"
+        (touchcancel)="endHomePress($event)"
+        (mousedown)="startHomePress($event)"
+        (mouseup)="endHomePress($event)"
+        (mouseleave)="endHomePress($event)"
+        style="cursor: pointer;" title="Tieni premuto per configurare il Server IP">
         <img src="assets/verticale.png" alt="Byte or Bite Logo" class="desktop-logo">
       </div>
     </ion-buttons>
@@ -93,7 +100,13 @@
 
 <ion-tabs>
   <ion-tab-bar slot="bottom" class="mobile-tab-bar" *ngIf="(currentUrl$ | async) !== '/tabs/riepilogo'">
-    <ion-tab-button tab="home" href="/tabs/home">
+    <ion-tab-button tab="home" href="/tabs/home"
+      (touchstart)="startHomePress($event)"
+      (touchend)="endHomePress($event)"
+      (touchcancel)="endHomePress($event)"
+      (mousedown)="startHomePress($event)"
+      (mouseup)="endHomePress($event)"
+      (mouseleave)="endHomePress($event)">
       <div class="icon-wrapper">
         <img src="assets/1024v5.png" alt="Logo" class="mobile-logo-icon">
       </div>
@@ -180,7 +193,9 @@
           </ion-thumbnail>
           <ion-label>
             <h2>{{ item.prodotto_nome }}</h2>
-            <p *ngIf="item.modifiche" class="modifiche-text">{{ item.modifiche }}</p>
+            <div *ngIf="item.modifiche" class="modifiche-text">
+              <span *ngFor="let line of formatModifiche(item.modifiche)" class="modifica-line">{{ line }}</span>
+            </div>
             <p>{{ item.prezzo_unitario | currency:'EUR' }} x {{ item.quantita }}</p>
           </ion-label>
           <div slot="end" class="cart-item-controls">

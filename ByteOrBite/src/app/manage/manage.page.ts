@@ -382,4 +382,18 @@ export class ManagePage implements OnInit {
     });
     toast.present();
   }
+
+  formatModifiche(modifiche: string): string[] {
+    if (!modifiche) return [];
+    if (modifiche.includes('Starter:') || modifiche.includes('Bibita:')) {
+      return modifiche
+        .split(/(?:,\s*|\n+)(?=[A-Z][a-zA-ZÀ-ÿ\s]*:)/)
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+    }
+    if (modifiche.includes('\n')) {
+      return modifiche.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+    }
+    return [modifiche];
+  }
 }

@@ -67,7 +67,9 @@
             </ion-thumbnail>
             <ion-label>
               <h2>{{ item.prodotto_nome }}</h2>
-              <p *ngIf="item.modifiche" class="modifiche-text">{{ item.modifiche }}</p>
+              <div *ngIf="item.modifiche" class="modifiche-text">
+                <span *ngFor="let line of formatModifiche(item.modifiche)" class="modifica-line">{{ line }}</span>
+              </div>
               <p>{{ item.quantita }} x {{ item.prezzo_unitario | currency:'EUR' }}</p>
             </ion-label>
             <ion-text slot="end">
@@ -110,43 +112,65 @@
         </div>
 
         <!-- Sistema Coupon Punti -->
-        <ion-card class="points-coupon-card" [class.selected]="useCoupon" *ngIf="user.points && user.points >= 10">
+        <ion-card class="points-coupon-card" [class.selected]="useCoupon" [class.disabled]="(user.points || 0) < 10">
           <ion-card-content>
-            <div class="coupon-header" (click)="toggleCoupon(user.points)">
+            <div class="coupon-header" (click)="toggleCoupon(user.points || 0)">
               <div class="header-left">
-                <ion-icon name="ticket-outline" color="warning" class="coupon-icon"></ion-icon>
+                <ion-icon 
+                  [name]="(user.points || 0) < 10 ? 'lock-closed-outline' : 'ticket-outline'" 
+                  [color]="(user.points || 0) < 10 ? 'medium' : 'warning'" 
+                  class="coupon-icon">
+                </ion-icon>
                 <div class="coupon-header-text">
-                  <h3>Riscatta Coupon Punti</h3>
-                  <p>Hai <strong>{{ user.points }}</strong> punti accumulati (10 Punti = 5% Sconto)</p>
+                  <h3>Riscatta coupon</h3>
+                  <p *ngIf="(user.points || 0) >= 10">
+                    Hai <strong>{{ user.points }}</strong> punti accumulati (10 Punti = 5% Sconto)
+                  </p>
+                  <p *ngIf="(user.points || 0) < 10" class="points-locked-desc">
+                    Hai <strong>{{ user.points || 0 }}</strong> {{ (user.points === 1) ? 'punto' : 'punti' }}. <span class="points-needed-tag">Servono almeno 10 punti per lo sconto (10 Punti = 5%)</span>
+                  </p>
                 </div>
               </div>
               <ion-checkbox 
+                *ngIf="(user.points || 0) >= 10"
                 shape="round" 
                 color="warning" 
                 [(ngModel)]="useCoupon" 
                 (click)="$event.stopPropagation()" 
-                (ionChange)="onCouponToggle(user.points)">
+                (ionChange)="onCouponToggle(user.points || 0)">
               </ion-checkbox>
             </div>
 
-            <!-- Sezione Selezione Livello Coupon -->
-            <div class="coupon-selection-body" *ngIf="useCoupon">
-              <p class="section-subtitle">Scegli il coupon da applicare all'ordine (max 30%):</p>
+            <!-- Sezione Selezione Livello Coupon (Mostra i 4 blocchi fino al 20% su un'unica riga) -->
+            <div class="coupon-selection-body" *ngIf="useCoupon && (user.points || 0) >= 10">
+              <p class="section-subtitle">Scegli il coupon da applicare all'ordine (max 20%):</p>
               
               <div class="coupon-tiers-grid">
                 <div 
-                  *ngFor="let coupon of getAvailableCoupons(user.points)"
+                  *ngFor="let coupon of couponsList"
                   class="coupon-tier-pill"
-                  [class.selected]="selectedCouponPercentage === coupon.percentage"
-                  (click)="selectCouponTier(coupon.percentage)"
+                  [class.selected]="useCoupon && selectedCouponPercentage === coupon.percentage"
+                  [class.locked]="(user.points || 0) < coupon.points"
+                  (click)="selectCouponTier(coupon, user.points || 0)"
                 >
                   <div class="tier-percentage">-{{ coupon.percentage }}%</div>
                   <div class="tier-cost">{{ coupon.points }} Punti</div>
-                  <ion-icon name="checkmark-circle" class="check-icon" *ngIf="selectedCouponPercentage === coupon.percentage"></ion-icon>
+                  
+                  <ion-icon 
+                    name="checkmark-circle" 
+                    class="check-icon" 
+                    *ngIf="useCoupon && selectedCouponPercentage === coupon.percentage">
+                  </ion-icon>
+                  
+                  <ion-icon 
+                    name="lock-closed-outline" 
+                    class="locked-icon" 
+                    *ngIf="(user.points || 0) < coupon.points">
+                  </ion-icon>
                 </div>
               </div>
 
-              <div class="active-coupon-banner" *ngIf="selectedCouponPercentage > 0">
+              <div class="active-coupon-banner" *ngIf="useCoupon && selectedCouponPercentage > 0">
                 <ion-icon name="sparkles-outline" color="success"></ion-icon>
                 <span>Coupon <strong>-{{ selectedCouponPercentage }}%</strong> attivo! Risparmi {{ getPointsDiscount(user, cartItems$ | async) | currency:'EUR':'symbol':'1.2-2' }} (costo: {{ getUsedPoints() }} punti)</span>
               </div>

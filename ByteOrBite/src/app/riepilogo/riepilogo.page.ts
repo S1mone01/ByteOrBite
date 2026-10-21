@@ -13,7 +13,7 @@ import { addIcons } from 'ionicons';
 import { 
   locationOutline, personOutline, mapOutline, cashOutline, 
   cardOutline, alertCircleOutline, starOutline, addOutline, 
-  removeOutline, checkmarkCircle, createOutline, ticketOutline, sparklesOutline 
+  removeOutline, checkmarkCircle, createOutline, ticketOutline, sparklesOutline, lockClosedOutline 
 } from 'ionicons/icons';
 import { CartService } from '../services/cart.service';
 import { DataService } from '../services/data.service';
@@ -67,7 +67,7 @@ export class RiepilogoPage implements OnInit {
       locationOutline, personOutline, mapOutline, 
       cashOutline, cardOutline, alertCircleOutline, 
       starOutline, addOutline, removeOutline, checkmarkCircle, createOutline,
-      ticketOutline, sparklesOutline
+      ticketOutline, sparklesOutline, lockClosedOutline
     });
     this.cartItems$ = this.cartService.cartItems$;
     this.currentUser$ = this.authService.currentUser$;
@@ -248,21 +248,24 @@ export class RiepilogoPage implements OnInit {
     return items.reduce((acc, item) => acc + (item.prezzo_unitario * item.quantita), 0);
   }
 
-  // Restituisce i coupon sbloccati in base ai punti dell'utente (ogni 10 punti 5% di sconto, max 30%)
-  getAvailableCoupons(userPoints: number = 0) {
-    const allCoupons = [
-      { points: 10, percentage: 5, label: '5% Sconto (10 Punti)' },
-      { points: 20, percentage: 10, label: '10% Sconto (20 Punti)' },
-      { points: 30, percentage: 15, label: '15% Sconto (30 Punti)' },
-      { points: 40, percentage: 20, label: '20% Sconto (40 Punti)' },
-      { points: 50, percentage: 25, label: '25% Sconto (50 Punti)' },
-      { points: 60, percentage: 30, label: '30% Sconto - MAX (60 Punti)' }
-    ];
+  // 4 scaglioni coupon (max 20%)
+  couponsList = [
+    { points: 10, percentage: 5, label: '5% Sconto (10 Punti)' },
+    { points: 20, percentage: 10, label: '10% Sconto (20 Punti)' },
+    { points: 30, percentage: 15, label: '15% Sconto (30 Punti)' },
+    { points: 40, percentage: 20, label: '20% Sconto (40 Punti)' }
+  ];
 
-    return allCoupons.filter(c => c.points <= userPoints);
+  getAvailableCoupons(userPoints: number = 0) {
+    return this.couponsList.filter(c => c.points <= userPoints);
   }
 
   onCouponToggle(userPoints: number = 0) {
+    if (userPoints < 10) {
+      this.useCoupon = false;
+      this.selectedCouponPercentage = 0;
+      return;
+    }
     if (this.useCoupon) {
       const available = this.getAvailableCoupons(userPoints);
       if (available.length > 0) {
@@ -275,13 +278,40 @@ export class RiepilogoPage implements OnInit {
     }
   }
 
-  toggleCoupon(userPoints: number = 0) {
+  async toggleCoupon(userPoints: number = 0) {
+    if (userPoints < 10) {
+      const toast = await this.toastController.create({
+        message: `Hai ${userPoints} ${userPoints === 1 ? 'punto' : 'punti'}. Servono almeno 10 punti per riscattare uno sconto.`,
+        duration: 2500,
+        color: 'warning',
+        position: 'bottom'
+      });
+      toast.present();
+      return;
+    }
     this.useCoupon = !this.useCoupon;
     this.onCouponToggle(userPoints);
   }
 
-  selectCouponTier(percentage: number) {
-    this.selectedCouponPercentage = percentage;
+  async selectCouponTier(coupon: any, userPoints: number = 0) {
+    if (userPoints < coupon.points) {
+      const toast = await this.toastController.create({
+        message: `Servono almeno ${coupon.points} punti per sbloccare il coupon -${coupon.percentage}% (ne hai ${userPoints}).`,
+        duration: 2500,
+        color: 'warning',
+        position: 'bottom'
+      });
+      toast.present();
+      return;
+    }
+
+    if (this.useCoupon && this.selectedCouponPercentage === coupon.percentage) {
+      this.useCoupon = false;
+      this.selectedCouponPercentage = 0;
+    } else {
+      this.useCoupon = true;
+      this.selectedCouponPercentage = coupon.percentage;
+    }
   }
 
   getPointsDiscount(user: User | null, items: any[] | null): number {
@@ -328,6 +358,20 @@ export class RiepilogoPage implements OnInit {
         });
       });
     });
+  }
+
+  formatModifiche(modifiche: string): string[] {
+    if (!modifiche) return [];
+    if (modifiche.includes('Starter:') || modifiche.includes('Bibita:')) {
+      return modifiche
+        .split(/(?:,\s*|\n+)(?=[A-Z][a-zA-ZÀ-ÿ\s]*:)/)
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+    }
+    if (modifiche.includes('\n')) {
+      return modifiche.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+    }
+    return [modifiche];
   }
 }
 

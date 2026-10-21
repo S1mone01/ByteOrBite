@@ -3,7 +3,14 @@
     <!-- Hero Section -->
     <div class="hero-section">
       <div class="hero-overlay">
-        <img src="assets/verticale.png" alt="ByteOrBite Logo" class="hero-logo">
+        <img src="assets/verticale.png" alt="ByteOrBite Logo" class="hero-logo"
+          (touchstart)="startHomePress($event)"
+          (touchend)="endHomePress($event)"
+          (touchcancel)="endHomePress($event)"
+          (mousedown)="startHomePress($event)"
+          (mouseup)="endHomePress($event)"
+          (mouseleave)="endHomePress($event)"
+          style="cursor: pointer;" title="Tieni premuto per configurare il Server IP">
         <p class="ion-text-center">Il gusto a portata di click</p>
         <ion-button color="primary" shape="round" size="large" routerLink="/tabs/menu">
           Ordina Ora

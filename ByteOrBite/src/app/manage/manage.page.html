@@ -133,7 +133,9 @@
           <ion-item *ngFor="let p of currentOrder.prodotti">
             <ion-label>
               <h3><strong>{{ p.quantita }}x</strong> {{ p.prodotto_nome }}</h3>
-              <p *ngIf="p.modifiche" style="color: var(--ion-color-medium)">{{ p.modifiche }}</p>
+              <div *ngIf="p.modifiche" style="color: var(--ion-color-medium); font-size: 0.85rem; font-style: italic; display: flex; flex-direction: column; gap: 2px; margin-top: 2px;">
+                <span *ngFor="let line of formatModifiche(p.modifiche)">{{ line }}</span>
+              </div>
             </ion-label>
             <ion-text slot="end">{{ p.prezzo_unitario | currency:'EUR' }}</ion-text>
           </ion-item>

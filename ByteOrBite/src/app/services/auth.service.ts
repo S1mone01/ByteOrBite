@@ -22,7 +22,10 @@ interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000';
+  get apiUrl(): string {
+    const saved = localStorage.getItem('custom_api_url');
+    return saved ? saved.trim() : 'http://localhost:3000';
+  }
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$: Observable<User | null> = this.currentUserSubject.asObservable();
 

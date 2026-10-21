@@ -6,7 +6,18 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DataService {
-  private apiUrl = 'http://localhost:3000';
+  get apiUrl(): string {
+    const saved = localStorage.getItem('custom_api_url');
+    return saved ? saved.trim() : 'http://localhost:3000';
+  }
+
+  setApiUrl(url: string) {
+    if (!url || !url.trim()) {
+      localStorage.removeItem('custom_api_url');
+    } else {
+      localStorage.setItem('custom_api_url', url.trim());
+    }
+  }
 
   constructor(private http: HttpClient) { }
 
