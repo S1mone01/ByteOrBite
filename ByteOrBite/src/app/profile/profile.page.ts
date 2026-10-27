@@ -57,6 +57,22 @@ export class ProfilePage implements OnInit {
   get ordiniCompletati() {
     return this.ordini.filter(o => o.stato === 'completato');
   }
+  formatStato(stato: string): string {
+    if (!stato) return '';
+    if (stato.toLowerCase() === 'spedito' || stato.toLowerCase() === 'in consegna') {
+      return 'IN CONSEGNA';
+    }
+    return stato.toUpperCase();
+  }
+
+  getStatoBadgeColor(stato: string): string {
+    if (!stato) return 'primary';
+    const s = stato.toLowerCase();
+    if (s === 'completato') return 'success';
+    if (s === 'spedito' || s === 'in consegna') return 'warning';
+    if (s === 'in preparazione') return 'tertiary';
+    return 'primary';
+  }
 
   private cachedMapUrlString: string = '';
   private cachedMapUrl: SafeResourceUrl | null = null;

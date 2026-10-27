@@ -157,8 +157,8 @@
               <ion-card-header>
                 <div class="order-card-top">
                   <ion-card-title>Ordine #{{ ordine.id }}</ion-card-title>
-                  <ion-badge [color]="ordine.stato === 'spedito' ? 'warning' : 'primary'">
-                    {{ ordine.stato | uppercase }}
+                  <ion-badge [color]="getStatoBadgeColor(ordine.stato)">
+                    {{ formatStato(ordine.stato) }}
                   </ion-badge>
                 </div>
                 <ion-card-subtitle>{{ ordine.data_ora | date:'dd/MM/yyyy HH:mm' }}</ion-card-subtitle>
@@ -195,7 +195,7 @@
                     <div class="order-card-top">
                       <ion-card-title>Ordine #{{ ordine.id }}</ion-card-title>
                       <ion-badge color="success">
-                        {{ ordine.stato | uppercase }}
+                        {{ formatStato(ordine.stato) }}
                       </ion-badge>
                     </div>
                     <ion-card-subtitle>{{ ordine.data_ora | date:'dd/MM/yyyy HH:mm' }}</ion-card-subtitle>

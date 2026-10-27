@@ -14,7 +14,11 @@
       <!-- Colonna Sinistra: Consegna e Prodotti -->
       <div class="left-column">
         <!-- Consegna -->
-        <ion-card class="delivery-card clickable-address-card" (click)="editAddress()">
+        <ion-card 
+          id="delivery-address-card" 
+          class="delivery-card clickable-address-card" 
+          [class.missing-border]="highlightMissingAddress && !hasDeliveryAddress(user)"
+          (click)="editAddress()">
           <ion-card-content>
             <div class="delivery-header">
               <ion-icon name="person-outline" color="primary"></ion-icon>
@@ -30,11 +34,12 @@
                 <div class="address-info">
                   <div class="address-title-row">
                     <h3>Indirizzo di Consegna</h3>
-                    <ion-badge color="secondary" class="edit-badge">
-                      <ion-icon name="create-outline"></ion-icon> Modifica
+                    <ion-badge [color]="hasDeliveryAddress(user) ? 'secondary' : 'warning'" class="edit-badge">
+                      <ion-icon [name]="hasDeliveryAddress(user) ? 'create-outline' : 'add-outline'"></ion-icon>
+                      {{ hasDeliveryAddress(user) ? 'Modifica' : 'Aggiungi' }}
                     </ion-badge>
                   </div>
-                  <p class="address-text">{{ parseLocation(user.location)?.address || user.location || 'Clicca per inserire il tuo indirizzo' }}</p>
+                  <p class="address-text" [class.unassigned]="!hasDeliveryAddress(user)">{{ getDisplayAddress(user) }}</p>
                 </div>
               </div>
               

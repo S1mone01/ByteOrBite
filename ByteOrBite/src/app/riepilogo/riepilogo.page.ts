@@ -46,6 +46,7 @@ export class RiepilogoPage implements OnInit {
   
   useCoupon: boolean = false;
   selectedCouponPercentage: number = 0;
+  highlightMissingAddress: boolean = false;
   
   private cachedMapUrlString: string = '';
   private cachedMapUrl: SafeResourceUrl | null = null;
@@ -95,7 +96,38 @@ export class RiepilogoPage implements OnInit {
     }
   }
 
+  hasDeliveryAddress(user: User | null): boolean {
+    if (!user || !user.location) return false;
+    let address = '';
+    const parsed = this.parseLocation(user.location);
+    if (parsed && typeof parsed === 'object' && parsed.address) {
+      address = parsed.address;
+    } else if (typeof user.location === 'string') {
+      address = user.location;
+    }
+    address = address.trim();
+    if (!address) return false;
+    const invalidPlaceholders = [
+      'clicca per inserire il tuo indirizzo',
+      'nessuna posizione salvata',
+      'consegna a domicilio'
+    ];
+    return !invalidPlaceholders.includes(address.toLowerCase());
+  }
+
+  getDisplayAddress(user: User | null): string {
+    if (!user || !this.hasDeliveryAddress(user)) {
+      return 'Clicca per inserire il tuo indirizzo';
+    }
+    const parsed = this.parseLocation(user.location);
+    if (parsed && typeof parsed === 'object' && parsed.address) {
+      return parsed.address;
+    }
+    return user.location || 'Clicca per inserire il tuo indirizzo';
+  }
+
   async editAddress() {
+    this.highlightMissingAddress = false;
     const alert = await this.alertController.create({
       header: 'Modifica Indirizzo',
       message: 'Scegli la modalità per aggiornare la posizione di consegna:',
@@ -214,6 +246,7 @@ export class RiepilogoPage implements OnInit {
       if (user && user.id) {
         this.authService.updateUser(user.id, { location: locationData }).subscribe({
           next: () => {
+            this.highlightMissingAddress = false;
             this.showToast('Indirizzo di consegna aggiornato!', 'success');
           },
           error: (err) => {
@@ -336,8 +369,45 @@ export class RiepilogoPage implements OnInit {
   }
 
   async confirmOrder() {
-    this.currentUser$.pipe(take(1)).subscribe(user => {
-      this.cartItems$.pipe(take(1)).subscribe(items => {
+    this.currentUser$.pipe(take(1)).subscribe(async user => {
+      if (!this.hasDeliveryAddress(user)) {
+        this.highlightMissingAddress = true;
+        const toast = await this.toastController.create({
+          message: 'Aggiungi un indirizzo di consegna per completare l\'ordine',
+          duration: 3000,
+          color: 'warning',
+          position: 'bottom',
+          buttons: [
+            {
+              text: 'Aggiungi',
+              role: 'info',
+              handler: () => {
+                this.editAddress();
+              }
+            }
+          ]
+        });
+        await toast.present();
+
+        const addressCard = document.getElementById('delivery-address-card');
+        if (addressCard) {
+          addressCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
+      this.cartItems$.pipe(take(1)).subscribe(async items => {
+        if (!items || items.length === 0) {
+          const toast = await this.toastController.create({
+            message: 'Il tuo carrello è vuoto',
+            duration: 2500,
+            color: 'warning',
+            position: 'bottom'
+          });
+          await toast.present();
+          return;
+        }
+
         const discount = this.getPointsDiscount(user, items);
         const usedPoints = this.getUsedPoints();
         

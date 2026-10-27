@@ -58,6 +58,12 @@ ion-header {
       transform: scale(0.99);
     }
 
+    &.missing-border {
+      border: 2px solid var(--ion-color-warning) !important;
+      box-shadow: 0 0 14px rgba(var(--ion-color-warning-rgb), 0.45) !important;
+      animation: pulse-address-border 1.5s infinite ease-in-out;
+    }
+
     .address-title-row {
       display: flex;
       align-items: center;
@@ -142,6 +148,11 @@ ion-header {
         color: var(--ion-text-color);
         line-height: 1.4;
         font-size: 0.9rem;
+
+        &.unassigned {
+          color: var(--ion-color-warning-shade, #d97706);
+          font-weight: 600;
+        }
       }
     }
   }
@@ -612,5 +623,17 @@ ion-header {
     grid-template-columns: 1.4fr 1fr;
     align-items: start;
     gap: 24px;
+  }
+}
+
+@keyframes pulse-address-border {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--ion-color-warning-rgb), 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(var(--ion-color-warning-rgb), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--ion-color-warning-rgb), 0);
   }
 }

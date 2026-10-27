@@ -123,7 +123,7 @@ export class CartService {
   checkout(discount: number = 0, usedPoints: number = 0) {
     const currentUser = this.authService.currentUserValue;
     const items = this.cartItemsSubject.value;
-    if (!currentUser || items.length === 0) return new Observable();
+    if (!currentUser || items.length === 0 || !currentUser.location) return new Observable();
 
     const subtotal = items.reduce((acc, item) => acc + (item.prezzo_unitario * item.quantita), 0);
     const totalToSave = Math.max(0, subtotal - discount); // Salviamo solo il subtotale prodotti (al netto dello sconto)
@@ -132,7 +132,7 @@ export class CartService {
     const ordineData = {
       utente_id: currentUser.id,
       utente_nome: currentUser.name,
-      destinazione: currentUser.location || 'Consegna a domicilio',
+      destinazione: currentUser.location || '',
       totale: totalToSave,
       prodotti: items.map(i => ({
         prodotto_nome: i.prodotto_nome,

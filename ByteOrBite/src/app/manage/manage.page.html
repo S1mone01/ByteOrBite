@@ -56,8 +56,8 @@
               <div class="status-step status-in-preparazione" [class.active]="ordine.stato === 'in preparazione'" (click)="updateStatoOrdine(ordine.id, 'in preparazione')">
                 In Prep.
               </div>
-              <div class="status-step status-spedito" [class.active]="ordine.stato === 'spedito'" (click)="updateStatoOrdine(ordine.id, 'spedito')">
-                Spedito
+              <div class="status-step status-in-consegna" [class.active]="ordine.stato === 'in consegna' || ordine.stato === 'spedito'" (click)="updateStatoOrdine(ordine.id, 'in consegna')">
+                In Consegna
               </div>
               <div class="status-step status-completato" [class.active]="ordine.stato === 'completato'" (click)="updateStatoOrdine(ordine.id, 'completato')">
                 Completato

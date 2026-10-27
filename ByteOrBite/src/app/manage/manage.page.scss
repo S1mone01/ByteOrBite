@@ -123,7 +123,7 @@
         
         &.status-ordinato { background: var(--ion-color-primary); }
         &.status-in-preparazione { background: var(--ion-color-warning); }
-        &.status-spedito { background: var(--ion-color-tertiary); }
+        &.status-spedito, &.status-in-consegna { background: var(--ion-color-tertiary); }
         &.status-completato { background: var(--ion-color-success); }
       }
 
