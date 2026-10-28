@@ -9,13 +9,14 @@ import {
   IonItem, IonLabel, IonInput, IonButton, IonList, 
   IonText, IonIcon, IonButtons, IonSegment, IonSegmentButton,
   IonCard, IonCardHeader, IonCardContent,
-  IonSpinner, IonCheckbox, IonModal
+  IonSpinner, IonCheckbox, IonModal, AlertController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
   mailOutline, lockClosedOutline, personOutline, 
   eyeOutline, eyeOffOutline, logInOutline, personAddOutline,
-  arrowBackOutline, checkmarkCircleOutline, closeOutline
+  arrowBackOutline, checkmarkCircleOutline, closeOutline,
+  copyOutline, checkmarkOutline, keyOutline
 } from 'ionicons/icons';
 import { AuthService } from '../services/auth.service';
 
@@ -42,16 +43,21 @@ export class LoginPage implements OnInit {
   errorMessage = '';
   successMessage = '';
   showTermsModal = false;
+  generatedPassword = '';
+  lastRecoveredEmail = '';
+  copied = false;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private alertController: AlertController
   ) {
     addIcons({ 
       mailOutline, lockClosedOutline, personOutline, 
       eyeOutline, eyeOffOutline, logInOutline, personAddOutline,
-      arrowBackOutline, checkmarkCircleOutline, closeOutline
+      arrowBackOutline, checkmarkCircleOutline, closeOutline,
+      copyOutline, checkmarkOutline, keyOutline
     });
   }
 
@@ -80,18 +86,28 @@ export class LoginPage implements OnInit {
   }
 
   toggleMode(event: any) {
+    const currentEmail = this.authForm?.get('email')?.value || '';
     this.isLogin = event.detail.value === 'login';
     this.isForgotPassword = false;
+    this.generatedPassword = '';
     this.errorMessage = '';
     this.successMessage = '';
     this.initForm();
+    if (currentEmail) {
+      this.authForm.patchValue({ email: currentEmail });
+    }
   }
 
   setForgotPassword(value: boolean) {
+    const currentEmail = this.authForm?.get('email')?.value || '';
     this.isForgotPassword = value;
+    this.generatedPassword = '';
     this.errorMessage = '';
     this.successMessage = '';
     this.initForm();
+    if (currentEmail) {
+      this.authForm.patchValue({ email: currentEmail });
+    }
   }
 
   togglePasswordVisibility() {
@@ -108,6 +124,44 @@ export class LoginPage implements OnInit {
     this.showTermsModal = false;
   }
 
+  async copyPassword() {
+    if (!this.generatedPassword) return;
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(this.generatedPassword);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = this.generatedPassword;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      this.copied = true;
+      setTimeout(() => {
+        this.copied = false;
+      }, 3000);
+    } catch (err) {
+      console.error('Errore durante la copia della password:', err);
+    }
+  }
+
+  goToLoginWithRecoveredPassword() {
+    const email = this.lastRecoveredEmail;
+    const pwd = this.generatedPassword;
+    this.isForgotPassword = false;
+    this.isLogin = true;
+    this.generatedPassword = '';
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.initForm();
+    this.authForm.patchValue({
+      email: email,
+      password: pwd
+    });
+    this.showPassword = true;
+  }
+
   async onSubmit() {
     if (this.authForm.invalid) return;
 
@@ -119,13 +173,30 @@ export class LoginPage implements OnInit {
 
     if (this.isForgotPassword) {
       this.authService.resetPassword(email).subscribe({
-        next: () => {
+        next: async (res) => {
           this.isLoading = false;
-          this.successMessage = 'Ti abbiamo inviato un link per reimpostare la password.';
+          this.generatedPassword = res.newPassword;
+          this.lastRecoveredEmail = email;
+          this.errorMessage = '';
+
+          const alert = await this.alertController.create({
+            header: 'Password Recuperata!',
+            subHeader: 'Nuova password temporanea generata',
+            message: `È stata generata una nuova password per ${email}.`,
+            cssClass: 'modern-alert',
+            buttons: [
+              {
+                text: 'OK',
+                role: 'confirm',
+                cssClass: 'alert-button-confirm'
+              }
+            ]
+          });
+          await alert.present();
         },
         error: (err) => {
           this.isLoading = false;
-          this.errorMessage = 'Impossibile inviare la mail. Riprova.';
+          this.errorMessage = err.error?.error || 'Impossibile recuperare la password. Verifica l\'email inserita e riprova.';
         }
       });
       return;

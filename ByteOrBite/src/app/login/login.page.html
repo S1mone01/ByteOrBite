@@ -23,12 +23,51 @@
             Torna al login
           </ion-button>
           <h2 class="auth-title">Recupera Password</h2>
-          <p class="auth-subtitle">Inserisci la tua email per ricevere le istruzioni.</p>
+          <p class="auth-subtitle">
+            {{ generatedPassword ? 'Ecco le nuove credenziali generate per il tuo account' : 'Inserisci la tua email per recuperare la password.' }}
+          </p>
         </div>
       </ion-card-header>
 
       <ion-card-content>
-        <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+        <!-- Box Password Recuperata Mostrata a Schermo -->
+        <div class="recovered-password-container" *ngIf="generatedPassword">
+          <div class="recovered-badge">
+            <ion-icon name="key-outline"></ion-icon>
+          </div>
+          <h3 class="recovered-title">Nuova Password Generata!</h3>
+          <p class="recovered-info">
+            La nuova password per <strong>{{ lastRecoveredEmail }}</strong> è:
+          </p>
+
+          <div class="password-box">
+            <span class="password-value">{{ generatedPassword }}</span>
+            <ion-button fill="clear" size="small" (click)="copyPassword()" class="copy-button" [title]="copied ? 'Copiata' : 'Copia password'">
+              <ion-icon [name]="copied ? 'checkmark-outline' : 'copy-outline'" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+
+          <div class="copy-feedback" *ngIf="copied">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            <span>Password copiata negli appunti!</span>
+          </div>
+
+          <p class="recovered-hint">
+            Usa questa nuova password per accedere. Potrai successivamente cambiarla in qualsiasi momento dalla sezione Profilo.
+          </p>
+
+          <div class="recovered-actions">
+            <ion-button expand="block" class="submit-button" (click)="goToLoginWithRecoveredPassword()">
+              Accedi con la nuova password
+            </ion-button>
+            <ion-button fill="clear" expand="block" (click)="setForgotPassword(false)" class="back-link">
+              Torna al login
+            </ion-button>
+          </div>
+        </div>
+
+        <!-- Form standard per Login / Registrazione / Richiesta Recupero -->
+        <form *ngIf="!generatedPassword" [formGroup]="authForm" (ngSubmit)="onSubmit()">
           <ion-list lines="none">
             <!-- Campo Nome (solo registrazione) -->
             <ion-item *ngIf="!isLogin && !isForgotPassword" class="auth-item">
@@ -98,14 +137,14 @@
           >
             <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
             <span *ngIf="!isLoading">
-              {{ isForgotPassword ? 'Invia Link' : (isLogin ? 'Entra' : 'Crea Account') }}
+              {{ isForgotPassword ? 'Recupera Password' : (isLogin ? 'Entra' : 'Crea Account') }}
             </span>
           </ion-button>
         </form>
 
-        <div class="auth-footer" *ngIf="isLogin && !isForgotPassword">
+        <div class="auth-footer" *ngIf="isLogin && !isForgotPassword && !generatedPassword">
           <ion-button fill="clear" size="small" color="medium" (click)="setForgotPassword(true)">
-            Password dimenticata?
+            Recupera password
           </ion-button>
         </div>
       </ion-card-content>

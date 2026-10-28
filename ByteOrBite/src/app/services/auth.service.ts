@@ -98,7 +98,7 @@ export class AuthService {
   }
 
   resetPassword(email: string): Observable<any> {
-    // Placeholder per il reset password (ancora mock o da implementare nel backend)
+    // Endpoint per la rigenerazione e recupero password
     console.log(`Reset password request for: ${email}`);
     return this.http.post(`${this.apiUrl}/reset-password`, { email }).pipe(
       catchError(err => throwError(() => err))

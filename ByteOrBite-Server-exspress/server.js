@@ -111,6 +111,55 @@ app.post('/login', async (req, res) => {
     }
 });
 
+// Funzione ausiliaria per generare una password randomica sicura e leggibile
+function generateRandomPassword(length = 8) {
+    const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const lower = 'abcdefghijkmnopqrstuvwxyz';
+    const numbers = '23456789';
+    const all = upper + lower + numbers;
+
+    let pwd = '';
+    pwd += upper.charAt(Math.floor(Math.random() * upper.length));
+    pwd += lower.charAt(Math.floor(Math.random() * lower.length));
+    pwd += numbers.charAt(Math.floor(Math.random() * numbers.length));
+
+    for (let i = 3; i < length; i++) {
+        pwd += all.charAt(Math.floor(Math.random() * all.length));
+    }
+
+    return pwd.split('').sort(() => 0.5 - Math.random()).join('');
+}
+
+// Endpoint per il recupero password con generazione di nuova password randomica mostrata a schermo
+app.post('/reset-password', async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ error: "L'indirizzo email è obbligatorio." });
+    }
+
+    try {
+        const user = await User.findByEmail(email);
+        if (!user) {
+            return res.status(404).json({ error: "Nessun account trovato con questa email." });
+        }
+
+        const newPassword = generateRandomPassword(8);
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        await User.update(user.id, { password: hashedPassword });
+
+        console.log(`[RECUPERO PASSWORD] Nuova password generata per ${email}: ${newPassword}`);
+        res.json({
+            message: "Password recuperata con successo!",
+            newPassword: newPassword
+        });
+    } catch (error) {
+        console.error("Errore durante il recupero password:", error.message);
+        res.status(500).json({ error: "Errore interno durante il recupero della password." });
+    }
+});
+
 // Endpoint aggiornamento utente
 app.post('/users/:id/verify', async (req, res) => {
     const { password } = req.body;
