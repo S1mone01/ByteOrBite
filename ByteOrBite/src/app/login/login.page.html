@@ -17,14 +17,14 @@
           </ion-segment>
         </ng-container>
 
-        <div class="forgot-header" *ngIf="isForgotPassword">
+        <div class="forgot-header" *ngIf="isForgotPassword && !generatedPassword">
           <ion-button fill="clear" (click)="setForgotPassword(false)" class="back-button">
             <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
             Torna al login
           </ion-button>
           <h2 class="auth-title">Recupera Password</h2>
           <p class="auth-subtitle">
-            {{ generatedPassword ? 'Ecco le nuove credenziali generate per il tuo account' : 'Inserisci la tua email per recuperare la password.' }}
+            Inserisci la tua email per recuperare la password.
           </p>
         </div>
       </ion-card-header>
@@ -32,10 +32,6 @@
       <ion-card-content>
         <!-- Box Password Recuperata Mostrata a Schermo -->
         <div class="recovered-password-container" *ngIf="generatedPassword">
-          <div class="recovered-badge">
-            <ion-icon name="key-outline"></ion-icon>
-          </div>
-          <h3 class="recovered-title">Nuova Password Generata!</h3>
           <p class="recovered-info">
             La nuova password per <strong>{{ lastRecoveredEmail }}</strong> è:
           </p>
@@ -57,10 +53,7 @@
           </p>
 
           <div class="recovered-actions">
-            <ion-button expand="block" class="submit-button" (click)="goToLoginWithRecoveredPassword()">
-              Accedi con la nuova password
-            </ion-button>
-            <ion-button fill="clear" expand="block" (click)="setForgotPassword(false)" class="back-link">
+            <ion-button expand="block" class="submit-button" (click)="setForgotPassword(false)">
               Torna al login
             </ion-button>
           </div>

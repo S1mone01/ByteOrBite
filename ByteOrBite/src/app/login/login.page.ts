@@ -9,14 +9,14 @@ import {
   IonItem, IonLabel, IonInput, IonButton, IonList, 
   IonText, IonIcon, IonButtons, IonSegment, IonSegmentButton,
   IonCard, IonCardHeader, IonCardContent,
-  IonSpinner, IonCheckbox, IonModal, AlertController
+  IonSpinner, IonCheckbox, IonModal
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
   mailOutline, lockClosedOutline, personOutline, 
   eyeOutline, eyeOffOutline, logInOutline, personAddOutline,
   arrowBackOutline, checkmarkCircleOutline, closeOutline,
-  copyOutline, checkmarkOutline, keyOutline
+  copyOutline, checkmarkOutline
 } from 'ionicons/icons';
 import { AuthService } from '../services/auth.service';
 
@@ -50,14 +50,13 @@ export class LoginPage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router,
-    private alertController: AlertController
+    private router: Router
   ) {
     addIcons({ 
       mailOutline, lockClosedOutline, personOutline, 
       eyeOutline, eyeOffOutline, logInOutline, personAddOutline,
       arrowBackOutline, checkmarkCircleOutline, closeOutline,
-      copyOutline, checkmarkOutline, keyOutline
+      copyOutline, checkmarkOutline
     });
   }
 
@@ -99,8 +98,9 @@ export class LoginPage implements OnInit {
   }
 
   setForgotPassword(value: boolean) {
-    const currentEmail = this.authForm?.get('email')?.value || '';
+    const currentEmail = this.lastRecoveredEmail || this.authForm?.get('email')?.value || '';
     this.isForgotPassword = value;
+    this.isLogin = true;
     this.generatedPassword = '';
     this.errorMessage = '';
     this.successMessage = '';
@@ -146,21 +146,6 @@ export class LoginPage implements OnInit {
     }
   }
 
-  goToLoginWithRecoveredPassword() {
-    const email = this.lastRecoveredEmail;
-    const pwd = this.generatedPassword;
-    this.isForgotPassword = false;
-    this.isLogin = true;
-    this.generatedPassword = '';
-    this.errorMessage = '';
-    this.successMessage = '';
-    this.initForm();
-    this.authForm.patchValue({
-      email: email,
-      password: pwd
-    });
-    this.showPassword = true;
-  }
 
   async onSubmit() {
     if (this.authForm.invalid) return;
@@ -173,26 +158,11 @@ export class LoginPage implements OnInit {
 
     if (this.isForgotPassword) {
       this.authService.resetPassword(email).subscribe({
-        next: async (res) => {
+        next: (res) => {
           this.isLoading = false;
           this.generatedPassword = res.newPassword;
           this.lastRecoveredEmail = email;
           this.errorMessage = '';
-
-          const alert = await this.alertController.create({
-            header: 'Password Recuperata!',
-            subHeader: 'Nuova password temporanea generata',
-            message: `È stata generata una nuova password per ${email}.`,
-            cssClass: 'modern-alert',
-            buttons: [
-              {
-                text: 'OK',
-                role: 'confirm',
-                cssClass: 'alert-button-confirm'
-              }
-            ]
-          });
-          await alert.present();
         },
         error: (err) => {
           this.isLoading = false;
