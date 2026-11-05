@@ -1,9 +1,9 @@
-import { Component, EnvironmentInjector, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { 
   IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, 
   IonHeader, IonToolbar, IonButtons, IonButton,
-  IonMenuButton, IonPopover, IonList, IonItem,
+  IonPopover, IonList, IonItem,
   IonContent, IonBadge, IonModal, IonFooter, IonThumbnail, IonTitle,
   IonFab, IonFabButton, ToastController, AlertController, AnimationController
 } from '@ionic/angular/standalone';
@@ -37,7 +37,6 @@ import { BehaviorSubject, Observable, filter, map, startWith } from 'rxjs';
   ],
 })
 export class TabsPage implements OnInit {
-  public environmentInjector = inject(EnvironmentInjector);
   currentUser$: Observable<any>;
   isDarkMode$: Observable<boolean>;
   cartCount$: Observable<number>;
