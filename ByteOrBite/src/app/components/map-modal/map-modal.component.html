@@ -1,14 +1,15 @@
-<ion-header>
-  <ion-toolbar>
+<ion-header class="ion-no-border">
+  <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-button (click)="cancel()">
+      <ion-button (click)="cancel()" class="header-btn">
         <ion-icon slot="icon-only" name="close-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Scegli Posizione</ion-title>
+    <ion-title class="modal-title">Scegli Posizione</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="confirm()" [disabled]="!selectedCoords">
-        <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+      <ion-button (click)="confirm()" [disabled]="!selectedCoords" fill="solid" class="header-confirm-btn">
+        <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+        <span>Conferma</span>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -60,19 +61,13 @@
   </div>
 
   <!-- Locate GPS Floating Button -->
-  <ion-button class="locate-btn" (click)="getCurrentLocation()" fill="solid" shape="round">
+  <button 
+    type="button" 
+    class="locate-btn" 
+    (click)="getCurrentLocation()" 
+    title="Centra sulla mia posizione" 
+    aria-label="Centra sulla mia posizione">
     <ion-spinner *ngIf="isLocating" name="crescent" color="primary"></ion-spinner>
-    <ion-icon *ngIf="!isLocating" slot="icon-only" name="locate-outline"></ion-icon>
-  </ion-button>
-
-  <!-- Address Info Bottom Overlay -->
-  <div class="address-overlay" *ngIf="selectedAddress || isGeocoding">
-    <div class="address-text">
-      <span *ngIf="isGeocoding" class="geocoding-text">
-        <ion-spinner name="dots" color="primary"></ion-spinner>
-        <span>Recupero indirizzo...</span>
-      </span>
-      <span *ngIf="!isGeocoding">{{ selectedAddress }}</span>
-    </div>
-  </div>
+    <ion-icon *ngIf="!isLocating" name="locate-outline"></ion-icon>
+  </button>
 </ion-content>

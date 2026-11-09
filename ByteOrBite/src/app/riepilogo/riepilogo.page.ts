@@ -1,13 +1,12 @@
 import { Component, OnInit, AfterViewChecked, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { 
   IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, 
   IonLabel, IonThumbnail, IonButton, IonButtons, 
   IonBackButton, IonIcon, IonCard, IonCardContent, IonText, IonListHeader,
   ToastController, IonRadioGroup, IonRadio, IonCheckbox, IonCardHeader, IonCardTitle,
-  IonBadge, AlertController, LoadingController, ModalController
+  IonBadge, ModalController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
@@ -57,12 +56,7 @@ export class RiepilogoPage implements OnInit {
     private authService: AuthService,
     private themeService: ThemeService,
     private router: Router,
-    private toastController: ToastController,
-    private alertController: AlertController,
-    private loadingController: LoadingController,
-    private modalController: ModalController,
-    private http: HttpClient,
-    private sanitizer: DomSanitizer
+    private toastController: ToastController,    private modalController: ModalController,    private sanitizer: DomSanitizer
   ) {
     addIcons({ 
       locationOutline, personOutline, mapOutline, 
@@ -128,88 +122,7 @@ export class RiepilogoPage implements OnInit {
 
   async editAddress() {
     this.highlightMissingAddress = false;
-    const alert = await this.alertController.create({
-      header: 'Modifica Indirizzo',
-      message: 'Scegli la modalità per aggiornare la posizione di consegna:',
-      cssClass: 'modern-alert location-alert',
-      buttons: [
-        {
-          text: 'Manuale',
-          cssClass: 'alert-button-option inline-button',
-          handler: () => this.showManualLocationInput()
-        },
-        {
-          text: 'Mappa Interattiva',
-          cssClass: 'alert-button-option inline-button',
-          handler: () => this.openMapModal()
-        },
-        {
-          text: 'Annulla',
-          role: 'cancel',
-          cssClass: 'alert-button-cancel full-width-button'
-        }
-      ]
-    });
-    await alert.present();
-  }
-
-  async showManualLocationInput() {
-    const alert = await this.alertController.create({
-      header: 'Inserisci Indirizzo',
-      cssClass: 'modern-alert',
-      inputs: [
-        {
-          name: 'location',
-          type: 'text',
-          placeholder: 'Via, Città, CAP',
-        }
-      ],
-      buttons: [
-        { text: 'Annulla', role: 'cancel', cssClass: 'alert-button-cancel' },
-        { 
-          text: 'Salva', 
-          cssClass: 'alert-button-confirm',
-          handler: async (data) => {
-            if (data.location) {
-              const loading = await this.loadingController.create({
-                message: 'Ricerca posizione in corso...'
-              });
-              await loading.present();
-
-              this.geocodeAddress(data.location).subscribe({
-                next: (res) => {
-                  loading.dismiss();
-                  if (res && res.length > 0) {
-                    const bestMatch = res[0];
-                    const locationData = JSON.stringify({
-                      address: bestMatch.display_name,
-                      lat: parseFloat(bestMatch.lat),
-                      lon: parseFloat(bestMatch.lon)
-                    });
-                    this.saveLocation(locationData);
-                  } else {
-                    this.saveLocation(data.location);
-                    this.showToast('Indirizzo non trovato sulla mappa, salvato come testo.', 'warning');
-                  }
-                },
-                error: (err) => {
-                  loading.dismiss();
-                  console.error('Errore geocoding', err);
-                  this.saveLocation(data.location);
-                  this.showToast('Errore durante la ricerca della posizione.', 'danger');
-                }
-              });
-            }
-          }
-        }
-      ]
-    });
-    await alert.present();
-  }
-
-  geocodeAddress(address: string): Observable<any[]> {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`;
-    return this.http.get<any[]>(url);
+    await this.openMapModal();
   }
 
   async openMapModal() {

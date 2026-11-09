@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>I Nostri Menu</ion-title>
+    <ion-title style="font-weight: 800;">I Nostri Menu</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -64,7 +64,6 @@
     <ng-template>
       <ion-header>
         <ion-toolbar color="primary">
-          <ion-title>{{ selectedMenu?.nome }}</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="closeDetails()">
               <ion-icon name="close"></ion-icon>
@@ -76,11 +75,13 @@
       <ion-content class="ion-padding content-sizing">
         <div class="modal-image-container">
           <ion-img [src]="getImageUrl(selectedMenu?.immagine_url)" class="modal-img"></ion-img>
+          <div class="modal-title-overlay">
+            <h3 class="overlay-menu-title">{{ selectedMenu?.nome }}</h3>
+          </div>
         </div>
 
-        <div class="ion-padding-top">
-          <h3>{{ selectedMenu?.nome }}</h3>
-          <p class="ion-text-muted" *ngIf="selectedMenu?.descrizione">{{ selectedMenu?.descrizione }}</p>
+        <div class="modal-description-box" *ngIf="selectedMenu?.descrizione">
+          <p class="menu-modal-desc">{{ selectedMenu?.descrizione }}</p>
         </div>
 
         <!-- Personalizzazione Combo -->
@@ -93,19 +94,20 @@
               <span class="group-title">Scegli lo Starter</span>
             </div>
 
-            <div class="options-grid">
+            <div class="options-list">
               <div 
                 *ngFor="let p of listaPatatine" 
-                class="option-card"
+                class="option-row-item"
                 [class.selected]="selectedPatatina?.id === p.id"
                 (click)="selectPatatina(p)"
               >
-                <img [src]="getImageUrl(p.immagine_url)" class="option-img" *ngIf="p.immagine_url" />
-                <div class="option-info">
-                  <span class="option-name">{{ p.nome }}</span>
-                  <span class="option-extra" *ngIf="p.sovrapprezzo > 0">+{{ p.sovrapprezzo | currency:'EUR':'symbol':'1.2-2' }}</span>
+                <div class="item-left">
+                  <img [src]="getImageUrl(p.immagine_url)" class="option-img" *ngIf="p.immagine_url" />
+                  <div class="option-info">
+                    <span class="option-name">{{ p.nome }}</span>
+                    <span class="option-extra" *ngIf="p.sovrapprezzo > 0">+{{ p.sovrapprezzo | currency:'EUR':'symbol':'1.2-2' }}</span>
+                  </div>
                 </div>
-                <ion-icon name="checkmark-circle-outline" class="select-check" *ngIf="selectedPatatina?.id === p.id"></ion-icon>
               </div>
             </div>
           </div>
@@ -117,19 +119,20 @@
               <span class="group-title">Scegli la Bibita</span>
             </div>
 
-            <div class="options-grid">
+            <div class="options-list">
               <div 
                 *ngFor="let b of listaBibite" 
-                class="option-card"
+                class="option-row-item"
                 [class.selected]="selectedBibita?.id === b.id"
                 (click)="selectBibita(b)"
               >
-                <img [src]="getImageUrl(b.immagine_url)" class="option-img" *ngIf="b.immagine_url" />
-                <div class="option-info">
-                  <span class="option-name">{{ b.nome }}</span>
-                  <span class="option-extra" *ngIf="b.sovrapprezzo > 0">+{{ b.sovrapprezzo | currency:'EUR':'symbol':'1.2-2' }}</span>
+                <div class="item-left">
+                  <img [src]="getImageUrl(b.immagine_url)" class="option-img" *ngIf="b.immagine_url" />
+                  <div class="option-info">
+                    <span class="option-name">{{ b.nome }}</span>
+                    <span class="option-extra" *ngIf="b.sovrapprezzo > 0">+{{ b.sovrapprezzo | currency:'EUR':'symbol':'1.2-2' }}</span>
+                  </div>
                 </div>
-                <ion-icon name="checkmark-circle-outline" class="select-check" *ngIf="selectedBibita?.id === b.id"></ion-icon>
               </div>
             </div>
           </div>

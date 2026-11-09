@@ -82,13 +82,12 @@
             <ion-col size="12" size-md="6" class="left-col-sticky ion-padding-top ion-padding-horizontal">
           <div class="exploded-burger-wrapper">
             <div class="exploded-burger-stack" [style.maxWidth]="getBurgerMaxWidth()" style="transition: max-width 0.3s ease;">
-            <!-- Pane Superiore (Cliccabile / Rimovibile) -->
+            <!-- Pane Superiore (Non rimovibile) -->
               <div 
                 *ngIf="hasBunTop" 
                 @slideInOut
-                class="burger-layer bun-top-layer interactive-bun"
-                (click)="toggleBunTop()"
-                title="Clicca per rimuovere il Pane Superiore"
+                class="burger-layer bun-top-layer fixed-bun"
+                title="Pane Superiore (Incluso)"
               >
                 <div class="ingredient-image-stack">
                   <img [src]="getImageUrl('uploads/ingredienti/1786361381842-886183848.jpeg')" alt="Pane Superiore" class="real-ingredient-img bun-img">
@@ -123,14 +122,13 @@
               </ng-container>
             </div>
 
-            <!-- Pane Inferiore (Cliccabile / Rimovibile) -->
+            <!-- Pane Inferiore (Non rimovibile) -->
               <div 
                 *ngIf="hasBunBottom" 
                 @slideInOut
-                class="burger-layer bun-bottom-layer interactive-bun"
+                class="burger-layer bun-bottom-layer fixed-bun"
                 [style.marginTop.%]="getLayerOverlap()"
-                (click)="toggleBunBottom()"
-                title="Clicca per rimuovere il Pane Inferiore"
+                title="Pane Inferiore (Incluso)"
               >
               <div class="ingredient-image-stack">
                 <img [src]="getImageUrl('uploads/ingredienti/1786361392128-794946643.jpeg')" alt="Pane Inferiore" class="real-ingredient-img bun-img">
@@ -146,90 +144,131 @@
           <div class="ingredients-modal-section">
           <h3>Personalizza Panino</h3>
           
-          <!-- Sezione Ingredienti Base (senza prezzo) -->
+          <!-- Sezione Ingredienti Base (Inclusi) -->
           <div class="ingredients-group" *ngIf="ingredientiBase.length > 0">
             <div class="group-header">
-              <ion-icon name="checkmark-circle-outline" color="primary"></ion-icon>
+              <ion-icon name="fast-food-outline" color="primary"></ion-icon>
               <span class="group-title">Ingredienti Base (Inclusi)</span>
             </div>
             
-            <ion-list lines="none" class="ingredients-list">
-              <ion-item *ngFor="let ing of ingredientiBase" class="ingredient-item base-ingredient">
-                <div class="ing-item-content">
-                  <div class="ing-icon-box">
-                    <img 
-                      *ngIf="ing.immagine_url" 
-                      [src]="getImageUrl(ing.immagine_url)" 
-                      [alt]="ing.nome" 
-                      class="ing-selection-img"
-                    />
-                    <ion-icon *ngIf="!ing.immagine_url" [name]="getIngredientIcon(ing.nome)" class="ing-selection-icon"></ion-icon>
+            <div class="options-list">
+              <div 
+                *ngFor="let ing of ingredientiBase" 
+                class="option-row-item base-item"
+                [class.selected]="ing.checked || (extraQuantities[ing.id] || 0) > 0"
+                [class.disabled-item]="ing.disponibile == 0"
+              >
+                <div class="item-left">
+                  <img 
+                    *ngIf="ing.immagine_url" 
+                    [src]="getImageUrl(ing.immagine_url)" 
+                    [alt]="ing.nome" 
+                    class="option-img"
+                  />
+                  <div class="option-icon-fallback" *ngIf="!ing.immagine_url">
+                    <ion-icon [name]="getIngredientIcon(ing.nome)"></ion-icon>
                   </div>
-                  <ion-checkbox labelPlacement="end" [checked]="ing.checked" (ionChange)="toggleIngrediente(ing)">
-                    <ion-label>
-                      <h2 class="ing-name">{{ ing.nome }}</h2>
-                      <p class="ing-subtitle base-badge">Incluso nel panino</p>
-                    </ion-label>
-                  </ion-checkbox>
+                  <div class="option-info">
+                    <span class="option-name" [class.deselected-text]="!ing.checked && (extraQuantities[ing.id] || 0) === 0">
+                      {{ ing.nome }}
+                    </span>
+                    <span class="option-extra base-badge" *ngIf="ing.checked && (extraQuantities[ing.id] || 0) === 0">Incluso nel panino</span>
+                    <span class="option-extra" *ngIf="(extraQuantities[ing.id] || 0) > 0">+{{ ((extraQuantities[ing.id] || 0) * (ing.prezzo_extra || 0)) | currency:'EUR':'symbol':'1.2-2' }}</span>
+                    <span class="option-extra removed-badge" *ngIf="!ing.checked && (extraQuantities[ing.id] || 0) === 0">Rimosso dal panino</span>
+                  </div>
                 </div>
-              </ion-item>
-            </ion-list>
+
+                <div class="extra-qty-controls" (click)="$event.stopPropagation()">
+                  <ion-button 
+                    fill="clear" 
+                    color="danger" 
+                    class="qty-btn"
+                    (click)="decrementBase(ing)" 
+                    [disabled]="!ing.checked && (extraQuantities[ing.id] || 0) === 0"
+                  >
+                    <ion-icon name="remove"></ion-icon>
+                  </ion-button>
+
+                  <span class="qty-count" [class.has-qty]="ing.checked || (extraQuantities[ing.id] || 0) > 0">
+                    {{ (ing.checked ? 1 : 0) + (extraQuantities[ing.id] || 0) }}
+                  </span>
+
+                  <ion-button 
+                    fill="clear" 
+                    color="success" 
+                    class="qty-btn"
+                    (click)="incrementBase(ing)" 
+                    [disabled]="ing.disponibile == 0"
+                  >
+                    <ion-icon name="add"></ion-icon>
+                  </ion-button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Sezione Ingredienti Extra (con prezzo extra) -->
-          <div class="ingredients-group" *ngIf="ingredientiExtra.length > 0">
+          <div class="combo-group" *ngIf="ingredientiExtra.length > 0">
             <div class="group-header">
               <ion-icon name="add-circle-outline" color="secondary"></ion-icon>
               <span class="group-title">Aggiunte Extra</span>
             </div>
 
-            <ion-list lines="none" class="ingredients-list">
-              <ion-item *ngFor="let ing of ingredientiExtra" class="ingredient-item extra-ingredient">
-                <div class="ing-item-content">
-                  <div class="ing-icon-box">
-                    <img 
-                      *ngIf="ing.immagine_url" 
-                      [src]="getImageUrl(ing.immagine_url)" 
-                      [alt]="ing.nome" 
-                      class="ing-selection-img"
-                    />
-                    <ion-icon *ngIf="!ing.immagine_url" [name]="getIngredientIcon(ing.nome)" class="ing-selection-icon"></ion-icon>
+            <div class="options-list">
+              <div 
+                *ngFor="let ing of ingredientiExtra" 
+                class="option-row-item extra-item"
+                [class.selected]="(extraQuantities[ing.id] || 0) > 0"
+                [class.disabled-item]="ing.disponibile == 0"
+              >
+                <div class="item-left">
+                  <img 
+                    *ngIf="ing.immagine_url" 
+                    [src]="getImageUrl(ing.immagine_url)" 
+                    [alt]="ing.nome" 
+                    class="option-img"
+                  />
+                  <div class="option-icon-fallback" *ngIf="!ing.immagine_url">
+                    <ion-icon [name]="getIngredientIcon(ing.nome)"></ion-icon>
                   </div>
-
-                  <div class="ing-text-group">
-                    <h2 class="ing-name" [style.textDecoration]="ing.disponibile == 0 ? 'line-through' : 'none'" [style.opacity]="ing.disponibile == 0 ? '0.6' : '1'">{{ ing.nome }}</h2>
-                    <p class="ing-subtitle extra-price" *ngIf="ing.prezzo_extra > 0 && ing.disponibile != 0">+ {{ ing.prezzo_extra | currency:'EUR':'symbol':'1.2-2' }}</p>
-                    <p class="ing-subtitle extra-price" *ngIf="ing.disponibile == 0" style="color: var(--ion-color-danger); font-style: italic;">Non disponibile</p>
-                  </div>
-
-                  <div class="extra-qty-controls">
-                    <ion-button 
-                      fill="clear" 
-                      color="danger" 
-                      class="qty-btn"
-                      (click)="decrementExtra(ing)" 
-                      [disabled]="(extraQuantities[ing.id] || 0) === 0 || ing.disponibile == 0"
-                    >
-                      <ion-icon name="remove"></ion-icon>
-                    </ion-button>
-
-                    <span class="qty-count" [class.has-qty]="(extraQuantities[ing.id] || 0) > 0">
-                      {{ extraQuantities[ing.id] || 0 }}
+                  <div class="option-info">
+                    <span class="option-name" [style.textDecoration]="ing.disponibile == 0 ? 'line-through' : 'none'" [style.opacity]="ing.disponibile == 0 ? '0.6' : '1'">
+                      {{ ing.nome }}
                     </span>
-
-                    <ion-button 
-                      fill="clear" 
-                      color="success" 
-                      class="qty-btn"
-                      (click)="incrementExtra(ing)" 
-                      [disabled]="ing.disponibile == 0"
-                    >
-                      <ion-icon name="add"></ion-icon>
-                    </ion-button>
+                    <span class="option-extra" *ngIf="ing.prezzo_extra > 0 && ing.disponibile != 0">
+                      +{{ (((extraQuantities[ing.id] || 0) > 1 ? (extraQuantities[ing.id] || 0) : 1) * (ing.prezzo_extra || 0)) | currency:'EUR':'symbol':'1.2-2' }}
+                    </span>
+                    <span class="option-extra unavailable-badge" *ngIf="ing.disponibile == 0">Non disponibile</span>
                   </div>
                 </div>
-              </ion-item>
-            </ion-list>
+
+                <div class="extra-qty-controls" (click)="$event.stopPropagation()">
+                  <ion-button 
+                    fill="clear" 
+                    color="danger" 
+                    class="qty-btn"
+                    (click)="decrementExtra(ing)" 
+                    [disabled]="(extraQuantities[ing.id] || 0) === 0 || ing.disponibile == 0"
+                  >
+                    <ion-icon name="remove"></ion-icon>
+                  </ion-button>
+
+                  <span class="qty-count" [class.has-qty]="(extraQuantities[ing.id] || 0) > 0">
+                    {{ extraQuantities[ing.id] || 0 }}
+                  </span>
+
+                  <ion-button 
+                    fill="clear" 
+                    color="success" 
+                    class="qty-btn"
+                    (click)="incrementExtra(ing)" 
+                    [disabled]="ing.disponibile == 0"
+                  >
+                    <ion-icon name="add"></ion-icon>
+                  </ion-button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

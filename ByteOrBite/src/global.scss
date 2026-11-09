@@ -77,8 +77,8 @@ tr:last-child td {
 
 /* Modale a tutto schermo per PC e Mobile */
 .full-screen-modal {
-  --width: 100%;
-  --height: 100%;
+  --width: 100% !important;
+  --height: 100% !important; --max-width: 100% !important; --max-height: 100% !important; --box-shadow: none !important;
   --border-radius: 0;
   
   &::part(content) {
@@ -202,25 +202,6 @@ body.ion-palette-dark {
     }
   }
 
-  &.location-alert {
-    .alert-button-group {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      
-      .alert-button {
-        &.inline-button {
-          flex: 1 1 calc(50% - 10px);
-          max-width: calc(50% - 5px);
-        }
-        &.full-width-button {
-          flex: 1 1 100%;
-          max-width: 100%;
-          margin-top: 5px !important;
-        }
-      }
-    }
-  }
 }
 
 /* Scrollbar Moderna e Sleek */
@@ -308,3 +289,4 @@ ion-modal.auto-height,
     }
   }
 }
+

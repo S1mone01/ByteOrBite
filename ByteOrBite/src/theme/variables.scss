@@ -14,13 +14,13 @@
   --ion-color-primary-shade: #229954;
   --ion-color-primary-tint: #3dbe70;
 
-  /** Secondary - Giallo Panineria **/
-  --ion-color-secondary: #f1c40f;
-  --ion-color-secondary-rgb: 241, 196, 15;
-  --ion-color-secondary-contrast: #000000;
-  --ion-color-secondary-contrast-rgb: 0, 0, 0;
-  --ion-color-secondary-shade: #d4ac0d;
-  --ion-color-secondary-tint: #f2ca27;
+  /** Secondary - Azzurro **/
+  --ion-color-secondary: #007bff;
+  --ion-color-secondary-rgb: 0, 123, 255;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #0069d9;
+  --ion-color-secondary-tint: #1a88ff;
 
   /** Background and Text **/
   --app-bg: #ffffff;
@@ -38,6 +38,13 @@ body.ion-palette-dark {
   --ion-color-primary: #2ecc71;
   --ion-color-primary-shade: #28b463;
   --ion-color-primary-tint: #43d17f;
+
+  --ion-color-secondary: #46b1ff;
+  --ion-color-secondary-rgb: 70, 177, 255;
+  --ion-color-secondary-contrast: #000000;
+  --ion-color-secondary-contrast-rgb: 0, 0, 0;
+  --ion-color-secondary-shade: #3e9ce0;
+  --ion-color-secondary-tint: #59b9ff;
 
   --app-bg: #1e1e1e;
   --app-text: #f8f9fa;

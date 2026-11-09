@@ -8,7 +8,7 @@ import {
   IonCardHeader, IonCardSubtitle, IonCardTitle, 
   IonCardContent, IonGrid, IonRow, IonCol,
   IonListHeader, IonBadge, IonAccordionGroup, IonAccordion, IonItem,
-  Platform, AlertController, LoadingController, ToastController, ModalController,
+  Platform, AlertController, ToastController, ModalController,
   IonRefresher, IonRefresherContent, IonProgressBar
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -26,7 +26,7 @@ import { Router } from '@angular/router';
 import { DataService } from '../services/data.service';
 import { MapModalComponent } from '../components/map-modal/map-modal.component';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { HttpClient } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-profile',
@@ -83,11 +83,11 @@ export class ProfilePage implements OnInit {
     private platform: Platform,
     private router: Router,
     private alertController: AlertController,
-    private loadingController: LoadingController,
+
     private toastController: ToastController,
     private dataService: DataService,
     private modalController: ModalController,
-    private http: HttpClient,
+
     private sanitizer: DomSanitizer
   ) {
     addIcons({ 
@@ -197,7 +197,7 @@ export class ProfilePage implements OnInit {
 
   async editField(field: string) {
     if (field === 'posizione') {
-      await this.showLocationOptions();
+      await this.getCurrentLocation();
       return;
     }
 
@@ -277,92 +277,6 @@ export class ProfilePage implements OnInit {
       ]
     });
     await alert.present();
-  }
-
-  async showLocationOptions() {
-    const alert = await this.alertController.create({
-      header: 'Aggiorna Posizione',
-      message: 'Come vuoi inserire la tua posizione?',
-      cssClass: 'modern-alert location-alert',
-      buttons: [
-        {
-          text: 'Manuale',
-          cssClass: 'alert-button-option inline-button',
-          handler: () => this.showManualLocationInput()
-        },
-        {
-          text: 'Condividi posizione',
-          cssClass: 'alert-button-option inline-button',
-          handler: () => this.getCurrentLocation()
-        },
-        {
-          text: 'Annulla',
-          role: 'cancel',
-          cssClass: 'alert-button-cancel full-width-button'
-        }
-      ]
-    });
-    await alert.present();
-  }
-
-  async showManualLocationInput() {
-    const alert = await this.alertController.create({
-      header: 'Inserisci Indirizzo',
-      cssClass: 'modern-alert',
-      inputs: [
-        {
-          name: 'location',
-          type: 'text',
-          placeholder: 'Via, Città, CAP',
-        }
-      ],
-      buttons: [
-        { text: 'Annulla', role: 'cancel', cssClass: 'alert-button-cancel' },
-        { 
-          text: 'Salva', 
-          cssClass: 'alert-button-confirm',
-          handler: async (data) => {
-            if (data.location) {
-              const loading = await this.loadingController.create({
-                message: 'Ricerca posizione in corso...'
-              });
-              await loading.present();
-
-              this.geocodeAddress(data.location).subscribe({
-                next: (res) => {
-                  loading.dismiss();
-                  if (res && res.length > 0) {
-                    const bestMatch = res[0];
-                    const locationData = JSON.stringify({
-                      address: bestMatch.display_name,
-                      lat: parseFloat(bestMatch.lat),
-                      lon: parseFloat(bestMatch.lon)
-                    });
-                    this.updateUser({ location: locationData });
-                  } else {
-                    // Se non trova nulla, salva comunque come testo semplice ma avvisa
-                    this.updateUser({ location: data.location });
-                    this.showToast('Indirizzo non trovato sulla mappa, salvato come testo.', 'warning');
-                  }
-                },
-                error: (err) => {
-                  loading.dismiss();
-                  console.error('Errore geocoding', err);
-                  this.updateUser({ location: data.location });
-                  this.showToast('Errore durante la ricerca della posizione.', 'danger');
-                }
-              });
-            }
-          }
-        }
-      ]
-    });
-    await alert.present();
-  }
-
-  geocodeAddress(address: string): Observable<any[]> {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`;
-    return this.http.get<any[]>(url);
   }
 
   async getCurrentLocation() {

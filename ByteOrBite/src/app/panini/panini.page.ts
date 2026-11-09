@@ -31,7 +31,7 @@ import { Router } from '@angular/router';
     IonHeader, IonToolbar, IonTitle, IonContent, 
     IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
     IonCardTitle, IonCardContent, IonButton, IonIcon, 
-    IonText, IonBadge, IonImg, IonModal, IonList, IonItem, IonLabel, IonCheckbox, IonButtons, IonFooter
+    IonText, IonBadge, IonImg, IonModal, IonButtons, IonFooter
   ],
   animations: [
     trigger('slideInOut', [
@@ -200,30 +200,20 @@ export class PaniniPage implements OnInit, OnDestroy {
       this.extraQuantities[ing.id] = 0;
     });
 
-    // Gli ingredienti base del panino (inclusi nel prezzo base)
+    // Gli ingredienti base del panino (escluso il pane)
     this.ingredientiBase = this.allIngredienti
-      .filter(ing => baseIds.includes(ing.id))
+      .filter(ing => baseIds.includes(ing.id) && !this.isBun(ing.nome))
       .map(ing => {
-        const isTop = ing.nome.toLowerCase().includes('pane superiore');
-        const isBottom = ing.nome.toLowerCase().includes('pane inferiore');
         return {
           ...ing,
           isBase: true,
-          checked: true,
-          isBunTop: isTop,
-          isBunBottom: isBottom
+          checked: true
         };
       });
 
-    // Sincronizza stato pani se presenti negli ingredienti base da DB
-    const topIng = this.ingredientiBase.find(i => i.isBunTop);
-    if (topIng) this.hasBunTop = topIng.checked;
-    const bottomIng = this.ingredientiBase.find(i => i.isBunBottom);
-    if (bottomIng) this.hasBunBottom = bottomIng.checked;
-
-    // Tutti gli ingredienti disponibili per aggiunta extra (esclusi pane superiore e inferiore)
+    // Tutti gli ingredienti disponibili per aggiunta extra (esclusi il pane e quelli già base)
     this.ingredientiExtra = this.allIngredienti
-      .filter(ing => !this.isBun(ing.nome))
+      .filter(ing => !this.isBun(ing.nome) && !baseIds.includes(ing.id))
       .map(ing => ({ ...ing, isBase: false }));
 
     this.isModalOpen = true;
@@ -254,19 +244,20 @@ export class PaniniPage implements OnInit, OnDestroy {
     }
   }
 
-  toggleBunTop() {
-    this.hasBunTop = !this.hasBunTop;
-    const topIng = this.ingredientiBase.find(i => i.isBunTop || i.nome.toLowerCase().includes('pane superiore'));
-    if (topIng) {
-      topIng.checked = this.hasBunTop;
+  incrementBase(ing: any) {
+    if (ing.disponibile == 0) return;
+    if (!ing.checked) {
+      ing.checked = true;
+    } else {
+      this.extraQuantities[ing.id] = (this.extraQuantities[ing.id] || 0) + 1;
     }
   }
 
-  toggleBunBottom() {
-    this.hasBunBottom = !this.hasBunBottom;
-    const bottomIng = this.ingredientiBase.find(i => i.isBunBottom || i.nome.toLowerCase().includes('pane inferiore'));
-    if (bottomIng) {
-      bottomIng.checked = this.hasBunBottom;
+  decrementBase(ing: any) {
+    if ((this.extraQuantities[ing.id] || 0) > 0) {
+      this.extraQuantities[ing.id]--;
+    } else if (ing.checked) {
+      ing.checked = false;
     }
   }
 
@@ -319,12 +310,10 @@ export class PaniniPage implements OnInit, OnDestroy {
   }
 
   toggleIngrediente(ing: any) {
-    ing.checked = !ing.checked;
-    if (ing.isBunTop || ing.nome.toLowerCase().includes('pane superiore')) {
-      this.hasBunTop = ing.checked;
-    }
-    if (ing.isBunBottom || ing.nome.toLowerCase().includes('pane inferiore')) {
-      this.hasBunBottom = ing.checked;
+    if (ing.checked) {
+      this.decrementBase(ing);
+    } else {
+      this.incrementBase(ing);
     }
   }
 
@@ -405,17 +394,6 @@ export class PaniniPage implements OnInit, OnDestroy {
     }
 
     const removed: string[] = [];
-
-    // Se il pane superiore o inferiore è stato rimosso
-    const hasTopBaseIng = this.ingredientiBase.some(i => i.isBunTop || i.nome.toLowerCase().includes('pane superiore'));
-    const hasBottomBaseIng = this.ingredientiBase.some(i => i.isBunBottom || i.nome.toLowerCase().includes('pane inferiore'));
-
-    if (!this.hasBunTop && !hasTopBaseIng) {
-      removed.push('-Pane Superiore');
-    }
-    if (!this.hasBunBottom && !hasBottomBaseIng) {
-      removed.push('-Pane Inferiore');
-    }
 
     this.ingredientiBase.forEach(ing => {
       if (!ing.checked) {
