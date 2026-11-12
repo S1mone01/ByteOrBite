@@ -1,52 +1,25 @@
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
- 
-/* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
-
-/* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
-
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
-
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
 @import "@ionic/angular/css/palettes/dark.class.css";
-/* @import '@ionic/angular/css/palettes/dark.system.css'; */
 
 body {
-    --background: var(--app-bg);
-    color: var(--app-text);
+  --background: var(--app-bg);
+  color: var(--app-text);
 }
 
 ion-content {
-    --background: var(--app-bg);
-    --color: var(--app-text);
+  --background: var(--app-bg);
+  --color: var(--app-text);
 }
 
-/* Stili globali per tabelle (se presenti in futuro o per elementi che le simulano) */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -71,16 +44,14 @@ th {
   font-size: 0.85rem;
 }
 
-tr:last-child td {
-  border-bottom: none;
-}
-
-/* Modale a tutto schermo per PC e Mobile */
 .full-screen-modal {
   --width: 100% !important;
-  --height: 100% !important; --max-width: 100% !important; --max-height: 100% !important; --box-shadow: none !important;
+  --height: 100% !important;
+  --max-width: 100% !important;
+  --max-height: 100% !important;
+  --box-shadow: none !important;
   --border-radius: 0;
-  
+
   &::part(content) {
     width: 100%;
     height: 100%;
@@ -88,14 +59,13 @@ tr:last-child td {
   }
 }
 
-/* Fix per visibilità testi scuri in Dark Mode (Loading, Alert, Toast) */
 body.ion-palette-dark {
   ion-loading, ion-alert, ion-toast {
     --color: #ffffff;
     --message-color: #ffffff;
     --header-color: var(--ion-color-primary);
   }
-  
+
   .loading-wrapper, .alert-wrapper {
     background: #2a2a2a !important;
     color: #ffffff !important;
@@ -104,17 +74,24 @@ body.ion-palette-dark {
   .alert-message, .loading-content {
     color: #ffffff !important;
   }
-  
+
   .alert-button {
     color: var(--ion-color-primary) !important;
   }
+
+  iframe[src*="maps.google.com"],
+  .map-wrapper iframe,
+  .map-preview-box iframe,
+  .map-preview-box-bottom iframe,
+  .dark-map iframe {
+    filter: invert(90%) hue-rotate(180deg) contrast(95%);
+  }
 }
 
-/* Alert Moderni e Customizzati */
 .modern-alert {
   --background: var(--ion-overlay-background-color);
   --border-radius: 20px;
-  
+
   .alert-wrapper {
     border: 1px solid rgba(var(--ion-color-primary-rgb), 0.2);
   }
@@ -144,10 +121,11 @@ body.ion-palette-dark {
     margin-bottom: -5px;
     margin-right: -35px;
     margin-left: -15px;
+
     .alert-input {
       background: rgba(var(--ion-color-primary-rgb), 0.05);
       border-radius: 10px;
-      margin: 0px 0px;
+      margin: 0;
       border: 1px solid rgba(var(--ion-color-primary-rgb), 0.1);
       padding: 10px 14px;
       color: var(--ion-text-color);
@@ -173,11 +151,11 @@ body.ion-palette-dark {
       letter-spacing: 0.5px;
       margin: 0 !important;
       transition: all 0.2s ease-in-out;
-      
+
       &.alert-button-confirm, &.alert-button-option {
-        background: #29dd6e38; /* Verde molto scuro */
+        background: #29dd6e38;
         color: var(--ion-color-primary) !important;
-        
+
         &:hover {
           background: var(--ion-color-primary);
           color: white !important;
@@ -188,7 +166,7 @@ body.ion-palette-dark {
       &.alert-button-cancel {
         background: rgba(var(--ion-color-danger-rgb), 0.1);
         color: var(--ion-color-danger) !important;
-        
+
         &:hover {
           background: var(--ion-color-danger);
           color: white !important;
@@ -201,10 +179,8 @@ body.ion-palette-dark {
       }
     }
   }
-
 }
 
-/* Scrollbar Moderna e Sleek */
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
@@ -224,13 +200,11 @@ body.ion-palette-dark {
   background: var(--ion-color-primary-shade);
 }
 
-/* Supporto Firefox */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--ion-color-primary) transparent;
 }
 
-/* Centramento e contenimento universale per componenti ion-img */
 ion-img {
   display: flex;
   align-items: center;
@@ -244,7 +218,6 @@ ion-img {
   }
 }
 
-/* Transizione e modalità scura per tutte le mappe Google Maps */
 iframe[src*="maps.google.com"],
 .map-wrapper iframe,
 .map-preview-box iframe,
@@ -252,17 +225,6 @@ iframe[src*="maps.google.com"],
   transition: filter 0.35s ease-in-out;
 }
 
-body.ion-palette-dark {
-  iframe[src*="maps.google.com"],
-  .map-wrapper iframe,
-  .map-preview-box iframe,
-  .map-preview-box-bottom iframe,
-  .dark-map iframe {
-    filter: invert(90%) hue-rotate(180deg) contrast(95%);
-  }
-}
-
-/* Modali ad altezza dinamica (si adattano automaticamente al contenuto) */
 ion-modal.auto-height,
 .auto-height-modal {
   --height: auto;
@@ -289,4 +251,3 @@ ion-modal.auto-height,
     }
   }
 }
-

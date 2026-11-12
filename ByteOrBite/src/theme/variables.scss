@@ -1,12 +1,4 @@
-/**
- * Ionic Variables and Theming
- * ----------------------------------------------------------------------------
- * For more information, please visit:
- * https://ionicframework.com/docs/theming/
- */
-
 :root {
-  /** Primary - Verde Panineria **/
   --ion-color-primary: #27ae60;
   --ion-color-primary-rgb: 39, 174, 96;
   --ion-color-primary-contrast: #ffffff;
@@ -14,7 +6,6 @@
   --ion-color-primary-shade: #229954;
   --ion-color-primary-tint: #3dbe70;
 
-  /** Secondary - Azzurro **/
   --ion-color-secondary: #007bff;
   --ion-color-secondary-rgb: 0, 123, 255;
   --ion-color-secondary-contrast: #ffffff;
@@ -22,18 +13,15 @@
   --ion-color-secondary-shade: #0069d9;
   --ion-color-secondary-tint: #1a88ff;
 
-  /** Background and Text **/
   --app-bg: #ffffff;
   --app-text: #1a252f;
   --app-card-bg: #ffffff;
 
-  /** Profile Button **/
   --profile-btn-bg: #8c949a;
   --profile-btn-text: #ffffff;
   --profile-btn-hover: #7a8288;
 }
 
-/* Dark Mode Variables */
 body.ion-palette-dark {
   --ion-color-primary: #2ecc71;
   --ion-color-primary-shade: #28b463;
@@ -54,17 +42,11 @@ body.ion-palette-dark {
   --profile-btn-text: #ffffff;
   --profile-btn-hover: #4d5b5f;
 
-  /* Overrides for Ionic system colors in dark mode */
   --ion-background-color: #1e1e1e;
   --ion-background-color-rgb: 30, 30, 30;
 
   --ion-text-color: #f8f9fa;
   --ion-text-color-rgb: 248, 249, 250;
-
-  --ion-color-step-50: #232323;
-  --ion-color-step-100: #2e2e2e;
-  --ion-color-step-150: #3a3a3a;
-  --ion-color-step-200: #454545;
 
   --ion-color-light: #2a2a2a;
   --ion-color-light-rgb: 42, 42, 42;
@@ -74,7 +56,6 @@ body.ion-palette-dark {
   --ion-item-background: #2a2a2a;
   --ion-card-background: #2a2a2a;
 
-  /* Step colors for dark mode to fix UI components contrast */
   --ion-color-step-50: #232323;
   --ion-color-step-100: #2e2e2e;
   --ion-color-step-150: #3a3a3a;
@@ -95,6 +76,5 @@ body.ion-palette-dark {
   --ion-color-step-900: #e5e5e5;
   --ion-color-step-950: #f0f0f0;
 
-  /* Fix visibility for alerts, loadings and modals */
   --ion-overlay-background-color: #2a2a2a;
 }
