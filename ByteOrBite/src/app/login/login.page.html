@@ -120,13 +120,10 @@
             expand="block" 
             type="submit" 
             class="submit-button" 
-            [disabled]="authForm.invalid || isLoading"
-          >
-            <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
-            <span *ngIf="!isLoading">
-              {{ isForgotPassword ? 'Recupera Password' : (isLogin ? 'Entra' : 'Crea Account') }}
-            </span>
-          </ion-button>
+            [disabled]="authForm.invalid"
+            >
+            {{ isForgotPassword ? 'Recupera Password' : (isLogin ? 'Entra' : 'Crea Account') }}
+        </ion-button>
         </form>
 
         <div class="auth-footer" *ngIf="isLogin && !isForgotPassword && !generatedPassword">

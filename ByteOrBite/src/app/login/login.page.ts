@@ -1,22 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { 
-  FormBuilder, FormGroup, Validators, ReactiveFormsModule 
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { 
-  IonHeader, IonToolbar, IonTitle, IonContent, 
-  IonItem, IonLabel, IonInput, IonButton, IonList, 
-  IonText, IonIcon, IonButtons, IonSegment, IonSegmentButton,
-  IonCard, IonCardHeader, IonCardContent,
-  IonSpinner, IonCheckbox, IonModal
+import {
+  IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonInput,
+  IonButton, IonList, IonText, IonIcon, IonButtons, IonSegment, IonSegmentButton,
+  IonCard, IonCardHeader, IonCardContent, IonCheckbox, IonModal
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { 
-  mailOutline, lockClosedOutline, personOutline, 
-  eyeOutline, eyeOffOutline, logInOutline, personAddOutline,
-  arrowBackOutline, checkmarkCircleOutline, closeOutline,
-  copyOutline, checkmarkOutline
+import {
+  mailOutline, lockClosedOutline, personOutline, eyeOutline, eyeOffOutline,
+  logInOutline, personAddOutline, arrowBackOutline, checkmarkCircleOutline,
+  closeOutline, copyOutline, checkmarkOutline
 } from 'ionicons/icons';
 import { AuthService } from '../services/auth.service';
 
@@ -27,11 +22,9 @@ import { AuthService } from '../services/auth.service';
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule,
-    IonHeader, IonToolbar, IonTitle, IonContent, 
-    IonItem, IonLabel, IonInput, IonButton, IonList, 
-    IonText, IonIcon, IonButtons, IonSegment, IonSegmentButton,
-    IonCard, IonCardHeader, IonCardContent,
-    IonSpinner, IonCheckbox, IonModal
+    IonHeader, IonToolbar, IonTitle, IonContent, IonItem, IonLabel, IonInput,
+    IonButton, IonList, IonText, IonIcon, IonButtons, IonSegment, IonSegmentButton,
+    IonCard, IonCardHeader, IonCardContent, IonCheckbox, IonModal
   ]
 })
 export class LoginPage implements OnInit {
@@ -39,7 +32,6 @@ export class LoginPage implements OnInit {
   isLogin = true;
   isForgotPassword = false;
   showPassword = false;
-  isLoading = false;
   errorMessage = '';
   successMessage = '';
   showTermsModal = false;
@@ -52,11 +44,10 @@ export class LoginPage implements OnInit {
     private authService: AuthService,
     private router: Router
   ) {
-    addIcons({ 
-      mailOutline, lockClosedOutline, personOutline, 
-      eyeOutline, eyeOffOutline, logInOutline, personAddOutline,
-      arrowBackOutline, checkmarkCircleOutline, closeOutline,
-      copyOutline, checkmarkOutline
+    addIcons({
+      mailOutline, lockClosedOutline, personOutline, eyeOutline, eyeOffOutline,
+      logInOutline, personAddOutline, arrowBackOutline, checkmarkCircleOutline,
+      closeOutline, copyOutline, checkmarkOutline
     });
   }
 
@@ -64,50 +55,43 @@ export class LoginPage implements OnInit {
     this.initForm();
   }
 
-  initForm() {
+  initForm(email = '') {
+    const emailCtrl = [email, [Validators.required, Validators.email]];
+    const passwordCtrl = ['', [Validators.required, Validators.minLength(6)]];
+
     if (this.isForgotPassword) {
-      this.authForm = this.fb.group({
-        email: ['', [Validators.required, Validators.email]]
-      });
+      this.authForm = this.fb.group({ email: emailCtrl });
     } else if (this.isLogin) {
-      this.authForm = this.fb.group({
-        email: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required, Validators.minLength(6)]]
-      });
+      this.authForm = this.fb.group({ email: emailCtrl, password: passwordCtrl });
     } else {
       this.authForm = this.fb.group({
-        name: ['', [Validators.required]],
-        email: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required, Validators.minLength(6)]],
-        termsAccepted: [false, [Validators.requiredTrue]]
+        name: ['', Validators.required],
+        email: emailCtrl,
+        password: passwordCtrl,
+        termsAccepted: [false, Validators.requiredTrue]
       });
     }
+  }
+
+  private resetState(email: string) {
+    this.generatedPassword = '';
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.initForm(email);
   }
 
   toggleMode(event: any) {
-    const currentEmail = this.authForm?.get('email')?.value || '';
+    const email = this.authForm?.get('email')?.value || '';
     this.isLogin = event.detail.value === 'login';
     this.isForgotPassword = false;
-    this.generatedPassword = '';
-    this.errorMessage = '';
-    this.successMessage = '';
-    this.initForm();
-    if (currentEmail) {
-      this.authForm.patchValue({ email: currentEmail });
-    }
+    this.resetState(email);
   }
 
   setForgotPassword(value: boolean) {
-    const currentEmail = this.lastRecoveredEmail || this.authForm?.get('email')?.value || '';
+    const email = this.lastRecoveredEmail || this.authForm?.get('email')?.value || '';
     this.isForgotPassword = value;
     this.isLogin = true;
-    this.generatedPassword = '';
-    this.errorMessage = '';
-    this.successMessage = '';
-    this.initForm();
-    if (currentEmail) {
-      this.authForm.patchValue({ email: currentEmail });
-    }
+    this.resetState(email);
   }
 
   togglePasswordVisibility() {
@@ -138,19 +122,15 @@ export class LoginPage implements OnInit {
         document.body.removeChild(textarea);
       }
       this.copied = true;
-      setTimeout(() => {
-        this.copied = false;
-      }, 3000);
+      setTimeout(() => (this.copied = false), 3000);
     } catch (err) {
       console.error('Errore durante la copia della password:', err);
     }
   }
 
-
-  async onSubmit() {
+  onSubmit() {
     if (this.authForm.invalid) return;
 
-    this.isLoading = true;
     this.errorMessage = '';
     this.successMessage = '';
 
@@ -159,30 +139,23 @@ export class LoginPage implements OnInit {
     if (this.isForgotPassword) {
       this.authService.resetPassword(email).subscribe({
         next: (res) => {
-          this.isLoading = false;
           this.generatedPassword = res.newPassword;
           this.lastRecoveredEmail = email;
-          this.errorMessage = '';
         },
         error: (err) => {
-          this.isLoading = false;
           this.errorMessage = err.error?.error || 'Impossibile recuperare la password. Verifica l\'email inserita e riprova.';
         }
       });
       return;
     }
 
-    const authObs = this.isLogin 
+    const authObs = this.isLogin
       ? this.authService.login(email, password)
       : this.authService.register(email, password, name);
 
     authObs.subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.router.navigateByUrl('/tabs/home');
-      },
+      next: () => this.router.navigateByUrl('/tabs/home'),
       error: (err) => {
-        this.isLoading = false;
         this.errorMessage = 'Errore durante l\'autenticazione. Riprova.';
         console.error(err);
       }
