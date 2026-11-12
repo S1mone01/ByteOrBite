@@ -436,39 +436,6 @@ ion-col.panino-col, ion-col {
   width: 100%;
   overflow: hidden;
 
-  .exploded-header {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 1px dashed rgba(var(--ion-color-medium-rgb), 0.2);
-
-    .exploded-title-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-
-      .title-icon {
-        font-size: 1.4rem;
-      }
-
-      .exploded-title {
-        font-size: 1.1rem;
-        font-weight: 800;
-        color: var(--app-text);
-        letter-spacing: 0.5px;
-      }
-    }
-
-    .layer-count-badge {
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 12px;
-    }
-  }
 
   .exploded-burger-stack {
 
@@ -582,14 +549,6 @@ ion-col.panino-col, ion-col {
     }
   }
 
-  .exploded-hint {
-    margin-top: 12px;
-    font-size: 0.78rem;
-    color: var(--app-text);
-    opacity: 0.75;
-    text-align: center;
-    line-height: 1.3;
-  }
 }
 
 .split-layout-grid {

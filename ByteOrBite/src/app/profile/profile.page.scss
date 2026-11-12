@@ -192,35 +192,6 @@
   font-style: italic;
 }
 
-.mobile-actions-section {
-  margin-top: 20px;
-
-  ion-list-header {
-    --color: var(--ion-color-medium);
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding-left: 20px;
-  }
-
-  ion-list {
-    background: transparent;
-    padding: 0 10px;
-  }
-
-  ion-item {
-    --background: var(--ion-card-background);
-    --border-radius: 12px;
-    margin-bottom: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-  }
-
-  .manage-item {
-    --color: var(--ion-color-tertiary);
-    font-weight: 600;
-  }
-}
-
 .no-user-container {
   display: flex;
   flex-direction: column;
