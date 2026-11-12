@@ -1,21 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { 
-  IonContent, IonHeader, IonTitle, IonToolbar, IonSegment, IonSegmentButton, 
-  IonLabel, IonList, IonItem, IonThumbnail, IonButton, IonIcon, IonModal, 
-  IonButtons, IonInput, IonToggle, IonSelect, IonSelectOption, IonCard,
-  IonCardHeader, IonCardTitle, IonCardContent, IonListHeader,
-  IonCardSubtitle, IonText, AlertController, ToastController,
-  IonGrid, IonRow, IonCol, IonBackButton,
-  IonRefresher, IonRefresherContent
+
+import {
+  IonContent, IonHeader, IonTitle, IonToolbar, IonSegment,
+  IonSegmentButton, IonLabel, IonList, IonItem, IonThumbnail,
+  IonButton, IonIcon, IonModal, IonButtons, IonInput, IonToggle,
+  IonSelect, IonSelectOption, IonCard, IonCardHeader, IonCardTitle,
+  IonCardContent, IonListHeader, IonCardSubtitle, IonText,
+  AlertController, ToastController, IonGrid, IonRow, IonCol,
+  IonBackButton, IonRefresher, IonRefresherContent
 } from '@ionic/angular/standalone';
+
 import { addIcons } from 'ionicons';
-import { 
-  add, pencil, trash, close, save, 
-  chevronDownOutline, chevronUpOutline, eyeOutline, arrowBackOutline,
+import {
+  add, pencil, trash, close, save, chevronDownOutline,
+  chevronUpOutline, eyeOutline, arrowBackOutline,
   cloudUploadOutline
 } from 'ionicons/icons';
+
 import { DataService } from '../services/data.service';
 
 @Component({
@@ -24,17 +27,21 @@ import { DataService } from '../services/data.service';
   styleUrls: ['./manage.page.scss'],
   standalone: true,
   imports: [
-    IonContent, IonHeader, IonTitle, IonToolbar, IonSegment, IonSegmentButton, 
-    IonLabel, IonList, IonItem, IonThumbnail, IonButton, IonIcon, IonModal, 
-    IonButtons, IonInput, IonToggle, IonSelect, IonSelectOption, IonCard, 
-    IonCardHeader, IonCardTitle, IonCardContent, IonListHeader, 
-    IonCardSubtitle, IonText, IonGrid, IonRow, IonCol,
-    IonBackButton, IonRefresher, IonRefresherContent,
-    CommonModule, FormsModule
+    CommonModule, FormsModule,
+    IonContent, IonHeader, IonTitle, IonToolbar,
+    IonSegment, IonSegmentButton, IonLabel, IonList,
+    IonItem, IonThumbnail, IonButton, IonIcon, IonModal,
+    IonButtons, IonInput, IonToggle, IonSelect,
+    IonSelectOption, IonCard, IonCardHeader, IonCardTitle,
+    IonCardContent, IonListHeader, IonCardSubtitle,
+    IonText, IonGrid, IonRow, IonCol, IonBackButton,
+    IonRefresher, IonRefresherContent
   ]
 })
 export class ManagePage implements OnInit {
+
   segmentValue = 'panini';
+
   panini: any[] = [];
   bibite: any[] = [];
   patatine: any[] = [];
@@ -45,7 +52,14 @@ export class ManagePage implements OnInit {
   isOrdersVisible = true;
   isCompletedOrdersVisible = false;
   isInCorsoOrdersVisible = true;
+
   isModalOpen = false;
+  isOrderModalOpen = false;
+
+  modalMode: 'add' | 'edit' = 'add';
+
+  currentItem: any = {};
+  currentOrder: any = {};
 
   get ordiniInCorso() {
     return this.ordini.filter(o => o.stato !== 'completato');
@@ -55,25 +69,15 @@ export class ManagePage implements OnInit {
     return this.ordini.filter(o => o.stato === 'completato');
   }
 
-  toggleCompletedOrders() {
-    this.isCompletedOrdersVisible = !this.isCompletedOrdersVisible;
-  }
-
-  toggleInCorsoOrders() {
-    this.isInCorsoOrdersVisible = !this.isInCorsoOrdersVisible;
-  }
-  modalMode: 'add' | 'edit' = 'add';
-  currentItem: any = {};
-
   constructor(
     private dataService: DataService,
     private alertController: AlertController,
     private toastController: ToastController
   ) {
-    addIcons({ 
-      add, pencil, trash, close, save, 
-      chevronDownOutline, chevronUpOutline, eyeOutline, arrowBackOutline,
-      cloudUploadOutline
+    addIcons({
+      add, pencil, trash, close, save,
+      chevronDownOutline, chevronUpOutline,
+      eyeOutline, arrowBackOutline, cloudUploadOutline
     });
   }
 
@@ -87,66 +91,56 @@ export class ManagePage implements OnInit {
     this.loadOrdini();
   }
 
+  // IMMAGINI
+
   getImageUrl(path: string) {
     return this.dataService.getImageUrl(path);
   }
 
   onFileSelected(event: any) {
     const file: File = event.target.files[0];
-    if (file) {
-      this.dataService.uploadImage(file, this.segmentValue).subscribe({
-        next: (res) => {
-          this.currentItem.immagine_url = res.url;
-          this.showToast('Immagine caricata con successo');
-        },
-        error: (err) => {
-          console.error("Errore upload", err);
-          this.showToast('Errore durante il caricamento dell\'immagine', 'danger');
-        }
-      });
-    }
+    if (!file) return;
+
+    this.dataService.uploadImage(file, this.segmentValue).subscribe({
+      next: res => {
+        this.currentItem.immagine_url = res.url;
+        this.showToast('Immagine caricata con successo');
+      },
+      error: (err: any) => {
+        console.error('Errore upload', err);
+        this.showToast('Errore durante il caricamento dell\'immagine', 'danger');
+      }
+    });
   }
 
-  toggleOrders() {
-    this.isOrdersVisible = !this.isOrdersVisible;
-  }
+  // CARICAMENTO DATI
 
   loadAllData(event?: any) {
-    this.dataService.getPanini().subscribe({
-      next: (res) => this.panini = res,
-      error: (err) => this.showToast('Errore nel caricamento dei panini', 'danger')
-    });
-    this.dataService.getBibite().subscribe({
-      next: (res) => this.bibite = res,
-      error: (err) => this.showToast('Errore nel caricamento delle bibite', 'danger')
-    });
-    this.dataService.getPatatine().subscribe({
-      next: (res) => this.patatine = res,
-      error: (err) => this.showToast('Errore nel caricamento delle patatine', 'danger')
-    });
-    this.dataService.getMenu().subscribe({
-      next: (res) => this.menu = res,
-      error: (err) => this.showToast('Errore nel caricamento dei menu', 'danger')
-    });
-    this.dataService.getIngredienti().subscribe({
-      next: (res) => this.ingredienti = res,
-      error: (err) => this.showToast('Errore nel caricamento degli ingredienti', 'danger')
+    const requests = [
+      { method: 'getPanini', property: 'panini', error: 'Errore nel caricamento dei panini' },
+      { method: 'getBibite', property: 'bibite', error: 'Errore nel caricamento delle bibite' },
+      { method: 'getPatatine', property: 'patatine', error: 'Errore nel caricamento delle patatine' },
+      { method: 'getMenu', property: 'menu', error: 'Errore nel caricamento dei menu' },
+      { method: 'getIngredienti', property: 'ingredienti', error: 'Errore nel caricamento degli ingredienti' }
+    ];
+
+    requests.forEach(({ method, property, error }) => {
+      (this.dataService as any)[method]().subscribe({
+        next: (res: any[]) => (this as any)[property] = res,
+        error: () => this.showToast(error, 'danger')
+      });
     });
   }
 
   loadOrdini(event?: any) {
     this.dataService.getOrdini().subscribe({
-      next: (res) => {
+      next: res => {
         this.ordini = res;
-        if (event) {
-          event.target.complete();
-        }
+        event?.target.complete();
       },
-      error: (err) => {
+      error: () => {
         this.showToast('Errore nel caricamento degli ordini', 'danger');
-        if (event) {
-          event.target.complete();
-        }
+        event?.target.complete();
       }
     });
   }
@@ -156,24 +150,39 @@ export class ManagePage implements OnInit {
     this.loadOrdini(event);
   }
 
+  // GESTIONE ORDINI
+
+  toggleOrders() {
+    this.isOrdersVisible = !this.isOrdersVisible;
+  }
+
+  toggleCompletedOrders() {
+    this.isCompletedOrdersVisible = !this.isCompletedOrdersVisible;
+  }
+
+  toggleInCorsoOrders() {
+    this.isInCorsoOrdersVisible = !this.isInCorsoOrdersVisible;
+  }
+
   parseLocation(location: string | undefined): any {
     if (!location) return null;
+
     try {
       return JSON.parse(location);
-    } catch (e) {
+    } catch {
       return { address: location };
     }
   }
 
-  isOrderModalOpen = false;
-  currentOrder: any = {};
-
   openEditOrderModal(ordine: any) {
     this.currentOrder = { ...ordine };
-    const loc = this.parseLocation(this.currentOrder.destinazione);
-    if (loc && loc.address) {
-      this.currentOrder.destinazione = loc.address;
+
+    const location = this.parseLocation(this.currentOrder.destinazione);
+
+    if (location?.address) {
+      this.currentOrder.destinazione = location.address;
     }
+
     this.isOrderModalOpen = true;
   }
 
@@ -182,28 +191,39 @@ export class ManagePage implements OnInit {
   }
 
   saveOrder() {
-    this.dataService.updateOrdine(this.currentOrder.id, this.currentOrder).subscribe({
+    this.dataService.updateOrdine(
+      this.currentOrder.id,
+      this.currentOrder
+    ).subscribe({
       next: () => {
         this.showToast('Ordine aggiornato con successo');
         this.loadOrdini();
         this.closeOrderModal();
       },
-      error: (err) => this.showToast('Errore durante l\'aggiornamento dell\'ordine', 'danger')
+      error: () => this.showToast(
+        'Errore durante l\'aggiornamento dell\'ordine',
+        'danger'
+      )
     });
   }
 
   updateStatoOrdine(id: number, nuovoStato: string) {
     const ordine = this.ordini.find(o => o.id === id);
-    if (ordine) {
-      const updatedData = { ...ordine, stato: nuovoStato };
-      this.dataService.updateOrdine(id, updatedData).subscribe({
-        next: () => {
-          this.showToast('Stato ordine aggiornato');
-          this.loadOrdini();
-        },
-        error: (err) => this.showToast('Errore durante l\'aggiornamento dello stato', 'danger')
-      });
-    }
+    if (!ordine) return;
+
+    this.dataService.updateOrdine(id, {
+      ...ordine,
+      stato: nuovoStato
+    }).subscribe({
+      next: () => {
+        this.showToast('Stato ordine aggiornato');
+        this.loadOrdini();
+      },
+      error: () => this.showToast(
+        'Errore durante l\'aggiornamento dello stato',
+        'danger'
+      )
+    });
   }
 
   async confirmDeleteOrder(id: number) {
@@ -211,16 +231,11 @@ export class ManagePage implements OnInit {
       header: 'Conferma eliminazione',
       message: 'Sei sicuro di voler eliminare questo ordine? L\'azione è irreversibile.',
       buttons: [
-        {
-          text: 'Annulla',
-          role: 'cancel'
-        },
+        { text: 'Annulla', role: 'cancel' },
         {
           text: 'Elimina',
           role: 'destructive',
-          handler: () => {
-            this.deleteOrdine(id);
-          }
+          handler: () => this.deleteOrdine(id)
         }
       ]
     });
@@ -234,14 +249,23 @@ export class ManagePage implements OnInit {
         this.showToast('Ordine eliminato');
         this.loadOrdini();
       },
-      error: (err) => this.showToast('Errore durante l\'eliminazione dell\'ordine', 'danger')
+      error: () => this.showToast(
+        'Errore durante l\'eliminazione dell\'ordine',
+        'danger'
+      )
     });
   }
+
+  // GESTIONE PRODOTTI
 
   openAddModal() {
     this.modalMode = 'add';
     this.currentItem = { disponibile: 1 };
-    if (this.segmentValue === 'panini') this.currentItem.ingredienti = [];
+
+    if (this.segmentValue === 'panini') {
+      this.currentItem.ingredienti = [];
+    }
+
     this.isModalOpen = true;
   }
 
@@ -255,58 +279,88 @@ export class ManagePage implements OnInit {
     this.isModalOpen = false;
   }
 
-  saveItem() {
-    if (this.currentItem.prezzo) this.currentItem.prezzo = Number(this.currentItem.prezzo);
-    if (this.currentItem.prezzo_extra) this.currentItem.prezzo_extra = Number(this.currentItem.prezzo_extra);
-    if (this.currentItem.sovrapprezzo) this.currentItem.sovrapprezzo = Number(this.currentItem.sovrapprezzo);
+  getItemObservable(
+    action: 'add' | 'update' | 'delete',
+    item: any = this.currentItem
+  ) {
+    const id = item.id;
 
-    const obs = this.getObservable();
-    if (obs) {
-      obs.subscribe({
-        next: () => {
-          this.showToast(`${this.segmentValue.charAt(0).toUpperCase() + this.segmentValue.slice(1)} salvato con successo`);
-          this.loadAllData();
-          this.closeModal();
-        },
-        error: (err) => this.showToast(`Errore durante il salvataggio: ${err.error?.message || 'Errore generico'}`, 'danger')
-      });
-    }
+    const operations: Record<string, any> = {
+      panini: {
+        add: () => this.dataService.addPanino(item),
+        update: () => this.dataService.updatePanino(id, item),
+        delete: () => this.dataService.deletePanino(id)
+      },
+      bibite: {
+        add: () => this.dataService.addBibita(item),
+        update: () => this.dataService.updateBibita(id, item),
+        delete: () => this.dataService.deleteBibita(id)
+      },
+      patatine: {
+        add: () => this.dataService.addPatatine(item),
+        update: () => this.dataService.updatePatatine(id, item),
+        delete: () => this.dataService.deletePatatine(id)
+      },
+      menu: {
+        add: () => this.dataService.addMenu(item),
+        update: () => this.dataService.updateMenu(id, item),
+        delete: () => this.dataService.deleteMenu(id)
+      },
+      ingredienti: {
+        add: () => this.dataService.addIngrediente(item),
+        update: () => this.dataService.updateIngrediente(id, item),
+        delete: () => this.dataService.deleteIngrediente(id)
+      }
+    };
+
+    return operations[this.segmentValue]?.[action]?.() ?? null;
   }
 
   getObservable() {
-    const id = this.currentItem.id;
-    const val = this.segmentValue;
-    if (this.modalMode === 'add') {
-      if (val === 'panini') return this.dataService.addPanino(this.currentItem);
-      if (val === 'bibite') return this.dataService.addBibita(this.currentItem);
-      if (val === 'patatine') return this.dataService.addPatatine(this.currentItem);
-      if (val === 'menu') return this.dataService.addMenu(this.currentItem);
-      if (val === 'ingredienti') return this.dataService.addIngrediente(this.currentItem);
-    } else {
-      if (val === 'panini') return this.dataService.updatePanino(id, this.currentItem);
-      if (val === 'bibite') return this.dataService.updateBibita(id, this.currentItem);
-      if (val === 'patatine') return this.dataService.updatePatatine(id, this.currentItem);
-      if (val === 'menu') return this.dataService.updateMenu(id, this.currentItem);
-      if (val === 'ingredienti') return this.dataService.updateIngrediente(id, this.currentItem);
-    }
-    return null;
+    return this.getItemObservable(
+      this.modalMode === 'add' ? 'add' : 'update'
+    );
+  }
+
+  saveItem() {
+    ['prezzo', 'prezzo_extra', 'sovrapprezzo'].forEach(key => {
+      if (this.currentItem[key] !== undefined &&
+          this.currentItem[key] !== null &&
+          this.currentItem[key] !== '') {
+        this.currentItem[key] = Number(this.currentItem[key]);
+      }
+    });
+
+    this.getObservable()?.subscribe({
+      next: () => {
+        const name = this.segmentValue;
+
+        this.showToast(
+          `${name.charAt(0).toUpperCase() + name.slice(1)} salvato con successo`
+        );
+
+        this.loadAllData();
+        this.closeModal();
+      },
+      error: (err: any) => {
+        this.showToast(
+          `Errore durante il salvataggio: ${err.error?.message || 'Errore generico'}`,
+          'danger'
+        );
+      }
+    });
   }
 
   async confirmDeleteItem(item: any) {
     const alert = await this.alertController.create({
       header: 'Conferma eliminazione',
-      message: `Sei sicuro di voler eliminare "${item.nome}"? L\'azione è irreversibile.`,
+      message: `Sei sicuro di voler eliminare "${item.nome}"? L'azione è irreversibile.`,
       buttons: [
-        {
-          text: 'Annulla',
-          role: 'cancel'
-        },
+        { text: 'Annulla', role: 'cancel' },
         {
           text: 'Elimina',
           role: 'destructive',
-          handler: () => {
-            this.deleteItem(item);
-          }
+          handler: () => this.deleteItem(item)
         }
       ]
     });
@@ -315,76 +369,58 @@ export class ManagePage implements OnInit {
   }
 
   deleteItem(item: any) {
-    let obs;
-    const val = this.segmentValue;
-    if (val === 'panini') obs = this.dataService.deletePanino(item.id);
-    if (val === 'bibite') obs = this.dataService.deleteBibita(item.id);
-    if (val === 'patatine') obs = this.dataService.deletePatatine(item.id);
-    if (val === 'menu') obs = this.dataService.deleteMenu(item.id);
-    if (val === 'ingredienti') obs = this.dataService.deleteIngrediente(item.id);
-
-    if (obs) {
-      obs.subscribe({
-        next: () => {
-          this.showToast('Elemento eliminato');
-          this.loadAllData();
-        },
-        error: (err) => this.showToast('Errore durante l\'eliminazione', 'danger')
-      });
-    }
+    this.getItemObservable('delete', item)?.subscribe({
+      next: () => {
+        this.showToast('Elemento eliminato');
+        this.loadAllData();
+      },
+      error: () => this.showToast('Errore durante l\'eliminazione', 'danger')
+    });
   }
 
   toggleAvailability(item: any, event: any) {
-    const newVal = event.detail.checked ? 1 : 0;
-    
-    if (item.disponibile === newVal) return;
+    const newValue = event.detail.checked ? 1 : 0;
 
-    const oldVal = item.disponibile;
-    item.disponibile = newVal;
-    
-    const id = item.id;
-    const val = this.segmentValue;
-    let obs;
-    
-    if (val === 'panini') obs = this.dataService.updatePanino(id, item);
-    if (val === 'bibite') obs = this.dataService.updateBibita(id, item);
-    if (val === 'patatine') obs = this.dataService.updatePatatine(id, item);
-    if (val === 'menu') obs = this.dataService.updateMenu(id, item);
-    if (val === 'ingredienti') obs = this.dataService.updateIngrediente(id, item);
-    
-    if (obs) {
-      obs.subscribe({
-        next: () => this.showToast('Disponibilità aggiornata'),
-        error: (err) => {
-          console.error("Errore aggiornamento disponibilità", err);
-          this.showToast('Errore aggiornamento disponibilità', 'danger');
-          item.disponibile = oldVal;
-        }
-      });
-    }
+    if (item.disponibile === newValue) return;
+
+    const oldValue = item.disponibile;
+    item.disponibile = newValue;
+
+    this.getItemObservable('update', item)?.subscribe({
+      next: () => this.showToast('Disponibilità aggiornata'),
+      error: (err: any) => {
+        console.error('Errore aggiornamento disponibilità', err);
+
+        this.showToast('Errore aggiornamento disponibilità', 'danger');
+        item.disponibile = oldValue;
+      }
+    });
   }
+
+  // NOTIFICHE
 
   async showToast(message: string, color: string = 'success') {
     const toast = await this.toastController.create({
-      message: message,
+      message,
       duration: 2000,
-      color: color,
+      color,
       position: 'bottom'
     });
-    toast.present();
+
+    await toast.present();
   }
+
+  // FORMATTAZIONE MODIFICHE ORDINE
 
   formatModifiche(modifiche: string): string[] {
     if (!modifiche) return [];
-    if (modifiche.includes('Starter:') || modifiche.includes('Bibita:')) {
-      return modifiche
-        .split(/(?:,\s*|\n+)(?=[A-Z][a-zA-ZÀ-ÿ\s]*:)/)
-        .map(s => s.trim())
-        .filter(s => s.length > 0);
-    }
-    if (modifiche.includes('\n')) {
-      return modifiche.split('\n').map(s => s.trim()).filter(s => s.length > 0);
-    }
-    return [modifiche];
+
+    const parts = modifiche.includes('Starter:') || modifiche.includes('Bibita:')
+      ? modifiche.split(/(?:,\s*|\n+)(?=[A-Z][a-zA-ZÀ-ÿ\s]*:)/)
+      : modifiche.includes('\n')
+        ? modifiche.split('\n')
+        : [modifiche];
+
+    return parts.map(part => part.trim()).filter(Boolean);
   }
 }

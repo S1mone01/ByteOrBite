@@ -32,35 +32,31 @@ export class MapModalComponent implements OnInit {
   @Input() initialLat?: number;
   @Input() initialLon?: number;
 
-  selectedAddress: string = '';
+  selectedAddress = '';
   selectedCoords: { lat: number, lon: number } | null = null;
   mapUrl: SafeResourceUrl | null = null;
   isDarkMode$: Observable<boolean>;
   
-  searchQuery: string = '';
+  searchQuery = '';
   searchResults: any[] = [];
-  isSearching: boolean = false;
-  isGeocoding: boolean = false;
-  isLocating: boolean = false;
+  isLocating = false;
 
-  private currentRawUrl: string = '';
+  private currentRawUrl = '';
 
   constructor(
     private modalController: ModalController,
     private http: HttpClient,
     private toastController: ToastController,
     private sanitizer: DomSanitizer,
-    private themeService: ThemeService
+    themeService: ThemeService
   ) {
     addIcons({ closeOutline, checkmarkOutline, locateOutline, locationOutline, searchOutline });
-    this.isDarkMode$ = this.themeService.isDarkMode$;
+    this.isDarkMode$ = themeService.isDarkMode$;
   }
 
   ngOnInit() {
     if (this.initialLat && this.initialLon) {
-      this.selectedCoords = { lat: this.initialLat, lon: this.initialLon };
-      this.updateMapUrl(this.initialLat, this.initialLon);
-      this.reverseGeocode(this.initialLat, this.initialLon);
+      this.setLocation(this.initialLat, this.initialLon);
     } else {
       this.getCurrentLocation();
     }
@@ -82,34 +78,35 @@ export class MapModalComponent implements OnInit {
           this.isLocating = false;
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
-          this.selectedCoords = { lat, lon };
-          this.updateMapUrl(lat, lon);
-          this.reverseGeocode(lat, lon);
+          this.setLocation(lat, lon);
           this.showToast('Posizione GPS rilevata!', 'success');
         },
         (error) => {
           this.isLocating = false;
           console.error('Error getting location', error);
-          if (!this.selectedCoords) {
-            const defaultLat = 45.4642;
-            const defaultLon = 9.1900;
-            this.selectedCoords = { lat: defaultLat, lon: defaultLon };
-            this.updateMapUrl(defaultLat, defaultLon);
-            this.reverseGeocode(defaultLat, defaultLon);
-          }
+          this.setDefaultLocation();
           this.showToast('Impossibile recuperare la posizione GPS', 'warning');
         },
         { enableHighAccuracy: true, timeout: 8000 }
       );
     } else {
-      if (!this.selectedCoords) {
-        const defaultLat = 45.4642;
-        const defaultLon = 9.1900;
-        this.selectedCoords = { lat: defaultLat, lon: defaultLon };
-        this.updateMapUrl(defaultLat, defaultLon);
-        this.reverseGeocode(defaultLat, defaultLon);
-      }
+      this.setDefaultLocation();
     }
+  }
+
+  private setLocation(lat: number, lon: number) {
+    this.selectedCoords = { lat, lon };
+    this.updateMapUrl(lat, lon);
+    this.reverseGeocode(lat, lon);
+  }
+
+  private setDefaultLocation() {
+    if (!this.selectedCoords) this.setLocation(45.4642, 9.1900);
+  }
+
+  private search(query: string) {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query.trim())}&limit=5&addressdetails=1`;
+    return this.http.get<any[]>(url);
   }
 
   onSearchInput(event: any) {
@@ -119,15 +116,11 @@ export class MapModalComponent implements OnInit {
       return;
     }
 
-    this.isSearching = true;
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query.trim())}&limit=5&addressdetails=1`;
-    this.http.get<any[]>(url).subscribe({
+    this.search(query).subscribe({
       next: (results) => {
-        this.isSearching = false;
         this.searchResults = results || [];
       },
       error: (err) => {
-        this.isSearching = false;
         console.error('Search geocoding error', err);
         this.searchResults = [];
       }
@@ -136,19 +129,15 @@ export class MapModalComponent implements OnInit {
 
   searchAddress() {
     if (!this.searchQuery || this.searchQuery.trim().length < 3) return;
-    this.isSearching = true;
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(this.searchQuery.trim())}&limit=5&addressdetails=1`;
-    this.http.get<any[]>(url).subscribe({
+    this.search(this.searchQuery).subscribe({
       next: (results) => {
-        this.isSearching = false;
-        if (results && results.length > 0) {
+        if (results?.length) {
           this.selectSearchResult(results[0]);
         } else {
           this.showToast('Nessun indirizzo trovato', 'warning');
         }
       },
       error: (err) => {
-        this.isSearching = false;
         console.error('Search error', err);
         this.showToast('Errore durante la ricerca', 'danger');
       }
@@ -171,22 +160,20 @@ export class MapModalComponent implements OnInit {
   }
 
   reverseGeocode(lat: number, lon: number) {
-    this.isGeocoding = true;
+    const fallbackAddress = `Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`;
     this.http.get<any>(url).subscribe({
       next: (data) => {
-        this.isGeocoding = false;
-        if (data && data.display_name) {
+        if (data?.display_name) {
           this.selectedAddress = data.display_name;
           this.searchQuery = data.display_name;
         } else {
-          this.selectedAddress = `Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
+          this.selectedAddress = fallbackAddress;
         }
       },
       error: (err) => {
-        this.isGeocoding = false;
         console.error('Reverse geocoding error', err);
-        this.selectedAddress = `Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`;
+        this.selectedAddress = fallbackAddress;
       }
     });
   }

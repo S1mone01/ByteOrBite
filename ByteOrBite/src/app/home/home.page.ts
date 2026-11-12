@@ -10,10 +10,12 @@ import {
   IonCard,
   IonCardHeader,
   IonCardTitle,
-  IonCardContent
-, AlertController, ToastController } from '@ionic/angular/standalone';
+  IonCardContent,
+  AlertController,
+  ToastController
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { starOutline, arrowForwardOutline, fastFoodOutline, restaurantOutline, personOutline, personCircleOutline } from 'ionicons/icons';
+import { arrowForwardOutline, fastFoodOutline, restaurantOutline, personOutline, personCircleOutline } from 'ionicons/icons';
 import { DataService } from '../services/data.service';
 
 @Component({
@@ -36,26 +38,30 @@ import { DataService } from '../services/data.service';
   ],
 })
 export class HomePage {
-  constructor(private dataService: DataService, private alertController: AlertController, private toastController: ToastController) {
-    addIcons({ starOutline, arrowForwardOutline, fastFoodOutline, restaurantOutline, personOutline, personCircleOutline });
+  private homePressTimer?: ReturnType<typeof setTimeout> | null;
+
+  constructor(
+    private dataService: DataService,
+    private alertController: AlertController,
+    private toastController: ToastController
+  ) {
+    addIcons({ arrowForwardOutline, fastFoodOutline, restaurantOutline, personOutline, personCircleOutline });
   }
 
   getImageUrl(path: string) {
     return this.dataService.getImageUrl(path);
   }
 
-  private homePressTimer: any;
-
-  startHomePress(event?: Event) {
+  startHomePress(_event?: Event) {
     this.homePressTimer = setTimeout(() => {
       if (navigator.vibrate) {
-        try { navigator.vibrate(60); } catch (e) {}
+        try { navigator.vibrate(60); } catch {}
       }
       this.showServerConfigPrompt();
     }, 700);
   }
 
-  endHomePress(event?: Event) {
+  endHomePress(_event?: Event) {
     if (this.homePressTimer) {
       clearTimeout(this.homePressTimer);
       this.homePressTimer = null;
@@ -83,8 +89,7 @@ export class HomePage {
           text: 'Reset Localhost',
           role: 'destructive',
           handler: () => {
-            localStorage.removeItem('custom_api_url');
-            this.showToast('Server ripristinato a: http://localhost:3000', 'warning');
+            this.resetServerUrl();
             setTimeout(() => window.location.reload(), 800);
           }
         },
@@ -97,8 +102,7 @@ export class HomePage {
           handler: (data) => {
             const raw = data.serverIp;
             if (!raw || !raw.trim()) {
-              localStorage.removeItem('custom_api_url');
-              this.showToast('Server ripristinato a: http://localhost:3000', 'warning');
+              this.resetServerUrl();
             } else {
               let clean = raw.trim();
               if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
@@ -108,7 +112,7 @@ export class HomePage {
                 clean = clean.slice(0, -1);
               }
               if (!clean.includes(':', 7) && !clean.includes('loca.lt') && !clean.includes('ngrok')) {
-                clean = clean + ':3000';
+                clean += ':3000';
               }
               localStorage.setItem('custom_api_url', clean);
               this.showToast('Server impostato su: ' + clean, 'success');
@@ -120,6 +124,11 @@ export class HomePage {
     });
 
     await alert.present();
+  }
+
+  private resetServerUrl() {
+    localStorage.removeItem('custom_api_url');
+    this.showToast('Server ripristinato a: http://localhost:3000', 'warning');
   }
 
   async showToast(message: string, color: string = 'success') {

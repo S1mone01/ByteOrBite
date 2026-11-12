@@ -1,23 +1,27 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { DataService } from 'src/app/services/data.service';
-import { CartService } from 'src/app/services/cart.service';
 import { Subscription } from 'rxjs';
-import { 
+import { Router } from '@angular/router';
+
+import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonFooter,
-  IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
-  IonCardTitle, IonCardContent, IonButton, IonIcon, 
+  IonGrid, IonRow, IonCol, IonCard, IonCardHeader,
+  IonCardTitle, IonCardContent, IonButton, IonIcon,
   IonText, IonBadge, IonImg, IonModal, IonButtons,
   ModalController, ToastController
 } from '@ionic/angular/standalone';
+
 import { addIcons } from 'ionicons';
-import { 
-  cartOutline, add, remove, close, cart, removeCircleOutline, 
-  addCircleOutline, fastFoodOutline, wineOutline, checkmarkCircleOutline
+import {
+  cartOutline, add, remove, close, cart,
+  removeCircleOutline, addCircleOutline,
+  fastFoodOutline, wineOutline, checkmarkCircleOutline
 } from 'ionicons/icons';
+
+import { DataService } from 'src/app/services/data.service';
+import { CartService } from 'src/app/services/cart.service';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
@@ -27,24 +31,26 @@ import { Router } from '@angular/router';
   imports: [
     CommonModule, FormsModule,
     IonHeader, IonToolbar, IonTitle, IonContent, IonFooter,
-    IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
-    IonCardTitle, IonCardContent, IonButton, IonIcon, 
+    IonGrid, IonRow, IonCol, IonCard, IonCardHeader,
+    IonCardTitle, IonCardContent, IonButton, IonIcon,
     IonText, IonBadge, IonImg, IonModal, IonButtons
   ]
 })
 export class MenuPage implements OnInit, OnDestroy {
+
   listaMenu: any[] = [];
   listaPatatine: any[] = [];
   listaBibite: any[] = [];
-  
+
   cartQuantities: { [key: number]: number } = {};
+  cartItems: any[] = [];
+
   isModalOpen = false;
   selectedMenu: any = null;
   selectedPatatina: any = null;
   selectedBibita: any = null;
-  modalQuantity: number = 1;
-  
-  cartItems: any[] = [];
+  modalQuantity = 1;
+
   private cartItemsSub: Subscription | null = null;
 
   constructor(
@@ -54,11 +60,11 @@ export class MenuPage implements OnInit, OnDestroy {
     private router: Router,
     private modalController: ModalController,
     private toastController: ToastController
-  ) { 
-    addIcons({ 
-      cartOutline, add, remove, close, cart, 
-      removeCircleOutline, addCircleOutline, 
-      fastFoodOutline, wineOutline, checkmarkCircleOutline 
+  ) {
+    addIcons({
+      cartOutline, add, remove, close, cart,
+      removeCircleOutline, addCircleOutline,
+      fastFoodOutline, wineOutline, checkmarkCircleOutline
     });
   }
 
@@ -66,6 +72,7 @@ export class MenuPage implements OnInit, OnDestroy {
     this.caricaMenuCombo();
     this.caricaPatatine();
     this.caricaBibite();
+
     this.cartItemsSub = this.cartService.cartItems$.subscribe(items => {
       this.cartItems = items;
       this.aggiornaQuantitaLocali(items);
@@ -73,92 +80,90 @@ export class MenuPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.cartItemsSub) this.cartItemsSub.unsubscribe();
+    this.cartItemsSub?.unsubscribe();
   }
 
   aggiornaQuantitaLocali(items: any[]) {
-    Object.keys(this.cartQuantities).forEach(key => this.cartQuantities[+key] = 0);
-    
+    Object.keys(this.cartQuantities).forEach(key => {
+      this.cartQuantities[+key] = 0;
+    });
+
     items.forEach(item => {
       const menu = this.listaMenu.find(m => m.nome === item.prodotto_nome);
+
       if (menu) {
-        this.cartQuantities[menu.id] = (this.cartQuantities[menu.id] || 0) + item.quantita;
+        this.cartQuantities[menu.id] =
+          (this.cartQuantities[menu.id] || 0) + item.quantita;
       }
     });
   }
 
   caricaMenuCombo() {
     this.dataService.getMenu().subscribe({
-      next: (dati) => {
+      next: dati => {
         this.listaMenu = dati;
-        this.listaMenu.forEach(m => {
-          if (this.cartQuantities[m.id] === undefined) {
-            this.cartQuantities[m.id] = 0;
-          }
+
+        this.listaMenu.forEach(menu => {
+          this.cartQuantities[menu.id] ??= 0;
         });
+
         this.aggiornaQuantitaLocali(this.cartItems);
       },
-      error: (err) => {
-        console.error('Errore nel caricamento dei menu:', err);
-      }
+      error: err => console.error('Errore nel caricamento dei menu:', err)
     });
   }
 
   caricaPatatine() {
     this.dataService.getPatatine().subscribe({
-      next: (dati) => {
+      next: dati => {
         this.listaPatatine = dati.filter(p => p.disponibile != 0);
       },
-      error: (err) => console.error('Errore caricamento patatine:', err)
+      error: err => console.error('Errore caricamento patatine:', err)
     });
   }
 
   caricaBibite() {
     this.dataService.getBibite().subscribe({
-      next: (dati) => {
+      next: dati => {
         this.listaBibite = dati.filter(b => b.disponibile != 0);
       },
-      error: (err) => console.error('Errore caricamento bibite:', err)
+      error: err => console.error('Errore caricamento bibite:', err)
     });
   }
 
   incrementQuantity(combo: any, event?: Event) {
-    if (event) event.stopPropagation();
+    event?.stopPropagation();
     this.openDetails(combo);
   }
 
   decrementQuantity(combo: any, event?: Event) {
-    if (event) event.stopPropagation();
-    const existingItem = this.cartItems.find(
-      i => i.prodotto_nome === combo.nome
-    );
-    
-    if (existingItem) {
-      this.cartService.updateQuantity(existingItem.id, existingItem.quantita - 1);
+    event?.stopPropagation();
+
+    const item = this.cartItems.find(i => i.prodotto_nome === combo.nome);
+
+    if (item) {
+      this.cartService.updateQuantity(item.id, item.quantita - 1);
     }
   }
 
   openDetails(combo: any) {
     this.selectedMenu = { ...combo };
     this.modalQuantity = 1;
-    
-    if (combo.patatine_id) {
-      this.selectedPatatina = this.listaPatatine.find(p => p.id === combo.patatine_id) || this.listaPatatine[0] || null;
-    } else {
-      this.selectedPatatina = this.listaPatatine[0] || null;
-    }
 
-    if (combo.bibite_id) {
-      this.selectedBibita = this.listaBibite.find(b => b.id === combo.bibite_id) || this.listaBibite[0] || null;
-    } else {
-      this.selectedBibita = this.listaBibite[0] || null;
-    }
+    this.selectedPatatina =
+      this.listaPatatine.find(p => p.id === combo.patatine_id) ||
+      this.listaPatatine[0] || null;
+
+    this.selectedBibita =
+      this.listaBibite.find(b => b.id === combo.bibite_id) ||
+      this.listaBibite[0] || null;
 
     this.isModalOpen = true;
   }
 
   closeDetails() {
     this.isModalOpen = false;
+
     setTimeout(() => {
       if (!this.isModalOpen) {
         this.selectedMenu = null;
@@ -189,14 +194,12 @@ export class MenuPage implements OnInit, OnDestroy {
 
   calculateTotalPrice(): number {
     if (!this.selectedMenu) return 0;
-    let total = this.selectedMenu.prezzo || 0;
-    if (this.selectedPatatina && this.selectedPatatina.sovrapprezzo) {
-      total += this.selectedPatatina.sovrapprezzo;
-    }
-    if (this.selectedBibita && this.selectedBibita.sovrapprezzo) {
-      total += this.selectedBibita.sovrapprezzo;
-    }
-    return total;
+
+    return (
+      (this.selectedMenu.prezzo || 0) +
+      (this.selectedPatatina?.sovrapprezzo || 0) +
+      (this.selectedBibita?.sovrapprezzo || 0)
+    );
   }
 
   async addSelectedToCart() {
@@ -204,40 +207,39 @@ export class MenuPage implements OnInit, OnDestroy {
 
     if (!this.authService.isLoggedIn()) {
       this.closeDetails();
-      try {
-        const topModal = await this.modalController.getTop();
-        if (topModal) {
-          await topModal.dismiss();
-        }
-      } catch (e) {}
+
+      const topModal = await this.modalController.getTop();
+      if (topModal) await topModal.dismiss();
+
       await this.router.navigate(['/tabs/login']);
+
       const toast = await this.toastController.create({
         message: 'Accedi per completare il tuo ordine',
         duration: 2500,
         color: 'warning',
         position: 'bottom'
       });
+
       await toast.present();
       return;
     }
 
-    const modificheList: string[] = [];
+    const modifiche = [];
+
     if (this.selectedPatatina) {
-      modificheList.push(`Starter: ${this.selectedPatatina.nome}`);
-    }
-    if (this.selectedBibita) {
-      modificheList.push(`Bibita: ${this.selectedBibita.nome}`);
+      modifiche.push(`Starter: ${this.selectedPatatina.nome}`);
     }
 
-    const modificheStr = modificheList.join(', ');
-    const prezzoFinale = this.calculateTotalPrice();
+    if (this.selectedBibita) {
+      modifiche.push(`Bibita: ${this.selectedBibita.nome}`);
+    }
 
     this.cartService.addToCart({
       ...this.selectedMenu,
-      prezzo: prezzoFinale,
+      prezzo: this.calculateTotalPrice(),
       tipo: 'menu',
       quantita: this.modalQuantity,
-      modifiche: modificheStr
+      modifiche: modifiche.join(', ')
     });
 
     this.closeDetails();
@@ -247,4 +249,3 @@ export class MenuPage implements OnInit, OnDestroy {
     return this.dataService.getImageUrl(path);
   }
 }
-
