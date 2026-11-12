@@ -50,7 +50,7 @@ export const routes: Routes = [
         path: 'manage',
         loadComponent: () =>
           import('../manage/manage.page').then((m) => m.ManagePage),
-        canActivate: [authGuard, adminGuard]
+        canActivate: [adminGuard]
       },
       {
         path: 'riepilogo',

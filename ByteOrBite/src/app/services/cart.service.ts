@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 import { DataService } from './data.service';
 import { AuthService } from './auth.service';
-import { AlertController, ModalController, ToastController } from '@ionic/angular/standalone';
+import { ModalController, ToastController } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -12,8 +12,9 @@ export class CartService {
   private cartItemsSubject = new BehaviorSubject<any[]>([]);
   public cartItems$ = this.cartItemsSubject.asObservable();
 
-  private cartCountSubject = new BehaviorSubject<number>(0);
-  public cartCount$ = this.cartCountSubject.asObservable();
+  public cartCount$ = this.cartItems$.pipe(
+    map(items => items.reduce((acc, item) => acc + item.quantita, 0))
+  );
 
   private isCartModalOpenSubject = new BehaviorSubject<boolean>(false);
   public isCartModalOpen$ = this.isCartModalOpenSubject.asObservable();
@@ -21,7 +22,6 @@ export class CartService {
   constructor(
     private dataService: DataService,
     private authService: AuthService,
-    private alertController: AlertController,
     private modalController: ModalController,
     private toastController: ToastController,
     private router: Router
@@ -31,30 +31,22 @@ export class CartService {
         this.loadCart(user.id);
       } else {
         this.cartItemsSubject.next([]);
-        this.cartCountSubject.next(0);
       }
     });
   }
 
   loadCart(userId: string) {
     this.dataService.getCarrello(userId).subscribe({
-      next: (items) => {
-        this.cartItemsSubject.next(items);
-        this.updateCartCount(items);
-      },
-      error: (err) => console.error('Errore nel caricamento del carrello:', err)
+      next: items => this.cartItemsSubject.next(items),
+      error: err => console.error('Errore nel caricamento del carrello:', err)
     });
   }
 
   async addToCart(item: any) {
     const currentUser = this.authService.currentUserValue;
     if (!currentUser) {
-      console.warn('Utente non loggato, reindirizzamento al login');
       try {
-        const topModal = await this.modalController.getTop();
-        if (topModal) {
-          await topModal.dismiss();
-        }
+        await (await this.modalController.getTop())?.dismiss();
       } catch (e) {}
       await this.router.navigate(['/tabs/login']);
       const toast = await this.toastController.create({
@@ -73,8 +65,11 @@ export class CartService {
 
     if (existingItem) {
       this.updateQuantity(existingItem.id, existingItem.quantita + (item.quantita || 1));
-    } else {
-      const cartItem = {
+      return;
+    }
+
+    this.reloadAfter(
+      this.dataService.addToCarrello({
         utente_id: currentUser.id,
         prodotto_nome: item.nome,
         quantita: item.quantita || 1,
@@ -82,13 +77,10 @@ export class CartService {
         modifiche: item.modifiche || '',
         tipo_prodotto: item.tipo || 'panino',
         immagine_url: item.immagine_url
-      };
-
-      this.dataService.addToCarrello(cartItem).subscribe({
-        next: () => this.loadCart(currentUser.id),
-        error: (err) => console.error('Errore nell\'aggiunta al carrello:', err)
-      });
-    }
+      }),
+      currentUser.id,
+      'Errore nell\'aggiunta al carrello:'
+    );
   }
 
   updateQuantity(id: number, quantita: number) {
@@ -98,10 +90,11 @@ export class CartService {
     if (quantita <= 0) {
       this.removeFromCart(id);
     } else {
-      this.dataService.updateCarrelloItem(id, quantita).subscribe({
-        next: () => this.loadCart(currentUser.id),
-        error: (err) => console.error('Errore nell\'aggiornamento della quantità:', err)
-      });
+      this.reloadAfter(
+        this.dataService.updateCarrelloItem(id, quantita),
+        currentUser.id,
+        'Errore nell\'aggiornamento della quantità:'
+      );
     }
   }
 
@@ -109,10 +102,11 @@ export class CartService {
     const currentUser = this.authService.currentUserValue;
     if (!currentUser) return;
 
-    this.dataService.removeFromCarrello(id).subscribe({
-      next: () => this.loadCart(currentUser.id),
-      error: (err) => console.error('Errore nella rimozione dal carrello:', err)
-    });
+    this.reloadAfter(
+      this.dataService.removeFromCarrello(id),
+      currentUser.id,
+      'Errore nella rimozione dal carrello:'
+    );
   }
 
   setCartModalOpen(isOpen: boolean) {
@@ -124,15 +118,14 @@ export class CartService {
     const items = this.cartItemsSubject.value;
     if (!currentUser || items.length === 0 || !currentUser.location) return new Observable();
 
-    const subtotal = items.reduce((acc, item) => acc + (item.prezzo_unitario * item.quantita), 0);
-    const totalToSave = Math.max(0, subtotal - discount);
-    const finalTotalForPoints = totalToSave + 1.99;
+    const subtotal = items.reduce((acc, item) => acc + item.prezzo_unitario * item.quantita, 0);
+    const totale = Math.max(0, subtotal - discount);
 
     const ordineData = {
       utente_id: currentUser.id,
       utente_nome: currentUser.name,
-      destinazione: currentUser.location || '',
-      totale: totalToSave,
+      destinazione: currentUser.location,
+      totale,
       prodotti: items.map(i => ({
         prodotto_nome: i.prodotto_nome,
         quantita: i.quantita,
@@ -145,24 +138,25 @@ export class CartService {
       tap(() => {
         this.clearCart(currentUser.id);
         this.setCartModalOpen(false);
-        const puntiGuadagnati = Math.floor(finalTotalForPoints / 10);
+        const puntiGuadagnati = Math.floor((totale + 1.99) / 10);
         const puntiRimanenti = Math.max(0, (currentUser.points || 0) - usedPoints);
-        const puntiFinali = puntiRimanenti + puntiGuadagnati;
-        
-        this.authService.updateUser(currentUser.id, { points: puntiFinali }).subscribe();
+        this.authService.updateUser(currentUser.id, { points: puntiRimanenti + puntiGuadagnati }).subscribe();
       })
     );
   }
 
   clearCart(userId: string) {
-    this.dataService.clearCarrello(userId).subscribe({
-      next: () => this.loadCart(userId),
-      error: (err) => console.error('Errore nello svuotamento del carrello:', err)
-    });
+    this.reloadAfter(
+      this.dataService.clearCarrello(userId),
+      userId,
+      'Errore nello svuotamento del carrello:'
+    );
   }
 
-  private updateCartCount(items: any[]) {
-    const count = items.reduce((acc, item) => acc + item.quantita, 0);
-    this.cartCountSubject.next(count);
+  private reloadAfter(request$: Observable<any>, userId: string, errorMessage: string) {
+    request$.subscribe({
+      next: () => this.loadCart(userId),
+      error: err => console.error(errorMessage, err)
+    });
   }
 }
