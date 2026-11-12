@@ -150,6 +150,16 @@ ion-list {
   margin-bottom: 20px;
 }
 
+.ingredient-thumbnail {
+  background: #fff;
+
+  img {
+    object-fit: contain;
+    object-position: center;
+    background: #fff;
+  }
+}
+
 ion-modal {
   --height: auto;
   --max-height: 85vh;
