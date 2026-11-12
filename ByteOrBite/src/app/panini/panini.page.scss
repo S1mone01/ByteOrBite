@@ -418,7 +418,6 @@ ion-col.panino-col, ion-col {
   }
 }
 
-// Stili per il contenitore del messaggio di lista vuota
 .ion-text-center {
   p {
     font-size: 1.1rem;
@@ -426,12 +425,8 @@ ion-col.panino-col, ion-col {
   }
 }
 
-// ==========================================
-// VISTA ESPLOSA HAMBURGER (EXPLODED BURGER VIEW)
-// ==========================================
-
 .exploded-burger-wrapper {
-  margin-bottom: 0; // Rimossa margin per meglio centrare verticalmente
+  margin-bottom: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -439,7 +434,7 @@ ion-col.panino-col, ion-col {
   height: 100%;
   max-height: 100%;
   width: 100%;
-  overflow: hidden; // Previene scrollbar orizzontali durante le animazioni laterali degli ingredienti
+  overflow: hidden;
 
   .exploded-header {
     width: 100%;
@@ -545,13 +540,11 @@ ion-col.panino-col, ion-col {
       will-change: transform, opacity;
       transition: margin-top 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
       
-      /* Permette allo strato di ridursi in altezza se il contenitore è troppo piccolo */
       flex: 1 1 auto;
       min-height: 0;
       align-items: center;
     }
 
-    /* PANE SUPERIORE */
     .bun-top-layer {
       z-index: 200;
       cursor: default;
@@ -563,7 +556,6 @@ ion-col.panino-col, ion-col {
       }
     }
 
-    /* LISTA STRATI ATTIVI */
     .active-layers-list {
       display: contents;
 
@@ -578,7 +570,6 @@ ion-col.panino-col, ion-col {
       }
     }
 
-    /* PANE INFERIORE */
     .bun-bottom-layer {
       z-index: 10;
       cursor: default;
@@ -601,10 +592,6 @@ ion-col.panino-col, ion-col {
   }
 }
 
-
-
-
-
 .split-layout-grid {
   padding: 0;
   height: 100%;
@@ -621,9 +608,9 @@ ion-col.panino-col, ion-col {
   }
   
   .left-col-sticky {
-    position: relative; // Nessun sticky o fixed come richiesto per mobile
+    position: relative;
     background: var(--app-bg, #ffffff);
-    height: 220px; // Altezza ridotta per mobile
+    height: 220px;
     display: flex;
     flex-direction: column;
     align-items: center;

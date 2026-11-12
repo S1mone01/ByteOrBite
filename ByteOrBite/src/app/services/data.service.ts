@@ -25,14 +25,12 @@ export class DataService {
     return this.apiUrl;
   }
 
-  // Upload Immagini
   uploadImage(file: File, categoria: string): Observable<{ url: string }> {
     const formData = new FormData();
     formData.append('immagine', file);
     return this.http.post<{ url: string }>(`${this.apiUrl}/upload?categoria=${categoria}`, formData);
   }
 
-  // Panini
   getPanini(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/catalogo`);
   }
@@ -46,7 +44,6 @@ export class DataService {
     return this.http.delete(`${this.apiUrl}/catalogo/${id}`);
   }
 
-  // Bibite
   getBibite(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/bibite`);
   }
@@ -60,7 +57,6 @@ export class DataService {
     return this.http.delete(`${this.apiUrl}/bibite/${id}`);
   }
 
-  // Patatine
   getPatatine(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/patatine`);
   }
@@ -74,7 +70,6 @@ export class DataService {
     return this.http.delete(`${this.apiUrl}/patatine/${id}`);
   }
 
-  // Menu
   getMenu(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/menu`);
   }
@@ -88,7 +83,6 @@ export class DataService {
     return this.http.delete(`${this.apiUrl}/menu/${id}`);
   }
 
-  // Ingredienti
   getIngredienti(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/ingredienti`);
   }
@@ -102,7 +96,6 @@ export class DataService {
     return this.http.delete(`${this.apiUrl}/ingredienti/${id}`);
   }
 
-  // Carrello
   getCarrello(userId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/carrello/utente/${userId}`);
   }
@@ -119,7 +112,6 @@ export class DataService {
     return this.http.delete(`${this.apiUrl}/carrello/utente/${userId}`);
   }
 
-  // Ordini
   getOrdini(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/ordini`);
   }

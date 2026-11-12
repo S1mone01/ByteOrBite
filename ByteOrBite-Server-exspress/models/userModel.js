@@ -1,7 +1,6 @@
 const { userDB: db } = require('../db/database');
 
 const User = {
-    // Creazione nuovo utente
     create: (name, email, password, role = 'user') => {
         return new Promise((resolve, reject) => {
             const sql = `INSERT INTO utenti (name, email, password, points, role) VALUES (?, ?, ?, 0, ?)`;
@@ -12,7 +11,6 @@ const User = {
         });
     },
 
-    // Ricerca per email
     findByEmail: (email) => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM utenti WHERE email = ?`;
@@ -23,7 +21,6 @@ const User = {
         });
     },
 
-    // Ricerca per ID
     findById: (id) => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM utenti WHERE id = ?`;
@@ -34,7 +31,6 @@ const User = {
         });
     },
 
-    // Aggiornamento utente
     update: (id, data) => {
         return new Promise((resolve, reject) => {
             const fields = Object.keys(data).map(key => `${key} = ?`).join(', ');

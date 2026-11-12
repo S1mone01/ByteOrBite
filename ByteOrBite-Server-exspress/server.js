@@ -12,13 +12,11 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Assicuriamoci che la cartella base uploads esista
 const baseUploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(baseUploadsDir)) {
     fs.mkdirSync(baseUploadsDir);
 }
 
-// Lista delle categorie per pre-creare le cartelle (opzionale ma consigliato)
 const categorie = ['panini', 'bibite', 'patatine', 'menu', 'ingredienti', 'altri'];
 categorie.forEach(cat => {
     const dir = path.join(baseUploadsDir, cat);
@@ -27,16 +25,13 @@ categorie.forEach(cat => {
     }
 });
 
-// Servire i file statici dalla cartella uploads
 app.use('/uploads', express.static(baseUploadsDir));
 
-// Configurazione Multer per caricamento immagini
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const categoria = req.query.categoria || 'altri';
         const dest = path.join(__dirname, 'uploads', categoria);
         
-        // Assicuriamoci che la sottocartella esista
         if (!fs.existsSync(dest)){
             fs.mkdirSync(dest, { recursive: true });
         }
@@ -50,7 +45,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Endpoint per l'upload delle immagini (generico)
 app.post('/upload', upload.single('immagine'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: "Nessun file caricato." });
@@ -60,7 +54,6 @@ app.post('/upload', upload.single('immagine'), (req, res) => {
     res.json({ url: filePath });
 });
 
-// Endpoint di registrazione
 app.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
 
@@ -69,12 +62,8 @@ app.post('/register', async (req, res) => {
     }
 
     try {
-        // 1. Cripta la password (10 round di hashing)
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // 2. Salva nel database tramite il modello
-        // Nota: Qui potresti voler gestire un ruolo specifico se inviato dal client, 
-        // ma di default è 'user'.
         const role = req.body.role || 'user';
         const nuovoUtente = await User.create(name, email, hashedPassword, role);
 
@@ -89,7 +78,6 @@ app.post('/register', async (req, res) => {
     }
 });
 
-// Endpoint di login (aggiunto per completezza)
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
@@ -111,7 +99,6 @@ app.post('/login', async (req, res) => {
     }
 });
 
-// Funzione ausiliaria per generare una password randomica sicura e leggibile
 function generateRandomPassword(length = 8) {
     const upper = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
     const lower = 'abcdefghijkmnopqrstuvwxyz';
@@ -130,7 +117,6 @@ function generateRandomPassword(length = 8) {
     return pwd.split('').sort(() => 0.5 - Math.random()).join('');
 }
 
-// Endpoint per il recupero password con generazione di nuova password randomica mostrata a schermo
 app.post('/reset-password', async (req, res) => {
     const { email } = req.body;
 
@@ -160,7 +146,6 @@ app.post('/reset-password', async (req, res) => {
     }
 });
 
-// Endpoint aggiornamento utente
 app.post('/users/:id/verify', async (req, res) => {
     const { password } = req.body;
     try {
@@ -182,14 +167,12 @@ app.put('/users/:id', async (req, res) => {
     try {
         const { oldPassword, ...updateData } = req.body;
         
-        // Se si sta aggiornando la password, dobbiamo criptarla
         if (updateData.password) {
             updateData.password = await bcrypt.hash(updateData.password, 10);
         }
 
         const aggiornato = await User.update(req.params.id, updateData);
         
-        // Rimuoviamo la password dalla risposta per sicurezza
         const { password, ...userWithoutPassword } = aggiornato;
         res.json({ message: "Utente aggiornato", user: userWithoutPassword });
     } catch (err) {
@@ -206,7 +189,6 @@ const Ingrediente = require('./models/ingredientiModel');
 const Ordine = require('./models/ordineModel');
 const Carrello = require('./models/carrelloModel');
 
-// --- SEZIONE CARRELLO ---
 app.get('/carrello/utente/:id', async (req, res) => {
     try {
         const elenco = await Carrello.getByUserId(req.params.id);
@@ -253,7 +235,6 @@ app.delete('/carrello/utente/:id', async (req, res) => {
     }
 });
 
-// --- SEZIONE ORDINI ---
 app.get('/ordini', async (req, res) => {
     try {
         const elenco = await Ordine.getAll();
@@ -300,7 +281,6 @@ app.delete('/ordini/:id', async (req, res) => {
     }
 });
 
-// --- SEZIONE GESTIONE PANINI  ---
 app.get('/catalogo', async (req, res) => {
     try {
         const elenco = await Panino.tutti();
@@ -345,7 +325,6 @@ app.delete('/catalogo/:id', async (req, res) => {
     }
 });
 
-// --- BIBITE ---
 app.get('/bibite', async (req, res) => {
     try {
         const elenco = await Bibita.tutti();
@@ -384,7 +363,6 @@ app.delete('/bibite/:id', async (req, res) => {
     }
 });
 
-// --- PATATINE ---
 app.get('/patatine', async (req, res) => {
     try {
         const elenco = await Patatine.tutti();
@@ -423,7 +401,6 @@ app.delete('/patatine/:id', async (req, res) => {
     }
 });
 
-// --- MENU ---
 app.get('/menu', async (req, res) => {
     try {
         const elenco = await Menu.tutti();
@@ -462,7 +439,6 @@ app.delete('/menu/:id', async (req, res) => {
     }
 });
 
-// --- INGREDIENTI ---
 app.get('/ingredienti', async (req, res) => {
     try {
         const elenco = await Ingrediente.tutti();
@@ -500,8 +476,6 @@ app.delete('/ingredienti/:id', async (req, res) => {
         res.status(500).json({ error: "Errore" });
     }
 });
-
-
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server avviato su 0.0.0.0:${PORT} (accessibile da tutta la rete locale)`);

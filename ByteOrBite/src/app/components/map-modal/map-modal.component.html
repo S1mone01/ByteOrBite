@@ -16,7 +16,6 @@
 </ion-header>
 
 <ion-content [scrollY]="false">
-  <!-- Search Overlay -->
   <div class="search-container">
     <ion-searchbar 
       [(ngModel)]="searchQuery" 
@@ -28,7 +27,6 @@
       animated="true">
     </ion-searchbar>
 
-    <!-- Search Results / Suggestions Dropdown -->
     <div class="search-results-card" *ngIf="searchResults.length > 0">
       <ion-list lines="full">
         <ion-item button *ngFor="let result of searchResults" (click)="selectSearchResult(result)">
@@ -41,7 +39,6 @@
     </div>
   </div>
 
-  <!-- Google Maps iFrame -->
   <div class="map-wrapper" [class.dark-map]="isDarkMode$ | async" *ngIf="mapUrl">
     <iframe
       [src]="mapUrl"
@@ -60,7 +57,6 @@
     <p>Caricamento mappa Google Maps...</p>
   </div>
 
-  <!-- Locate GPS Floating Button -->
   <button 
     type="button" 
     class="locate-btn" 

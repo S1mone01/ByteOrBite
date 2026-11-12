@@ -2,7 +2,6 @@
 title Avvio ByteOrBite Full-Stack
 chcp 65001 >nul
 
-:: Determina il percorso corretto delle cartelle
 set "CURRENT_DIR=%~dp0"
 if exist "%CURRENT_DIR%ByteOrBite-Server-exspress" (
     set "BACKEND_DIR=%CURRENT_DIR%ByteOrBite-Server-exspress"

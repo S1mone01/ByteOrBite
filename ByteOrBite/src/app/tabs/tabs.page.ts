@@ -74,7 +74,6 @@ export class TabsPage implements OnInit {
       startWith(this.router.url)
     );
 
-    // Gestione ridimensionamento per isDesktop
     window.addEventListener('resize', () => {
       this.isDesktop = window.innerWidth >= 768;
     });
@@ -107,7 +106,7 @@ export class TabsPage implements OnInit {
       .create()
       .addElement(baseEl)
       .easing('cubic-bezier(0.32,0.72,0,1)')
-      .duration(600) // Aumentato da 400 a 600 per un'animazione più lenta e fluida
+      .duration(600)
       .addAnimation([backdropAnimation, wrapperAnimation]);
   };
 

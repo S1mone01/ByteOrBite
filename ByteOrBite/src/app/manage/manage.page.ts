@@ -165,7 +165,6 @@ export class ManagePage implements OnInit {
     try {
       return JSON.parse(location);
     } catch (e) {
-      // Supporto per vecchio formato o inserimento manuale
       return { address: location };
     }
   }
@@ -175,7 +174,6 @@ export class ManagePage implements OnInit {
 
   openEditOrderModal(ordine: any) {
     this.currentOrder = { ...ordine };
-    // Se la destinazione è un JSON, mostriamo solo l'indirizzo nel campo di input
     const loc = this.parseLocation(this.currentOrder.destinazione);
     if (loc && loc.address) {
       this.currentOrder.destinazione = loc.address;
@@ -262,7 +260,6 @@ export class ManagePage implements OnInit {
   }
 
   saveItem() {
-    // Assicuriamoci che i campi numerici siano effettivamente numeri
     if (this.currentItem.prezzo) this.currentItem.prezzo = Number(this.currentItem.prezzo);
     if (this.currentItem.prezzo_extra) this.currentItem.prezzo_extra = Number(this.currentItem.prezzo_extra);
     if (this.currentItem.sovrapprezzo) this.currentItem.sovrapprezzo = Number(this.currentItem.sovrapprezzo);
@@ -344,7 +341,6 @@ export class ManagePage implements OnInit {
   toggleAvailability(item: any, event: any) {
     const newVal = event.detail.checked ? 1 : 0;
     
-    // Se il valore è già quello desiderato, non fare nulla (previene loop o chiamate doppie)
     if (item.disponibile === newVal) return;
 
     const oldVal = item.disponibile;
@@ -366,7 +362,6 @@ export class ManagePage implements OnInit {
         error: (err) => {
           console.error("Errore aggiornamento disponibilità", err);
           this.showToast('Errore aggiornamento disponibilità', 'danger');
-          // Ripristina il valore precedente in caso di errore
           item.disponibile = oldVal;
         }
       });

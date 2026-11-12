@@ -103,7 +103,6 @@
                 </div>
               </ion-card>
 
-      <!-- Posizione e Preview Unite -->
       <div class="location-section-middle">
         <ion-list-header>
           <ion-label>La mia Posizione</ion-label>
@@ -121,7 +120,6 @@
             </ion-button>
           </div>
 
-          <!-- Preview Mappa interna alla card -->
           <div *ngIf="parseLocation(user.location)?.lat" class="map-preview-bottom" (click)="getCurrentLocation()">
             <div id="profile-map-preview" class="map-preview-box-bottom" [class.dark-map]="isDarkMode$ | async">
               <iframe
@@ -142,7 +140,6 @@
         </ion-card>
       </div>
 
-      <!-- Cronologia Ordini -->
       <div class="orders-history-section" style="padding-bottom: 40px;">
         <ion-list-header>
           <ion-label>I miei Ordini</ion-label>
@@ -150,7 +147,6 @@
 
         <div *ngIf="ordini.length > 0; else noOrders">
           
-          <!-- Ordini in Corso -->
           <div *ngIf="ordiniInCorso.length > 0; else noInCorso">
             <h3 class="orders-subtitle" style="margin-left: 16px; font-size: 1.1em; color: var(--ion-color-medium);">In Corso</h3>
             <ion-card *ngFor="let ordine of ordiniInCorso" class="user-order-card">
@@ -183,7 +179,6 @@
             </div>
           </ng-template>
 
-          <!-- Ordini Completati (Accordion) -->
           <ion-accordion-group *ngIf="ordiniCompletati.length > 0" style="margin-top: 16px;">
             <ion-accordion value="completati">
               <ion-item slot="header" color="light" style="border-radius: 12px; margin: 0 16px;">

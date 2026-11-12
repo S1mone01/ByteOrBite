@@ -27,7 +27,6 @@ import { DataService } from '../services/data.service';
 import { MapModalComponent } from '../components/map-modal/map-modal.component';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
-
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
@@ -125,7 +124,6 @@ export class ProfilePage implements OnInit {
     try {
       return JSON.parse(location);
     } catch (e) {
-      // Supporto per vecchio formato o inserimento manuale
       return { address: location };
     }
   }
@@ -178,7 +176,6 @@ export class ProfilePage implements OnInit {
       }
     }
     
-    // Se ha raggiunto o superato i 60 punti
     return { points: 60, discount: 30, maxReached: true };
   }
 
@@ -201,7 +198,6 @@ export class ProfilePage implements OnInit {
       return;
     }
 
-    // Per Nome, Email e Password chiediamo prima la verifica della password attuale
     const alertVerify = await this.alertController.create({
       header: 'Verifica Identità',
       message: 'Per modificare questo campo, inserisci la tua password attuale.',
@@ -226,7 +222,6 @@ export class ProfilePage implements OnInit {
     
     this.authService.verifyPassword(currentUser.id, oldPassword).subscribe({
       next: async () => {
-        // Se verificata, procediamo a chiedere il nuovo valore
         await this.showNewValueInput(field);
       },
       error: async (err) => {
@@ -335,4 +330,3 @@ export class ProfilePage implements OnInit {
     this.router.navigate(['/tabs/manage']);
   }
 }
-

@@ -30,7 +30,6 @@
       </ion-card-header>
 
       <ion-card-content>
-        <!-- Box Password Recuperata Mostrata a Schermo -->
         <div class="recovered-password-container" *ngIf="generatedPassword">
           <p class="recovered-info">
             La nuova password per <strong>{{ lastRecoveredEmail }}</strong> è:
@@ -59,10 +58,8 @@
           </div>
         </div>
 
-        <!-- Form standard per Login / Registrazione / Richiesta Recupero -->
         <form *ngIf="!generatedPassword" [formGroup]="authForm" (ngSubmit)="onSubmit()">
           <ion-list lines="none">
-            <!-- Campo Nome (solo registrazione) -->
             <ion-item *ngIf="!isLogin && !isForgotPassword" class="auth-item">
               <ion-icon name="person-outline" slot="start"></ion-icon>
               <ion-input
@@ -74,7 +71,6 @@
               ></ion-input>
             </ion-item>
 
-            <!-- Campo Email -->
             <ion-item class="auth-item">
               <ion-icon name="mail-outline" slot="start"></ion-icon>
               <ion-input
@@ -86,7 +82,6 @@
               ></ion-input>
             </ion-item>
 
-            <!-- Campo Password (nascosto in forgot password) -->
             <ion-item *ngIf="!isForgotPassword" class="auth-item">
               <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
               <ion-input
@@ -102,7 +97,6 @@
             </ion-item>
           </ion-list>
 
-          <!-- Checkbox Termini e Condizioni (solo registrazione) -->
           <div class="terms-container" *ngIf="!isLogin && !isForgotPassword">
             <ion-checkbox formControlName="termsAccepted" mode="md"></ion-checkbox>
             <ion-label>
@@ -144,7 +138,6 @@
     </ion-card>
   </div>
 
-  <!-- Modal Termini e Condizioni -->
   <ion-modal [isOpen]="showTermsModal" (didDismiss)="closeTerms()" class="terms-modal">
     <ng-template>
       <ion-header>

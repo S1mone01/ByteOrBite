@@ -1,7 +1,6 @@
 const { ordersDB: db } = require('../db/database');
 
 const Ordine = {
-    // Recupera tutti gli ordini (con i prodotti associati)
     getAll: () => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM ordini ORDER BY data_ora DESC`;
@@ -19,7 +18,6 @@ const Ordine = {
         });
     },
 
-    // Recupera gli ordini di un specifico utente
     getByUserId: (userId) => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM ordini WHERE utente_id = ? ORDER BY data_ora DESC`;
@@ -37,7 +35,6 @@ const Ordine = {
         });
     },
 
-    // Recupera i prodotti di un singolo ordine
     getProdottiByOrdineId: (ordineId) => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM ordine_dettagli WHERE ordine_id = ?`;
@@ -48,7 +45,6 @@ const Ordine = {
         });
     },
 
-    // Crea un nuovo ordine
     create: (ordineData) => {
         const { utente_id, utente_nome, destinazione, totale, prodotti } = ordineData;
         return new Promise((resolve, reject) => {
@@ -75,7 +71,6 @@ const Ordine = {
         });
     },
 
-    // Aggiorna un ordine (stato e/o destinazione)
     update: (id, data) => {
         const { stato, destinazione } = data;
         return new Promise((resolve, reject) => {
@@ -87,7 +82,6 @@ const Ordine = {
         });
     },
 
-    // Elimina un ordine
     delete: (id) => {
         return new Promise((resolve, reject) => {
             const sql = `DELETE FROM ordini WHERE id = ?`;

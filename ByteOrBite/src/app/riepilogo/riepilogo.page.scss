@@ -18,7 +18,6 @@ ion-header {
   }
 }
 
-/* Layout Grid */
 .riepilogo-grid {
   display: flex;
   flex-direction: column;
@@ -32,7 +31,6 @@ ion-header {
   width: 100%;
 }
 
-/* Colonna Sinistra: Card Consegna */
 .delivery-card {
   margin: 0;
   border-radius: 16px;
@@ -191,7 +189,6 @@ ion-header {
   }
 }
 
-/* Prodotti */
 .product-list {
   background: transparent;
   margin: 0;
@@ -249,7 +246,6 @@ ion-header {
   }
 }
 
-/* Pagamento */
 .payment-section {
   margin: 0;
 
@@ -322,7 +318,6 @@ ion-header {
   }
 }
 
-/* Sistema Coupon Punti */
 .points-coupon-card {
   margin: 0;
   border-radius: 16px;
@@ -399,7 +394,6 @@ ion-header {
       }
     }
 
-    /* Selettore tondo identico a quello dei metodi di pagamento */
     ion-checkbox {
       --size: 22px;
       --border-radius: 50%;
@@ -525,7 +519,6 @@ ion-header {
   }
 }
 
-/* Riepilogo Costi */
 .order-summary-card {
   margin: 0;
   border-radius: 16px;
@@ -616,7 +609,6 @@ ion-header {
   }
 }
 
-/* Media Query Desktop */
 @media (min-width: 992px) {
   .riepilogo-grid {
     display: grid;

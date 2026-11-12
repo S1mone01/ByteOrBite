@@ -34,7 +34,6 @@ export class AuthService {
   }
 
   constructor(private http: HttpClient) {
-    // Carica l'utente dal localStorage all'avvio
     const savedUser = localStorage.getItem('byte_or_bite_user');
     if (savedUser) {
       this.currentUserSubject.next(JSON.parse(savedUser));
@@ -60,7 +59,6 @@ export class AuthService {
       map(response => response.user),
       tap(user => {
         console.log('User updated:', user);
-        // Fondiamo i dati aggiornati con quelli esistenti per non perdere info non tornate dal server se necessario
         const currentUser = this.currentUserSubject.value;
         const updatedUser = { ...currentUser, ...user };
         this.currentUserSubject.next(updatedUser);
@@ -98,7 +96,6 @@ export class AuthService {
   }
 
   resetPassword(email: string): Observable<any> {
-    // Endpoint per la rigenerazione e recupero password
     console.log(`Reset password request for: ${email}`);
     return this.http.post(`${this.apiUrl}/reset-password`, { email }).pipe(
       catchError(err => throwError(() => err))

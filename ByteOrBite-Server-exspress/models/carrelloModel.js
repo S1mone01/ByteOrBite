@@ -1,7 +1,6 @@
 const { cartDB: db } = require('../db/database');
 
 const Carrello = {
-    // Recupera tutti gli elementi nel carrello di un utente
     getByUserId: (userId) => {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM carrello WHERE utente_id = ?`;
@@ -12,7 +11,6 @@ const Carrello = {
         });
     },
 
-    // Aggiunge un prodotto al carrello
     addItem: (itemData) => {
         const { utente_id, prodotto_nome, quantita, prezzo_unitario, modifiche, tipo_prodotto, immagine_url } = itemData;
         return new Promise((resolve, reject) => {
@@ -24,7 +22,6 @@ const Carrello = {
         });
     },
 
-    // Aggiorna la quantità di un elemento nel carrello
     updateQuantity: (id, quantita) => {
         return new Promise((resolve, reject) => {
             const sql = `UPDATE carrello SET quantita = ? WHERE id = ?`;
@@ -35,7 +32,6 @@ const Carrello = {
         });
     },
 
-    // Rimuove un elemento dal carrello
     removeItem: (id) => {
         return new Promise((resolve, reject) => {
             const sql = `DELETE FROM carrello WHERE id = ?`;
@@ -46,7 +42,6 @@ const Carrello = {
         });
     },
 
-    // Svuota il carrello di un utente
     clearByUserId: (userId) => {
         return new Promise((resolve, reject) => {
             const sql = `DELETE FROM carrello WHERE utente_id = ?`;

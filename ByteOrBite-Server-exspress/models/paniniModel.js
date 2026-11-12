@@ -12,7 +12,6 @@ const Panino = {
             db.all(sql, [], (err, rows) => {
                 if (err) return reject(err);
                 
-                // Converti la stringa GROUP_CONCAT in un array di numeri
                 const formatRows = rows.map(row => ({
                     ...row,
                     ingredienti: row.ingredienti_ids ? row.ingredienti_ids.split(',').map(Number) : []
@@ -62,7 +61,6 @@ modifica: (id, nome, prezzo, immagine_url, disponibile, arrayIngredientiIds) => 
         db.run(sql, [nome, prezzo, immagine_url, disponibile, id], function(err) {
             if (err) return reject(err);
 
-            // Elimina vecchi legami e inserisci nuovi
             db.run("DELETE FROM panino_ingredienti WHERE panino_id = ?", [id], (errDel) => {
                 if (errDel) return reject(errDel);
 
@@ -129,13 +127,11 @@ cercaPerIngrediente: (ingredienteId) => {
         `;
         db.all(sql, [ingredienteId], (err, rows) => {
             if (err) reject(err);
-            else resolve(rows); // Ti restituisce solo i panini che contengono quell'ingrediente
+            else resolve(rows);
         });
     });
 },
 
-
-    // Funzione per prendere un panino specifico CON i suoi ingredienti
     getDettaglio: (panino_id) => {
         return new Promise((resolve, reject) => {
             const sql = `
@@ -147,7 +143,7 @@ cercaPerIngrediente: (ingredienteId) => {
             
             db.all(sql, [panino_id], (err, rows) => {
                 if (err) reject(err);
-                else resolve(rows); // restituisce la lista degli ingredienti di quel panino
+                else resolve(rows);
             });
         });
     }

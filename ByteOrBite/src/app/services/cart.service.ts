@@ -67,7 +67,6 @@ export class CartService {
       return;
     }
 
-    // Cerca se esiste già un elemento identico nel carrello (stesso nome e stesse modifiche)
     const existingItem = this.cartItemsSubject.value.find(
       i => i.prodotto_nome === item.nome && i.modifiche === (item.modifiche || '')
     );
@@ -126,8 +125,8 @@ export class CartService {
     if (!currentUser || items.length === 0 || !currentUser.location) return new Observable();
 
     const subtotal = items.reduce((acc, item) => acc + (item.prezzo_unitario * item.quantita), 0);
-    const totalToSave = Math.max(0, subtotal - discount); // Salviamo solo il subtotale prodotti (al netto dello sconto)
-    const finalTotalForPoints = totalToSave + 1.99; // I punti si calcolano sul totale finale
+    const totalToSave = Math.max(0, subtotal - discount);
+    const finalTotalForPoints = totalToSave + 1.99;
 
     const ordineData = {
       utente_id: currentUser.id,
@@ -146,7 +145,6 @@ export class CartService {
       tap(() => {
         this.clearCart(currentUser.id);
         this.setCartModalOpen(false);
-        // Calcola il bilancio netto dei punti: (punti attuali - punti usati per il coupon) + punti guadagnati dall'ordine
         const puntiGuadagnati = Math.floor(finalTotalForPoints / 10);
         const puntiRimanenti = Math.max(0, (currentUser.points || 0) - usedPoints);
         const puntiFinali = puntiRimanenti + puntiGuadagnati;

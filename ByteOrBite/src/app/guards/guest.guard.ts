@@ -10,6 +10,5 @@ export const guestGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  // Reindirizza alla home se già autenticato
   return router.parseUrl('/tabs/home');
 };

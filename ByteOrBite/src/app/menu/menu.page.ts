@@ -142,14 +142,12 @@ export class MenuPage implements OnInit, OnDestroy {
     this.selectedMenu = { ...combo };
     this.modalQuantity = 1;
     
-    // Seleziona la patatina predefinita se presente nel combo, altrimenti la prima disponibile
     if (combo.patatine_id) {
       this.selectedPatatina = this.listaPatatine.find(p => p.id === combo.patatine_id) || this.listaPatatine[0] || null;
     } else {
       this.selectedPatatina = this.listaPatatine[0] || null;
     }
 
-    // Seleziona la bibita predefinita se presente nel combo, altrimenti la prima disponibile
     if (combo.bibite_id) {
       this.selectedBibita = this.listaBibite.find(b => b.id === combo.bibite_id) || this.listaBibite[0] || null;
     } else {

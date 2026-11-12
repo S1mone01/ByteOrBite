@@ -12,7 +12,6 @@
     </ion-text>
   </div>
 
-  <!-- Griglia Responsive -->
   <ion-grid>
     <ion-row>
       <ion-col size="6" size-md="4" size-lg="3" size-xl="2" *ngFor="let combo of listaMenu" class="menu-col">
@@ -59,7 +58,6 @@
     </ion-row>
   </ion-grid>
 
-  <!-- Modal Dettagli & Personalizzazione Menu -->
   <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeDetails()" class="custom-modal">
     <ng-template>
       <ion-header>
@@ -84,10 +82,8 @@
           <p class="menu-modal-desc">{{ selectedMenu?.descrizione }}</p>
         </div>
 
-        <!-- Personalizzazione Combo -->
         <div class="combo-customization-section">
           
-          <!-- Selezione Patatine -->
           <div class="combo-group" *ngIf="listaPatatine.length > 0">
             <div class="group-header">
               <ion-icon name="fast-food-outline" color="secondary"></ion-icon>
@@ -112,7 +108,6 @@
             </div>
           </div>
 
-          <!-- Selezione Bibita -->
           <div class="combo-group" *ngIf="listaBibite.length > 0">
             <div class="group-header">
               <ion-icon name="wine-outline" color="primary"></ion-icon>
@@ -171,12 +166,10 @@
     </ng-template>
   </ion-modal>
 
-  <!-- Messaggio se la lista è vuota -->
   <div *ngIf="listaMenu.length === 0" class="ion-text-center ion-padding">
     <p style="color: var(--app-text);">Nessun menu disponibile al momento.</p>
   </div>
 
-  <!-- Spazio per permettere lo scorrimento completo sopra tab bar e FAB carrello -->
   <div class="bottom-spacer"></div>
 
 </ion-content>

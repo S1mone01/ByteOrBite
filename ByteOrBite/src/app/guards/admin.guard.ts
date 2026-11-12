@@ -14,7 +14,6 @@ export const adminGuard: CanActivateFn = async (route, state) => {
     return true;
   }
 
-  // Se non è admin, mostra un messaggio e reindirizza alla home
   const toast = await toastController.create({
     message: 'Accesso negato. Questa pagina è riservata agli amministratori.',
     duration: 3000,

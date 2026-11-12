@@ -36,17 +36,14 @@
         <ion-icon slot="icon-only" [name]="(isDarkMode$ | async) ? 'sunny-outline' : 'moon-outline'"></ion-icon>
       </ion-button>
 
-      <!-- Se non loggato -->
       <ion-button *ngIf="!(currentUser$ | async)" routerLink="/tabs/login" class="login-button">Login</ion-button>
       
-      <!-- Se loggato -->
       <ng-container *ngIf="currentUser$ | async as user">
         <div class="user-profile-nav" id="user-popover-trigger">
           <ion-icon name="person-circle-outline" class="user-icon"></ion-icon>
           <span class="user-name">{{ user.name }}</span>
         </div>
 
-        <!-- Pulsante Carrello Desktop -->
         <ion-button (click)="openCart()" class="cart-button-desktop" fill="clear">
           <ion-icon slot="icon-only" name="cart-outline"></ion-icon>
           <ion-badge color="danger" *ngIf="(cartCount$ | async)! > 0">{{ cartCount$ | async }}</ion-badge>
@@ -79,7 +76,6 @@
                   <ion-label>Il mio Profilo</ion-label>
                 </ion-item>
 
-                <!-- Pulsante Gestisci per Amministratori -->
                 <ion-item *ngIf="user.role === 'admin'" [button]="true" routerLink="/tabs/manage" class="profile-item">
                   <ion-icon slot="start" name="settings-outline"></ion-icon>
                   <ion-label>Gestisci</ion-label>
@@ -155,7 +151,6 @@
     </ion-tab-button>
   </ion-tab-bar>
 
-  <!-- Pulsante Carrello Fluttuante (Mobile) -->
   <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="cart-fab" *ngIf="(currentUser$ | async) && (currentUrl$ | async) !== '/tabs/profile' && (currentUrl$ | async) !== '/tabs/manage' && (currentUrl$ | async) !== '/tabs/riepilogo'">
     <ion-fab-button color="success" class="cart-fab-button" (click)="openCart()">
       <ion-icon name="cart-outline"></ion-icon>
@@ -166,7 +161,6 @@
   </ion-fab>
 </ion-tabs>
 
-<!-- Modal Carrello Globale -->
 <ion-modal 
   [isOpen]="(isCartModalOpen$ | async) || false" 
   (didDismiss)="closeCart()" 

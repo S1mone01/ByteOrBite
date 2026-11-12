@@ -194,7 +194,6 @@ export class RiepilogoPage implements OnInit {
     return items.reduce((acc, item) => acc + (item.prezzo_unitario * item.quantita), 0);
   }
 
-  // 4 scaglioni coupon (max 20%)
   couponsList = [
     { points: 10, percentage: 5, label: '5% Sconto (10 Punti)' },
     { points: 20, percentage: 10, label: '10% Sconto (20 Punti)' },
@@ -357,5 +356,3 @@ export class RiepilogoPage implements OnInit {
     return [modifiche];
   }
 }
-
-

@@ -91,7 +91,7 @@ export class MapModalComponent implements OnInit {
           this.isLocating = false;
           console.error('Error getting location', error);
           if (!this.selectedCoords) {
-            const defaultLat = 45.4642; // Milano
+            const defaultLat = 45.4642;
             const defaultLon = 9.1900;
             this.selectedCoords = { lat: defaultLat, lon: defaultLon };
             this.updateMapUrl(defaultLat, defaultLon);

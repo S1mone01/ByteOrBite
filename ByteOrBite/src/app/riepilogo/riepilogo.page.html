@@ -11,9 +11,7 @@
   <div class="summary-container" *ngIf="currentUser$ | async as user">
     <div class="riepilogo-grid">
       
-      <!-- Colonna Sinistra: Consegna e Prodotti -->
       <div class="left-column">
-        <!-- Consegna -->
         <ion-card 
           id="delivery-address-card" 
           class="delivery-card clickable-address-card" 
@@ -61,7 +59,6 @@
           </ion-card-content>
         </ion-card>
 
-        <!-- Prodotti -->
         <ion-list lines="none" class="product-list">
           <ion-list-header>
             <ion-label>I Tuoi Prodotti</ion-label>
@@ -84,9 +81,7 @@
         </ion-list>
       </div>
 
-      <!-- Colonna Destra: Pagamento, Sconti e Totale -->
       <div class="right-column sticky-column">
-        <!-- Metodo di Pagamento -->
         <div class="payment-section">
           <ion-list-header>
             <ion-label>Metodo di Pagamento</ion-label>
@@ -116,7 +111,6 @@
           </ion-radio-group>
         </div>
 
-        <!-- Sistema Coupon Punti -->
         <ion-card class="points-coupon-card" [class.selected]="useCoupon" [class.disabled]="(user.points || 0) < 10">
           <ion-card-content>
             <div class="coupon-header" (click)="toggleCoupon(user.points || 0)">
@@ -146,7 +140,6 @@
               </ion-checkbox>
             </div>
 
-            <!-- Sezione Selezione Livello Coupon (Mostra i 4 blocchi fino al 20% su un'unica riga) -->
             <div class="coupon-selection-body" *ngIf="useCoupon && (user.points || 0) >= 10">
               <p class="section-subtitle">Scegli il coupon da applicare all'ordine (max 20%):</p>
               
@@ -183,7 +176,6 @@
           </ion-card-content>
         </ion-card>
 
-        <!-- Riepilogo Costi -->
         <ion-card class="order-summary-card">
           <ion-card-header>
             <ion-card-title>Riepilogo Costi</ion-card-title>

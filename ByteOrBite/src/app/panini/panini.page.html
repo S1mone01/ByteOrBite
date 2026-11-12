@@ -12,7 +12,6 @@
     </ion-text>
   </div>
 
-  <!-- Griglia Responsive -->
   <ion-grid>
     <ion-row>
       <ion-col size="6" size-md="4" size-lg="3" size-xl="2" *ngFor="let panino of panini" class="panino-col">
@@ -59,7 +58,6 @@
     </ion-row>
   </ion-grid>
 
-  <!-- Modal Dettagli Panino -->
   <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeDetails()" class="custom-modal">
     <ng-template>
       <ion-header>
@@ -74,15 +72,12 @@
       </ion-header>
 
       <ion-content>
-        
-        <!-- Vista Esplosa dell'Hamburger -->
-        
+
         <ion-grid class="split-layout-grid">
           <ion-row>
             <ion-col size="12" size-md="6" class="left-col-sticky ion-padding-top ion-padding-horizontal">
           <div class="exploded-burger-wrapper">
             <div class="exploded-burger-stack" [style.maxWidth]="getBurgerMaxWidth()" style="transition: max-width 0.3s ease;">
-            <!-- Pane Superiore (Non rimovibile) -->
               <div 
                 *ngIf="hasBunTop" 
                 @slideInOut
@@ -94,7 +89,6 @@
                 </div>
               </div>
 
-            <!-- Strati Ingredienti Attivi -->
             <div class="active-layers-list">
               <ng-container *ngFor="let ing of getActiveIngredients(); trackBy: trackByIngId; let i = index">
                 <div 
@@ -113,7 +107,6 @@
                       class="real-ingredient-img"
                     />
                     
-                    <!-- Overlay per extra info sull'immagine -->
                     <div class="ingredient-overlay-info" *ngIf="ing.totalQty > 1">
                       <span class="qty-badge">{{ ing.totalQty }}x</span>
                     </div>
@@ -122,7 +115,6 @@
               </ng-container>
             </div>
 
-            <!-- Pane Inferiore (Non rimovibile) -->
               <div 
                 *ngIf="hasBunBottom" 
                 @slideInOut
@@ -138,13 +130,11 @@
 
           </div>
 
-        
             </ion-col>
             <ion-col size="12" size-md="6" class="right-col-scroll ion-padding">
           <div class="ingredients-modal-section">
           <h3>Personalizza Panino</h3>
           
-          <!-- Sezione Ingredienti Base (Inclusi) -->
           <div class="ingredients-group" *ngIf="ingredientiBase.length > 0">
             <div class="group-header">
               <ion-icon name="fast-food-outline" color="primary"></ion-icon>
@@ -207,7 +197,6 @@
             </div>
           </div>
 
-          <!-- Sezione Ingredienti Extra (con prezzo extra) -->
           <div class="combo-group" *ngIf="ingredientiExtra.length > 0">
             <div class="group-header">
               <ion-icon name="add-circle-outline" color="secondary"></ion-icon>
@@ -307,12 +296,10 @@
     </ng-template>
   </ion-modal>
 
-  <!-- Messaggio se la lista è vuota -->
   <div *ngIf="panini.length === 0" class="ion-text-center ion-padding">
     <p style="color: var(--app-text);">Nessun panino disponibile al momento.</p>
   </div>
 
-  <!-- Spazio per permettere lo scorrimento completo sopra tab bar e FAB carrello -->
   <div class="bottom-spacer"></div>
 
 </ion-content>

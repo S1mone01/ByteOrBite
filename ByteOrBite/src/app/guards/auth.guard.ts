@@ -10,6 +10,5 @@ export const authGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  // Reindirizza al login se non autenticato
   return router.parseUrl('/tabs/login');
 };

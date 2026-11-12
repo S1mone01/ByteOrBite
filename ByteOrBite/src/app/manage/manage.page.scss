@@ -180,12 +180,10 @@ ion-modal {
   }
 }
 
-// Padding in fondo alla pagina
 .bottom-spacer {
   height: 100px;
 }
 
-// Media query per schermi piccoli (mobile)
 @media (max-width: 768px) {
   ion-modal {
     --width: 94vw;
@@ -201,7 +199,7 @@ ion-modal {
 
   .orders-section, .database-section {
     border: 1px solid var(--ion-color-light-shade);
-    border-radius: 12px; // Forza bordi arrotondati anche su mobile
+    border-radius: 12px;
     margin: 10px;
     overflow: hidden;
   }
@@ -209,20 +207,17 @@ ion-modal {
   .order-card.grid-card {
     border-radius: 12px;
     margin: 8px 0;
-    // Forza visualizzazione bordi arrotondati su alcuni browser mobile
     -webkit-border-radius: 12px;
     border-radius: 12px;
   }
 }
 
-// Utility class per nascondere su mobile
 .ion-hide-sm-down {
   @media (max-width: 576px) {
     display: none !important;
   }
 }
 
-// Utility class per nascondere su desktop
 .ion-hide-sm-up {
   @media (min-width: 577px) {
     display: none !important;

@@ -96,10 +96,8 @@ export class PaniniPage implements OnInit, OnDestroy {
   }
 
   aggiornaQuantitaLocali(items: any[]) {
-    // Reset quantita
     Object.keys(this.cartQuantities).forEach(key => this.cartQuantities[+key] = 0);
     
-    // Conteggia tutti i panini presenti nel carrello con lo stesso nome, sia base che personalizzati
     items.forEach(item => {
       const panino = this.panini.find(p => p.nome === item.prodotto_nome);
       if (panino) {
@@ -146,13 +144,11 @@ export class PaniniPage implements OnInit, OnDestroy {
         panino.disponibile_db = panino.disponibile;
       }
 
-      // Se il panino stesso è segnato come non disponibile nel DB
       if (panino.disponibile_db == 0) {
         panino.disponibile = 0;
         return;
       }
 
-      // Se almeno uno degli ingredienti base del panino non è disponibile, rende il panino non disponibile
       const baseIds = panino.ingredienti || [];
       const haIngredienteNonDisponibile = baseIds.some((ingId: any) => {
         const ing = this.allIngredienti.find(i => i.id == ingId);
@@ -172,7 +168,7 @@ export class PaniniPage implements OnInit, OnDestroy {
     this.cartService.addToCart({
       ...panino,
       quantita: 1,
-      modifiche: '' // Version base dalla card
+      modifiche: ''
     });
   }
 
@@ -194,13 +190,11 @@ export class PaniniPage implements OnInit, OnDestroy {
     this.hasBunTop = true;
     this.hasBunBottom = true;
 
-    // Inizializza quantita extra per tutti gli ingredienti a 0
     this.extraQuantities = {};
     this.allIngredienti.forEach(ing => {
       this.extraQuantities[ing.id] = 0;
     });
 
-    // Gli ingredienti base del panino (escluso il pane)
     this.ingredientiBase = this.allIngredienti
       .filter(ing => baseIds.includes(ing.id) && !this.isBun(ing.nome))
       .map(ing => {
@@ -211,7 +205,6 @@ export class PaniniPage implements OnInit, OnDestroy {
         };
       });
 
-    // Tutti gli ingredienti disponibili per aggiunta extra (esclusi il pane e quelli già base)
     this.ingredientiExtra = this.allIngredienti
       .filter(ing => !this.isBun(ing.nome) && !baseIds.includes(ing.id))
       .map(ing => ({ ...ing, isBase: false }));
@@ -276,7 +269,7 @@ export class PaniniPage implements OnInit, OnDestroy {
     const result: any[] = [];
 
     this.allIngredienti.forEach(ing => {
-      if (this.isBun(ing.nome)) return; // I pani hanno la vista grafica dedicata in cima e in fondo
+      if (this.isBun(ing.nome)) return;
 
       const baseItem = this.ingredientiBase.find(b => b.id === ing.id);
       const hasBase = baseItem && baseItem.checked ? 1 : 0;
@@ -356,7 +349,6 @@ export class PaniniPage implements OnInit, OnDestroy {
 
   getLayerOverlap(): number {
     const total = this.getActiveIngredients().length + (this.hasBunTop ? 1 : 0) + (this.hasBunBottom ? 1 : 0);
-    // Un overlap dinamico ma limitato per evitare schiacciamenti
     if (total <= 4) return -12;
     if (total <= 6) return -15;
     if (total <= 8) return -18;
@@ -365,7 +357,6 @@ export class PaniniPage implements OnInit, OnDestroy {
 
   getBurgerMaxWidth(): string {
     const total = this.getActiveIngredients().length + (this.hasBunTop ? 1 : 0) + (this.hasBunBottom ? 1 : 0);
-    // Meno aggressivo sul restringimento
     if (total <= 5) return '380px';
     if (total <= 7) return '320px';
     return '280px';
@@ -401,7 +392,6 @@ export class PaniniPage implements OnInit, OnDestroy {
       }
     });
 
-    // Aggiunta degli ingredienti extra selezionati con quantita
     const added: string[] = [];
     this.allIngredienti.forEach(ing => {
       if (this.isBun(ing.nome)) return;
@@ -415,7 +405,6 @@ export class PaniniPage implements OnInit, OnDestroy {
 
     const modifiche = [...added, ...removed].join(', ');
 
-    // Calcolo del prezzo finale
     let prezzoFinale = this.selectedPanino.prezzo;
     this.allIngredienti.forEach(ing => {
       if (this.isBun(ing.nome)) return;
@@ -443,4 +432,3 @@ export class PaniniPage implements OnInit, OnDestroy {
     return `${this.dataService.getApiUrl()}/${path}`;
   }
 }
-

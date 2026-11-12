@@ -12,7 +12,6 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <!-- SEZIONE ORDINI -->
   <div class="orders-section">
     <ion-list-header (click)="toggleOrders()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
       <ion-label>Ordini</ion-label>
@@ -69,7 +68,6 @@
     </ng-template>
 
     <div *ngIf="isOrdersVisible">
-      <!-- Ordini in corso -->
       <ion-list-header (click)="toggleInCorsoOrders()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; background-color: var(--ion-color-light); border-radius: 8px; margin-bottom: 10px; padding-right: 16px;">
         <ion-label color="primary">In Corso ({{ ordiniInCorso.length }})</ion-label>
         <ion-button fill="clear">
@@ -91,7 +89,6 @@
         </div>
       </div>
 
-      <!-- Ordini completati -->
       <ion-list-header (click)="toggleCompletedOrders()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; background-color: var(--ion-color-light); border-radius: 8px; margin-bottom: 10px; padding-right: 16px;">
         <ion-label color="medium">Completati ({{ ordiniCompletati.length }})</ion-label>
         <ion-button fill="clear">
@@ -114,7 +111,6 @@
     </div>
   </div>
 
-  <!-- MODAL DETTAGLI ORDINE (SOLO PRODOTTI) -->
   <ion-modal [isOpen]="isOrderModalOpen" (didDismiss)="closeOrderModal()">
     <ng-template>
       <ion-header>
@@ -156,7 +152,6 @@
     </ng-template>
   </ion-modal>
 
-  <!-- SEZIONE GESTIONE DATABASE -->
   <div class="database-section">
     <ion-list-header>
       <ion-label>Gestione Catalogo</ion-label>
@@ -188,7 +183,6 @@
       </ion-buttons>
     </ion-toolbar>
 
-    <!-- LISTA PANINI -->
     <ion-list *ngIf="segmentValue === 'panini'">
       <ion-item *ngFor="let item of panini">
         <ion-thumbnail slot="start">
@@ -210,7 +204,6 @@
       </ion-item>
     </ion-list>
 
-    <!-- LISTA BIBITE -->
     <ion-list *ngIf="segmentValue === 'bibite'">
       <ion-item *ngFor="let item of bibite">
         <ion-thumbnail slot="start">
@@ -232,7 +225,6 @@
       </ion-item>
     </ion-list>
 
-    <!-- LISTA PATATINE -->
     <ion-list *ngIf="segmentValue === 'patatine'">
       <ion-item *ngFor="let item of patatine">
         <ion-thumbnail slot="start">
@@ -254,7 +246,6 @@
       </ion-item>
     </ion-list>
 
-    <!-- LISTA MENU -->
     <ion-list *ngIf="segmentValue === 'menu'">
       <ion-item *ngFor="let item of menu">
         <ion-thumbnail slot="start">
@@ -276,7 +267,6 @@
       </ion-item>
     </ion-list>
 
-    <!-- LISTA INGREDIENTI -->
     <ion-list *ngIf="segmentValue === 'ingredienti'">
       <ion-item *ngFor="let item of ingredienti">
         <ion-thumbnail slot="start">
@@ -298,7 +288,6 @@
       </ion-item>
     </ion-list>
 
-    <!-- Pulsante Aggiungi per Mobile (in basso a destra della sezione) -->
     <div class="ion-padding ion-text-end ion-hide-sm-up">
       <ion-button (click)="openAddModal()" color="success" fill="solid" size="small">
         <ion-icon slot="start" name="add"></ion-icon>
@@ -307,7 +296,6 @@
     </div>
   </div>
 
-  <!-- MODAL EDIT/ADD CATALOGO -->
   <ion-modal [isOpen]="isModalOpen" (didDismiss)="closeModal()">
     <ng-template>
       <ion-header>
@@ -349,14 +337,12 @@
           <p style="font-size: 0.8em; color: gray; margin: 0;">{{ currentItem.immagine_url || 'Nessuna immagine caricata' }}</p>
         </ion-item>
 
-        <!-- Campi specifici per Panini (Ingredienti) -->
         <ion-item *ngIf="segmentValue === 'panini'">
           <ion-select label="Ingredienti" labelPlacement="stacked" multiple="true" [(ngModel)]="currentItem.ingredienti">
             <ion-select-option *ngFor="let ing of ingredienti" [value]="ing.id">{{ ing.nome }}</ion-select-option>
           </ion-select>
         </ion-item>
 
-        <!-- Campi specifici per Menu -->
         <ng-container *ngIf="segmentValue === 'menu'">
           <ion-item>
             <ion-select label="Panino" labelPlacement="stacked" [(ngModel)]="currentItem.panino_id">

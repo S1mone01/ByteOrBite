@@ -1,4 +1,3 @@
-/* Layout per Desktop */
 .desktop-header {
   display: none;
   background: var(--app-bg);
@@ -84,7 +83,7 @@ ion-toolbar {
   .desktop-nav-center ion-button {
     --padding-start: 5px;
     --padding-end: 5px;
-    font-size: 18px; /* Slightly larger for just the initial */
+    font-size: 18px;
   }
   .desktop-nav-center ion-button .short-text {
     display: inline;
@@ -202,7 +201,6 @@ ion-toolbar {
   }
 }
 
-/* Layout base / Mobile */
 ion-tabs {
   position: absolute;
   top: 0;
@@ -261,11 +259,10 @@ ion-tab-button[aria-selected="true"] {
   }
 }
 
-/* Stili per il Carrello */
 .cart-fab {
   margin-bottom: 80px;
   margin-right: 10px;
-  z-index: 999; // Assicura che sia sopra tutto
+  z-index: 999;
 
   @media (min-width: 768px) {
     display: none;
@@ -277,7 +274,7 @@ ion-tab-button[aria-selected="true"] {
   --background-activated: #28ba62;
   --background-focused: #28ba62;
   --background-hover: #28ba62;
-  overflow: visible !important; // Essenziale per il badge
+  overflow: visible !important;
   position: relative;
 
   ion-icon {
@@ -316,7 +313,6 @@ ion-tab-button[aria-selected="true"] {
     --border-radius: 0;
     --box-shadow: -5px 0 15px rgba(0,0,0,0.1);
     
-    // Posiziona il modal a destra
     &::part(content) {
       position: absolute;
       top: 0;
@@ -346,15 +342,15 @@ ion-tab-button[aria-selected="true"] {
       margin: 0 8px 0 0;
       --padding-start: 0;
       --padding-end: 0;
-      background: #0d3d28; // Sfondo applicato direttamente all'host
-      border-radius: 50%; // Forma circolare sull'host
+      background: #0d3d28;
+      border-radius: 50%;
       color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
       --box-shadow: none;
-      --background: transparent; // Rimuove lo sfondo interno di Ionic
+      --background: transparent;
 
       &::part(native) {
         border-radius: 50%;
@@ -409,14 +405,14 @@ ion-tab-button[aria-selected="true"] {
 
   ion-list {
     background: transparent;
-    padding: 8px 5px; // Ridotto padding orizzontale a 5px
+    padding: 8px 5px;
   }
 
   ion-item {
     margin-bottom: 8px;
     border-radius: 14px;
-    --padding-start: 6px; // Ridotto padding interno
-    --inner-padding-end: 6px; // Ridotto padding interno
+    --padding-start: 6px;
+    --inner-padding-end: 6px;
     --min-height: 75px;
     --background: rgba(var(--ion-color-primary-rgb), 0.02);
     box-shadow: 0 4px 10px rgba(0,0,0,0.03);
@@ -430,7 +426,7 @@ ion-tab-button[aria-selected="true"] {
 
   ion-thumbnail {
     --border-radius: 12px;
-    width: 65px; // Thumbnail più compatta
+    width: 65px;
     height: 65px;
     margin-right: 12px;
   }
@@ -438,7 +434,7 @@ ion-tab-button[aria-selected="true"] {
   ion-label h2 {
     font-weight: 700;
     color: var(--app-text);
-    font-size: 1rem; // Titolo leggermente più piccolo
+    font-size: 1rem;
     margin-bottom: 2px;
   }
 
@@ -468,16 +464,16 @@ ion-tab-button[aria-selected="true"] {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 4px; // Spazio minimo tra i blocchi
+    gap: 4px;
     background: rgba(var(--ion-color-primary-rgb), 0.08);
-    padding: 0; // Rimosso padding per far aderire i pulsanti
-    border-radius: 6px; // Contenitore squadrato
-    overflow: hidden; // Per mantenere i bordi dei pulsanti entro il contenitore
+    padding: 0;
+    border-radius: 6px;
+    overflow: hidden;
 
     ion-button {
       --padding-start: 0;
       --padding-end: 0;
-      --border-radius: 0; // Pulsanti perfettamente quadrati
+      --border-radius: 0;
       height: 32px;
       width: 32px;
       margin: 0;
@@ -502,11 +498,11 @@ ion-tab-button[aria-selected="true"] {
 
 .cart-footer-toolbar {
   --background: rgba(var(--ion-color-primary-rgb), 0.06);
-  --padding-top: 10px; // Ridotto da 20px
+  --padding-top: 10px;
   --padding-bottom: 0;
   --padding-start: 0;
   --padding-end: 0;
-  border-top: 3px solid var(--ion-color-primary); // Leggermente più sottile (3px invece di 4px)
+  border-top: 3px solid var(--ion-color-primary);
   display: flex;
   flex-direction: column;
 
@@ -514,7 +510,7 @@ ion-tab-button[aria-selected="true"] {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 8px 10px 8px; // Ridotto ulteriormente a 8px
+    padding: 5px 8px 10px 8px;
     background: transparent;
     border: none;
     border-radius: 0;
@@ -536,19 +532,19 @@ ion-tab-button[aria-selected="true"] {
 
   .checkout-section {
     background: transparent;
-    padding: 0 8px 15px 8px; // Ridotto ulteriormente a 8px
+    padding: 0 8px 15px 8px;
     border-top: none;
     
     .checkout-button {
       --border-radius: 14px;
-      --padding-top: 15px; // Ridotto da 22px
-      --padding-bottom: 15px; // Ridotto da 22px
+      --padding-top: 15px;
+      --padding-bottom: 15px;
       font-weight: 800;
-      font-size: 1rem; // Ridotto da 1.2rem
+      font-size: 1rem;
       text-transform: uppercase;
       letter-spacing: 1px;
       margin: 0;
-      height: 50px; // Ridotto da 65px
+      height: 50px;
       --box-shadow: none;
       box-shadow: none;
       
@@ -560,7 +556,6 @@ ion-tab-button[aria-selected="true"] {
   }
 }
 
-/* Stili per il Menu a tendina Utente */
 .user-dropdown-popover {
   --width: 240px;
   --border-radius: 12px;
@@ -701,7 +696,6 @@ ion-tab-button[aria-selected="true"] {
   }
 }
 
-/* Media Query per Desktop */
 @media (min-width: 768px) {
   .desktop-header {
     display: block;
@@ -710,7 +704,6 @@ ion-tab-button[aria-selected="true"] {
     display: none;
   }
   
-  /* Assicura che il contenuto delle tab parta sotto l'header desktop */
   ion-tabs {
     position: absolute;
     top: 73px;
