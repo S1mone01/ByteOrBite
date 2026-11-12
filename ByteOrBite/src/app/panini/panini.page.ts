@@ -8,12 +8,12 @@ import {
   IonHeader, IonToolbar, IonTitle, IonContent, 
   IonGrid, IonRow, IonCol, IonCard, IonCardHeader, 
   IonCardTitle, IonCardContent, IonButton, IonIcon, 
-  IonText, IonBadge, IonImg, IonModal, IonList, IonItem, IonLabel, IonCheckbox,
+  IonText, IonBadge, IonImg, IonModal,
   IonButtons, IonFooter, ModalController, ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { 
-  cartOutline, add, remove, close, cart, removeCircleOutline, addCircleOutline, 
+  add, remove, close, cart, removeCircleOutline, addCircleOutline,
   trash, trashOutline, checkmarkCircleOutline, layersOutline, closeCircle,
   flameOutline, leafOutline, nutritionOutline, fastFoodOutline
 } from 'ionicons/icons';
@@ -70,7 +70,7 @@ export class PaniniPage implements OnInit, OnDestroy {
     private toastController: ToastController
   ) {
     addIcons({ 
-      add, remove, close, cart, removeCircleOutline, addCircleOutline, 
+      add, remove, close, cart, removeCircleOutline, addCircleOutline,
       trash, trashOutline, checkmarkCircleOutline, layersOutline, closeCircle,
       flameOutline, leafOutline, nutritionOutline, fastFoodOutline 
     });
@@ -425,10 +425,6 @@ export class PaniniPage implements OnInit, OnDestroy {
   }
 
   getImageUrl(path: string) {
-    if (!path) return 'assets/1024v5.png';
-    if (path.startsWith('http') || path.startsWith('assets/')) {
-      return path;
-    }
-    return `${this.dataService.getApiUrl()}/${path}`;
+    return this.dataService.getImageUrl(path);
   }
 }

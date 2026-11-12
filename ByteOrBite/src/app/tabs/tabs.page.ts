@@ -20,7 +20,7 @@ import { AuthService } from '../services/auth.service';
 import { ThemeService } from '../services/theme.service';
 import { CartService } from '../services/cart.service';
 import { DataService } from '../services/data.service';
-import { BehaviorSubject, Observable, filter, map, startWith } from 'rxjs';
+import { Observable, filter, map, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-tabs',
@@ -183,11 +183,7 @@ export class TabsPage implements OnInit {
   }
 
   getImageUrl(path: string) {
-    if (!path) return 'assets/1024v5.png';
-    if (path.startsWith('http') || path.startsWith('assets/')) {
-      return path;
-    }
-    return `${this.dataService.getApiUrl()}/${path}`;
+    return this.dataService.getImageUrl(path);
   }
 
   formatModifiche(modifiche: string): string[] {

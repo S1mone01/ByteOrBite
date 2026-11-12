@@ -107,10 +107,6 @@ export class StarterPage implements OnInit, OnDestroy {
   }
 
   getImageUrl(path: string) {
-    if (!path) return 'assets/1024v5.png';
-    if (path.startsWith('http') || path.startsWith('assets/')) {
-      return path;
-    }
-    return `${this.dataService.getApiUrl()}/${path}`;
+    return this.dataService.getImageUrl(path);
   }
 }

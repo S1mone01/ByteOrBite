@@ -25,6 +25,14 @@ export class DataService {
     return this.apiUrl;
   }
 
+  getImageUrl(path: string) {
+    if (!path) return 'assets/1024v5.png';
+    if (path.startsWith('http') || path.startsWith('assets/')) {
+      return path;
+    }
+    return `${this.getApiUrl()}/${path}`;
+  }
+
   uploadImage(file: File, categoria: string): Observable<{ url: string }> {
     const formData = new FormData();
     formData.append('immagine', file);

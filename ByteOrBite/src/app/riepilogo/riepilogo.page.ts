@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewChecked, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { 
@@ -182,11 +182,7 @@ export class RiepilogoPage implements OnInit {
   }
 
   getImageUrl(path: string) {
-    if (!path) return 'assets/1024v5.png';
-    if (path.startsWith('http') || path.startsWith('assets/')) {
-      return path;
-    }
-    return `${this.dataService.getApiUrl()}/${path}`;
+    return this.dataService.getImageUrl(path);
   }
 
   getCartSubtotal(items: any[] | null) {
